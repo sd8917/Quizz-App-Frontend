@@ -4,6 +4,7 @@ import { ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material
 import theme from './theme/theme';
 
 // Lazy loading for better performance
+const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Register = React.lazy(() => import('./pages/Register'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
@@ -37,7 +38,7 @@ function App() {
       <Router>
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -48,7 +49,7 @@ function App() {
             <Route path="/user-management" element={<UserManagement />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </Router>
