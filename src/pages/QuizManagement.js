@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const QuizManagement = () => {
   const navigate = useNavigate();
@@ -105,6 +106,7 @@ const QuizManagement = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Footer />
     </Box>
   );
 };

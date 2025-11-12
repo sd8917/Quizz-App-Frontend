@@ -21,6 +21,7 @@ import {
   Google as GoogleIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -300,6 +301,7 @@ const Login = () => {
           </Box>
         </Paper>
       </Container>
+      <Footer />
     </Box>
   );
 };

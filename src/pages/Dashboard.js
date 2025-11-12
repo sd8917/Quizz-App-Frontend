@@ -26,6 +26,7 @@ import {
   Settings,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="static" elevation={0}>
+      <AppBar position="static" elevation={0} >
         <Toolbar>
           <IconButton
             size="large"
@@ -80,7 +81,7 @@ const Dashboard = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            QuizApp Dashboard
+            Triviaverse
           </Typography>
           <IconButton
             size="large"
@@ -272,6 +273,7 @@ const Dashboard = () => {
           </Grid>
         </Grid>
       </Container>
+      <Footer />
     </Box>
   );
 };

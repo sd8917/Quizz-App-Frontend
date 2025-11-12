@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { ArrowBack, Edit } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -92,6 +93,7 @@ const Profile = () => {
           </List>
         </Paper>
       </Container>
+      <Footer />
     </Box>
   );
 };

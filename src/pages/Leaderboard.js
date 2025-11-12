@@ -32,6 +32,7 @@ import {
   Timer,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const Leaderboard = () => {
   const navigate = useNavigate();
@@ -477,6 +478,7 @@ const Leaderboard = () => {
           </Grid>
         </Paper>
       </Container>
+      <Footer />
     </Box>
   );
 };

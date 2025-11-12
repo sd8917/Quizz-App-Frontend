@@ -48,6 +48,7 @@ import {
   SupervisorAccount,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -579,6 +580,7 @@ const UserManagement = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Footer />
     </Box>
   );
 };

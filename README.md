@@ -12,6 +12,8 @@ A modern, responsive Quiz application built with React and Material-UI featuring
 - **User Management**: Admin panel to manage users, roles, and permissions
 - **Quiz Management**: Create and manage quizzes (Admin)
 - **User Profile**: View and edit user information
+- **Footer Navigation**: Comprehensive footer with links to About Us, Contact, and more
+- **Static Pages**: About Us and Contact Us pages with detailed information
 - **Performance Optimized**: 
   - React lazy loading for code splitting
   - Optimized Material-UI component imports
@@ -54,7 +56,8 @@ npm start
 ```
 src/
 ├── components/          # Reusable components
-│   └── ProtectedRoute.js
+│   ├── ProtectedRoute.js
+│   └── Footer.js
 ├── pages/              # Page components
 │   ├── Login.js
 │   ├── Register.js
@@ -62,7 +65,9 @@ src/
 │   ├── Leaderboard.js
 │   ├── UserManagement.js
 │   ├── Profile.js
-│   └── QuizManagement.js
+│   ├── QuizManagement.js
+│   ├── About.js
+│   └── Contact.js
 ├── theme/              # Material-UI theme configuration
 │   └── theme.js
 ├── utils/              # Utility functions
