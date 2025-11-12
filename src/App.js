@@ -13,6 +13,7 @@ const Leaderboard = React.lazy(() => import('./pages/Leaderboard'));
 const UserManagement = React.lazy(() => import('./pages/UserManagement'));
 const About = React.lazy(() => import('./pages/About'));
 const Contact = React.lazy(() => import('./pages/Contact'));
+const TakeQuiz = React.lazy(() => import('./pages/TakeQuiz'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -41,6 +42,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/quiz-management" element={<QuizManagement />} />
+            <Route path="/quiz/:quizId" element={<TakeQuiz />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/user-management" element={<UserManagement />} />

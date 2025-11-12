@@ -307,7 +307,12 @@ const Dashboard = () => {
                       </Typography>
                     </CardContent>
                     <CardActions>
-                      <Button size="small" variant="contained" startIcon={<PlayArrow />}>
+                      <Button 
+                        size="small" 
+                        variant="contained" 
+                        startIcon={<PlayArrow />}
+                        onClick={() => navigate('/quiz/1')}
+                      >
                         Start Quiz
                       </Button>
                       <Button size="small">View Details</Button>
@@ -529,7 +534,11 @@ const Dashboard = () => {
                       </Typography>
                     </CardContent>
                     <CardActions>
-                      <Button size="small" variant="contained">
+                      <Button 
+                        size="small" 
+                        variant="contained"
+                        onClick={() => navigate('/quiz/1')}
+                      >
                         Start Quiz
                       </Button>
                       <Button size="small">View Details</Button>
