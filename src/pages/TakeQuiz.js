@@ -25,7 +25,6 @@ import {
 import {
   Timer as TimerIcon,
   CheckCircle as CheckCircleIcon,
-  RadioButtonUnchecked as UncheckedIcon,
   NavigateBefore as PrevIcon,
   NavigateNext as NextIcon,
   Flag as FlagIcon,
@@ -189,6 +188,38 @@ const TakeQuiz = () => {
     setTimeRemaining(sampleQuiz.duration * 60); // Convert to seconds
   }, [quizId]);
 
+  // Calculate results
+  const calculateResults = useCallback(() => {
+    let correctCount = 0;
+    quiz.questions.forEach((question) => {
+      if (answers[question.id] === question.correctAnswer) {
+        correctCount++;
+      }
+    });
+
+    const score = Math.round((correctCount / quiz.totalQuestions) * 100);
+    const passed = score >= quiz.passingScore;
+
+    // Navigate to results page with data
+    setTimeout(() => {
+      navigate('/dashboard', {
+        state: {
+          quizCompleted: true,
+          quizTitle: quiz.title,
+          score,
+          totalQuestions: quiz.totalQuestions,
+          correctAnswers: correctCount,
+          passed,
+        },
+      });
+    }, 500);
+  }, [quiz, answers, navigate]);
+
+  const handleAutoSubmit = useCallback(() => {
+    setQuizSubmitted(true);
+    calculateResults();
+  }, [calculateResults]);
+
   // Timer logic
   useEffect(() => {
     if (!quizStarted || quizSubmitted) return;
@@ -272,39 +303,6 @@ const TakeQuiz = () => {
     setShowSubmitDialog(false);
     setQuizSubmitted(true);
     calculateResults();
-  };
-
-  const handleAutoSubmit = useCallback(() => {
-    setQuizSubmitted(true);
-    calculateResults();
-  }, [quiz]);
-
-  // Calculate results
-  const calculateResults = () => {
-    let correctCount = 0;
-    quiz.questions.forEach((question) => {
-      if (answers[question.id] === question.correctAnswer) {
-        correctCount++;
-      }
-    });
-
-    const score = Math.round((correctCount / quiz.totalQuestions) * 100);
-    const passed = score >= quiz.passingScore;
-
-    // Navigate to results page with data
-    setTimeout(() => {
-      navigate('/dashboard', {
-        state: {
-          quizCompleted: true,
-          quizTitle: quiz.title,
-          score,
-          correctCount,
-          totalQuestions: quiz.totalQuestions,
-          passed,
-          timeTaken: quiz.duration * 60 - timeRemaining,
-        },
-      });
-    }, 1000);
   };
 
   // Exit confirmation
