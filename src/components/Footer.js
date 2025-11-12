@@ -73,19 +73,16 @@ const Footer = () => {
         <Grid container spacing={4}>
           {/* Brand Section */}
           <Grid item xs={12} md={4}>
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 700,
-                mb: 2,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
+            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            <img 
+              src="/logo192.png" 
+              alt="QuizApp Logo" 
+              style={{ height: '32px', marginRight: '12px' }}
+            />
+            <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
               TriviaVerse
             </Typography>
+          </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               Challenge yourself, compete with others, and enhance your knowledge
               with our interactive quiz platform. Join thousands of learners
