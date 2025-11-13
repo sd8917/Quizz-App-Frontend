@@ -15,6 +15,10 @@ const UserManagement = React.lazy(() => import('./pages/UserManagement'));
 const About = React.lazy(() => import('./pages/About'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 const TakeQuiz = React.lazy(() => import('./pages/TakeQuiz'));
+const OurTeam = React.lazy(() => import('./pages/OurTeam'));
+const Careers = React.lazy(() => import('./pages/Careers'));
+const HelpCenter = React.lazy(() => import('./pages/HelpCenter'));
+const Blog = React.lazy(() => import('./pages/Blog'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -49,6 +53,10 @@ function App() {
             <Route path="/user-management" element={<UserManagement />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/team" element={<OurTeam />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/help" element={<HelpCenter />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

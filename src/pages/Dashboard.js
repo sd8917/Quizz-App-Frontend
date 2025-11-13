@@ -37,7 +37,7 @@ import {
   EmojiEvents,
   Schedule,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 
 const Dashboard = () => {
@@ -168,7 +168,7 @@ const Dashboard = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700 }} onClick={()=> navigate("/")}>
             TriviaVerse
           </Typography>
           <Chip 
