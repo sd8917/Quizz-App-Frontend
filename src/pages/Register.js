@@ -23,6 +23,7 @@ import {
   Google as GoogleIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../services';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -94,13 +95,26 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setAlertMessage({ type: 'success', text: 'Registration successful! Redirecting to login...' });
+      const response = await authService.register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
+      
+      setAlertMessage({ type: 'success', text: 'Registration successful! Redirecting to dashboard...' });
+      
+      // Store user data if needed
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
+      
       setTimeout(() => {
-        navigate('/login');
+        navigate('/dashboard');
       }, 1500);
     } catch (error) {
-      setAlertMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      console.error('Registration error:', error);
+      const errorMessage = error.message || 'An error occurred. Please try again.';
+      setAlertMessage({ type: 'error', text: errorMessage });
     } finally {
       setLoading(false);
     }

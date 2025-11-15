@@ -22,6 +22,7 @@ import {
   Google as GoogleIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../services';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -79,22 +80,26 @@ const Login = () => {
 
     setLoading(true);
 
-    // Simulate API call
     try {
-      // Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await authService.login({
+        email: formData.email,
+        password: formData.password,
+      });
       
-      // For demo purposes - hardcoded credentials
-      if (formData.email === 'admin@example.com' && formData.password === 'admin123') {
-        setAlertMessage({ type: 'success', text: 'Login successful! Redirecting...' });
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 1000);
-      } else {
-        setAlertMessage({ type: 'error', text: 'Invalid email or password' });
+      setAlertMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+      
+      // Store user data if needed
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
       }
+      
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
     } catch (error) {
-      setAlertMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      console.error('Login error:', error);
+      const errorMessage = error.message || 'Invalid email or password';
+      setAlertMessage({ type: 'error', text: errorMessage });
     } finally {
       setLoading(false);
     }
