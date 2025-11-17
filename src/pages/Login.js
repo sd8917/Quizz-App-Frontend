@@ -21,11 +21,15 @@ import {
   Lock,
   Google as GoogleIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { authService } from '../services';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const auth = useAuth();
+  const login = auth?.login;
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -34,6 +38,17 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
+
+  // Check for session expiry
+  React.useEffect(() => {
+    const sessionExpired = searchParams.get('session');
+    if (sessionExpired === 'expired') {
+      setAlertMessage({ 
+        type: 'warning', 
+        text: 'Your session has expired. Please login again.' 
+      });
+    }
+  }, [searchParams]);
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -81,24 +96,33 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await authService.login({
+      if (!login) {
+        throw new Error('Authentication service not available');
+      }
+
+      await login({
         email: formData.email,
         password: formData.password,
       });
       
       setAlertMessage({ type: 'success', text: 'Login successful! Redirecting...' });
       
-      // Store user data if needed
-      if (response.user) {
-        localStorage.setItem('user', JSON.stringify(response.user));
-      }
+      // Redirect to previous location or dashboard
+      const from = location.state?.from?.pathname || '/dashboard';
       
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate(from, { replace: true });
       }, 1000);
     } catch (error) {
       console.error('Login error:', error);
-      const errorMessage = error.message || 'Invalid email or password';
+      let errorMessage = 'Invalid email or password';
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       setAlertMessage({ type: 'error', text: errorMessage });
     } finally {
       setLoading(false);

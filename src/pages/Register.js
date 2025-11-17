@@ -23,10 +23,12 @@ import {
   Google as GoogleIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();
+  const auth = useAuth();
+  const register = auth?.register;
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -95,25 +97,32 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await authService.register({
-        username: formData.username,
+      if (!register) {
+        throw new Error('Authentication service not available');
+      }
+
+      await register({
+        name: formData.username,
         email: formData.email,
         password: formData.password,
+        confirmPassword: formData.confirmPassword,
       });
       
       setAlertMessage({ type: 'success', text: 'Registration successful! Redirecting to dashboard...' });
       
-      // Store user data if needed
-      if (response.user) {
-        localStorage.setItem('user', JSON.stringify(response.user));
-      }
-      
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/dashboard', { replace: true });
       }, 1500);
     } catch (error) {
       console.error('Registration error:', error);
-      const errorMessage = error.message || 'An error occurred. Please try again.';
+      let errorMessage = 'An error occurred. Please try again.';
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       setAlertMessage({ type: 'error', text: errorMessage });
     } finally {
       setLoading(false);
