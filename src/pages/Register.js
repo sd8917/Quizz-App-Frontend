@@ -23,18 +23,34 @@ import {
   Google as GoogleIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser, clearError } from '../store/slices/authSlice';
 
 const Register = () => {
   const navigate = useNavigate();
-  const auth = useAuth();
-  const register = auth?.register;
+  const dispatch = useDispatch();
+  const { isAuthenticated, loading: authLoading, error: authError } = useSelector((state) => state.auth);
+  
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
+
+  // Redirect if already logged in
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Clear Redux errors when component unmounts
+  React.useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -97,30 +113,26 @@ const Register = () => {
     setLoading(true);
 
     try {
-      if (!register) {
-        throw new Error('Authentication service not available');
-      }
-
-      await register({
+      await dispatch(registerUser({
         name: formData.username,
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
-      });
+      })).unwrap();
       
-      setAlertMessage({ type: 'success', text: 'Registration successful! Redirecting to dashboard...' });
+      setAlertMessage({ type: 'success', text: 'Registration successful! Redirecting to profile...' });
       
       setTimeout(() => {
-        navigate('/dashboard', { replace: true });
+        navigate('/profile', { replace: true });
       }, 1500);
     } catch (error) {
       console.error('Registration error:', error);
       let errorMessage = 'An error occurred. Please try again.';
       
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
+      if (error?.message) {
         errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
       }
       
       setAlertMessage({ type: 'error', text: errorMessage });

@@ -26,52 +26,25 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor - Handle token refresh and auto-logout
+// Response interceptor - Handle 401 errors
 apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error) => {
-    const originalRequest = error.config;
-
-    // If error is 401 and we haven't tried to refresh yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) {
-          throw new Error('No refresh token available');
-        }
-
-        const response = await axios.post(`${BASE_URL}/refresh`, {
-          refreshToken,
-        });
-
-        const { accessToken } = response.data;
-        localStorage.setItem('accessToken', accessToken);
-
-        // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        return apiClient(originalRequest);
-      } catch (refreshError) {
-        // Refresh token expired or invalid - logout user
-        console.error('Token refresh failed:', refreshError);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
-        
-        // Dispatch custom event for auth components to listen
-        window.dispatchEvent(new CustomEvent('auth:logout', { 
-          detail: { reason: 'Token expired' } 
-        }));
-        
-        // Redirect to login
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login?session=expired';
-        }
-        
-        return Promise.reject(refreshError);
+    // If error is 401, clear storage and redirect to login
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      
+      // Dispatch custom event for auth components to listen
+      window.dispatchEvent(new CustomEvent('auth:logout', { 
+        detail: { reason: 'Token expired' } 
+      }));
+      
+      // Redirect to login if not already there
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login?session=expired';
       }
     }
 

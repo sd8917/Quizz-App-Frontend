@@ -12,7 +12,7 @@ const userService = {
    */
   getProfile: async () => {
     try {
-      const response = await apiClient.get('/user/profile');
+      const response = await apiClient.get('/profile');
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -26,7 +26,7 @@ const userService = {
    */
   updateProfile: async (profileData) => {
     try {
-      const response = await apiClient.put('/user/profile', profileData);
+      const response = await apiClient.put('/profile', profileData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -67,7 +67,7 @@ const userService = {
    */
   getAllUsers: async (params = {}) => {
     try {
-      const response = await apiClient.get('/admin/users', { params });
+      const response = await apiClient.get('/profile/users');
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -82,7 +82,7 @@ const userService = {
    */
   updateUserRole: async (userId, role) => {
     try {
-      const response = await apiClient.put(`/admin/users/${userId}/role`, { role });
+      const response = await apiClient.put(`/profile/user/${userId}/roles`, { role });
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

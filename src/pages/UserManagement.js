@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -32,6 +32,7 @@ import {
   Select,
   FormControl,
   InputLabel,
+  CircularProgress,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -49,9 +50,11 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
+import { userService } from '../services';
 
 const UserManagement = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [tabValue, setTabValue] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -64,63 +67,51 @@ const UserManagement = () => {
     role: '',
   });
 
-  const users = [
-    {
-      id: 1,
-      username: 'admin',
-      email: 'admin@example.com',
-      role: 'Admin',
-      status: 'Active',
-      quizzesTaken: 4,
-      score: 1800,
-      joinedDate: '2024-10-26',
-      lastActive: '2025-11-12',
-    },
-    {
-      id: 2,
-      username: 'code_master',
-      email: 'codemaster@example.com',
-      role: 'User',
-      status: 'Active',
-      quizzesTaken: 12,
-      score: 2400,
-      joinedDate: '2024-09-15',
-      lastActive: '2025-11-11',
-    },
-    {
-      id: 3,
-      username: 'quiz_whiz',
-      email: 'quizwhiz@example.com',
-      role: 'User',
-      status: 'Active',
-      quizzesTaken: 10,
-      score: 2150,
-      joinedDate: '2024-10-01',
-      lastActive: '2025-11-10',
-    },
-    {
-      id: 4,
-      username: 'react_guru',
-      email: 'reactguru@example.com',
-      role: 'Moderator',
-      status: 'Active',
-      quizzesTaken: 8,
-      score: 1650,
-      joinedDate: '2024-08-20',
-      lastActive: '2025-11-09',
-    },
-    {
-      id: 5,
-      username: 'inactive_user',
-      email: 'inactive@example.com',
-      role: 'User',
-      status: 'Suspended',
-      quizzesTaken: 2,
-      score: 400,
-      joinedDate: '2024-07-10',
-      lastActive: '2024-12-15',
-    },
-  ];
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+   useEffect(() => {
+      let isMounted = true;
+  
+      const fetchUsers = async () => {
+        try {
+          setLoading(true);
+          const response = await userService.getAllUsers();  
+          if (isMounted && response?.data) {
+            // Transform API data to match UI structure
+            const transformedUsers = response.data.map((user) => ({
+              id: user._id,
+              username: user.username || 'N/A',
+              email: user.email || 'N/A',
+              role: user.roles?.[0] ? user.roles[0].charAt(0).toUpperCase() + user.roles[0].slice(1) : 'N/A',
+              status: user.status || 'N/A',
+              quizzesTaken: user.quizzesTaken || 'N/A',
+              score: user.score || 'N/A',
+              joinedDate: user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A',
+              lastActive: user.lastActive ? new Date(user.lastActive).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A',
+            }));
+            setData(transformedUsers);
+          }
+        } catch (err) {
+          console.error('User fetch error:', err);
+          if (isMounted) {
+            setError('Failed to load users.');
+          }
+        } finally {
+          if (isMounted) {
+            setLoading(false);
+          }
+        }
+      };
+  
+      fetchUsers();
+  
+      return () => {
+        isMounted = false;
+      };
+    }, []); // Only run once on mount
+
+  const users = data || [];
 
   const stats = [
     {
@@ -142,8 +133,8 @@ const UserManagement = () => {
       color: '#ec4899',
     },
     {
-      title: 'Moderators',
-      value: users.filter((u) => u.role === 'Moderator').length,
+      title: 'Creators',
+      value: users.filter((u) => u.role === 'Creator').length,
       icon: <SupervisorAccount />,
       color: '#f59e0b',
     },
@@ -187,7 +178,7 @@ const UserManagement = () => {
     switch (role) {
       case 'Admin':
         return 'error';
-      case 'Moderator':
+      case 'Creator':
         return 'warning';
       default:
         return 'default';
@@ -209,6 +200,14 @@ const UserManagement = () => {
     if (tabValue === 2) return filteredUsers.filter((u) => u.status === 'Suspended');
     return filteredUsers;
   };
+
+    if (loading) {
+      return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+          <CircularProgress />
+        </Box>
+      );
+    }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -369,7 +368,7 @@ const UserManagement = () => {
                             bgcolor:
                               user.role === 'Admin'
                                 ? 'error.main'
-                                : user.role === 'Moderator'
+                                : user.role === 'Creator'
                                 ? 'warning.main'
                                 : 'primary.main',
                           }}
@@ -394,7 +393,7 @@ const UserManagement = () => {
                         icon={
                           user.role === 'Admin' ? (
                             <AdminPanelSettings sx={{ fontSize: 16 }} />
-                          ) : user.role === 'Moderator' ? (
+                          ) : user.role === 'Creator' ? (
                             <SupervisorAccount sx={{ fontSize: 16 }} />
                           ) : (
                             <Person sx={{ fontSize: 16 }} />
@@ -465,7 +464,7 @@ const UserManagement = () => {
 
       {/* Edit/Add User Dialog */}
       <Dialog open={openDialog && dialogType === 'edit'} onClose={handleDialogClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Edit User</DialogTitle>
+        <DialogTitle>Edit User 1</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -496,7 +495,7 @@ const UserManagement = () => {
               label="Role"
             >
               <MenuItem value="User">User</MenuItem>
-              <MenuItem value="Moderator">Moderator</MenuItem>
+              <MenuItem value="Creator">Creator</MenuItem>
               <MenuItem value="Admin">Admin</MenuItem>
             </Select>
           </FormControl>
@@ -538,7 +537,7 @@ const UserManagement = () => {
             <InputLabel>Role</InputLabel>
             <Select label="Role" defaultValue="User">
               <MenuItem value="User">User</MenuItem>
-              <MenuItem value="Moderator">Moderator</MenuItem>
+              <MenuItem value="Creator">Creator</MenuItem>
               <MenuItem value="Admin">Admin</MenuItem>
             </Select>
           </FormControl>

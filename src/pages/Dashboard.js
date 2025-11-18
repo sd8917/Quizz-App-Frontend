@@ -38,10 +38,13 @@ import {
   Schedule,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../store/slices/authSlice';
 import Footer from '../components/Footer';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   
   // Mock user role - In production, this would come from authentication context
@@ -56,9 +59,16 @@ const Dashboard = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     handleMenuClose();
-    navigate('/login');
+    try {
+      await dispatch(logoutUser()).unwrap();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Navigate to login even if logout fails
+      navigate('/login', { replace: true });
+    }
   };
 
   // Stats for different roles

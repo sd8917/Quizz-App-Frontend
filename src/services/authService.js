@@ -14,13 +14,9 @@ const authService = {
   login: async (credentials) => {
     try {
       const response = await apiClient.post('/login', credentials);
-      
-      // Store tokens if login successful
-      if (response.data.accessToken) {
-        localStorage.setItem('accessToken', response.data.accessToken);
-      }
-      if (response.data.refreshToken) {
-        localStorage.setItem('refreshToken', response.data.refreshToken);
+      // Store access token if login successful
+      if (response.data?.data.accessToken) {
+        localStorage.setItem('accessToken', response.data.data.accessToken);
       }
       
       return response.data;
@@ -42,38 +38,9 @@ const authService = {
       if (response.data.accessToken) {
         localStorage.setItem('accessToken', response.data.accessToken);
       }
-      if (response.data.refreshToken) {
-        localStorage.setItem('refreshToken', response.data.refreshToken);
-      }
       
       return response.data;
     } catch (error) {
-      throw error.response?.data || error.message;
-    }
-  },
-
-  /**
-   * Refresh access token
-   * @returns {Promise} Response with new access token
-   */
-  refresh: async () => {
-    try {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) {
-        throw new Error('No refresh token available');
-      }
-
-      const response = await apiClient.post('/refresh', { refreshToken });
-      
-      if (response.data.accessToken) {
-        localStorage.setItem('accessToken', response.data.accessToken);
-      }
-      
-      return response.data;
-    } catch (error) {
-      // Clear tokens on refresh failure
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
       throw error.response?.data || error.message;
     }
   },
@@ -91,7 +58,6 @@ const authService = {
     } finally {
       // Always clear local storage
       localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
     }
   },
@@ -102,7 +68,7 @@ const authService = {
    */
   getCurrentUser: async () => {
     try {
-      const response = await apiClient.get('/user/profile');
+      const response = await apiClient.get('/profile');
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
@@ -123,14 +89,6 @@ const authService = {
    */
   getAccessToken: () => {
     return localStorage.getItem('accessToken');
-  },
-
-  /**
-   * Get stored refresh token
-   * @returns {string|null} Refresh token
-   */
-  getRefreshToken: () => {
-    return localStorage.getItem('refreshToken');
   },
 };
 

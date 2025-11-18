@@ -195,8 +195,8 @@ npm run build
 
 ## 🔥 Next Features to Add
 
-- [ ] Backend API integration
-- [ ] Real authentication with JWT
+- [x] Backend API integration
+- [x] Real authentication with JWT
 - [ ] Quiz taking functionality
 - [ ] Timer for quizzes
 - [ ] Score tracking

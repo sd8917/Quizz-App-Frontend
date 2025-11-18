@@ -22,18 +22,28 @@ import {
   Google as GoogleIcon,
 } from '@mui/icons-material';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser, clearError } from '../store/slices/authSlice';
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const auth = useAuth();
-  const login = auth?.login;
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  // Redirect if already logged in
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -50,25 +60,35 @@ const Login = () => {
     }
   }, [searchParams]);
 
+  // Clear Redux errors when component unmounts
+  React.useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
+
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
-  const handleChange = (e) => {
+  const handleChange = React.useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
     // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
-    }
-  };
+    setErrors((prev) => {
+      if (prev[name]) {
+        return {
+          ...prev,
+          [name]: '',
+        };
+      }
+      return prev;
+    });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,31 +116,21 @@ const Login = () => {
     setLoading(true);
 
     try {
-      if (!login) {
-        throw new Error('Authentication service not available');
-      }
-
-      await login({
+      const result = await dispatch(loginUser({
         email: formData.email,
         password: formData.password,
-      });
-      
+      })).unwrap();
       setAlertMessage({ type: 'success', text: 'Login successful! Redirecting...' });
-      
-      // Redirect to previous location or dashboard
-      const from = location.state?.from?.pathname || '/dashboard';
-      
-      setTimeout(() => {
-        navigate(from, { replace: true });
-      }, 1000);
+      const from = location.state?.from?.pathname || '/profile';
+      navigate(from, { replace: true });
     } catch (error) {
       console.error('Login error:', error);
       let errorMessage = 'Invalid email or password';
       
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
+      if (error?.message) {
         errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
       }
       
       setAlertMessage({ type: 'error', text: errorMessage });

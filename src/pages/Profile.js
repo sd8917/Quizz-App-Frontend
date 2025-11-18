@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -13,13 +13,73 @@ import {
   AppBar,
   Toolbar,
   IconButton,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import { ArrowBack, Edit } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserProfile, updateUser as updateUserAction } from '../store/slices/authSlice';
+import { userService } from '../services';
 import Footer from '../components/Footer';
 
 const Profile = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const authUser = useSelector((state) => state.auth.user);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProfile = async () => {
+      // If we already have user data in Redux, use it immediately
+      if (authUser && !profile) {
+        setProfile(authUser);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const data = await dispatch(fetchUserProfile()).unwrap();
+        if (isMounted) {
+          setProfile(data);
+        }
+      } catch (err) {
+        console.error('Profile fetch error:', err);
+        if (isMounted) {
+          setError('Failed to load profile. Using cached data.');
+          // Fallback to Redux user
+          if (authUser) {
+            setProfile(authUser);
+          }
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch]); // Only run once on mount
+
+  const displayUser = profile || authUser;
+
+  if (loading && !displayUser) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -45,9 +105,15 @@ const Profile = () => {
       </AppBar>
 
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+        {error && (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
         <Paper sx={{ p: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
             <Avatar
+              src={displayUser?.avatar}
               sx={{
                 width: 100,
                 height: 100,
@@ -56,18 +122,18 @@ const Profile = () => {
                 mr: 3,
               }}
             >
-              A
+              {displayUser?.name?.charAt(0)?.toUpperCase() || 'U'}
             </Avatar>
             <Box sx={{ flex: 1 }}>
               <Typography variant="h4" gutterBottom>
-                admin
+                {displayUser?.data?.username || 'User'}
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                admin@example.com
+                {displayUser?.data?.email || 'No email'}
               </Typography>
               <Divider sx={{ mt: 1 }} />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                Admin
+                {displayUser?.data?.roles.map(role => role).join(', ').toUpperCase() || 'User'}
               </Typography>
             </Box>
             <Button variant="outlined" startIcon={<Edit />}>
@@ -84,17 +150,20 @@ const Profile = () => {
             <ListItem>
               <ListItemText
                 primary="Total Quizzes Taken"
-                secondary="4"
+                secondary={displayUser?.quizzesTaken || 0}
               />
             </ListItem>
             <ListItem>
               <ListItemText
                 primary="Highest Score"
-                secondary="1800 pts"
+                secondary={displayUser?.highestScore ? `${displayUser.highestScore} pts` : 'N/A'}
               />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Joined" secondary="October 26, 2024" />
+              <ListItemText 
+                primary="Joined" 
+                secondary={displayUser?.timestamp ? new Date(displayUser.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'} 
+              />
             </ListItem>
           </List>
         </Paper>
