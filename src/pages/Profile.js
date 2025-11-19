@@ -68,7 +68,7 @@ const Profile = () => {
     return () => {
       isMounted = false;
     };
-  }, [dispatch, authUser, profile]); // Only run once on mount
+  }, [dispatch]); // Only run once on mount
 
   const displayUser = profile || authUser;
 
