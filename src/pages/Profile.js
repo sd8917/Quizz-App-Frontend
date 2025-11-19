@@ -68,6 +68,7 @@ const Profile = () => {
     return () => {
       isMounted = false;
     };
+  // eslint-disable-next-line
   }, [dispatch]); // Only run once on mount
 
   const displayUser = profile || authUser;

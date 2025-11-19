@@ -17,7 +17,6 @@ import {
   Chip,
   LinearProgress,
   Divider,
-  Paper,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -46,7 +45,6 @@ const Dashboard = () => {
   const authUser = useSelector((state) => state.auth.user);
   const [anchorEl, setAnchorEl] = useState(null);
   
-  console.log("authUser ", authUser)
   // Get user role from Redux state
   // API returns: { data: { role, username, email, _id, ... } }
   // After login, authUser directly contains the user object with role property

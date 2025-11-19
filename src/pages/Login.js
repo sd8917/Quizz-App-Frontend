@@ -116,16 +116,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const result = await dispatch(loginUser({
+      await dispatch(loginUser({
         email: formData.email,
         password: formData.password,
       })).unwrap();;
-      console.log("res == ", result.data?.role)
       
       setAlertMessage({ type: 'success', text: 'Login successful! Redirecting...' });
       
-      // Redirect based on user role or previous location
-      const userRole = result?.data?.role || "user";
       const from = location.state?.from?.pathname;
       
       let redirectPath = '/dashboard'; // Default to dashboard
