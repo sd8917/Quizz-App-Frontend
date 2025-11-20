@@ -75,6 +75,36 @@ const channelService = {
       throw error.response?.data || error.message;
     }
   },
+
+  /**
+   * Add questions in bulk to a channel
+   * @param {string} channelId - Channel ID
+   * @param {Array} questions - Array of question objects
+   * @returns {Promise} Created questions
+   */
+  addBulkQuestions: async (channelId, questions) => {
+    try {
+      const response = await apiClient.post(`/quiz/channel/${channelId}/bulk`, { questions });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
+   * Add single question to a channel
+   * @param {string} channelId - Channel ID
+   * @param {Object} questionData - Question object
+   * @returns {Promise} Created question
+   */
+  addQuestion: async (channelId, questionData) => {
+    try {
+      const response = await apiClient.post(`/questions/channel/${channelId}`, questionData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default channelService;

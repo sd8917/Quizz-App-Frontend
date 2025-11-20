@@ -38,6 +38,8 @@ const QuizManagement = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [bulkQuestionsJson, setBulkQuestionsJson] = useState('');
+  const [uploadLoading, setUploadLoading] = useState(false);
 
   // Fetch channels on component mount
   useEffect(() => {
@@ -96,7 +98,72 @@ const QuizManagement = () => {
 
   const handleBulkUpload = (channel) => {
     setSelectedQuiz(channel);
+    setBulkQuestionsJson(''); // Clear previous input
     setOpenBulkUploadDialog(true);
+  };
+
+  const handleBulkUploadSubmit = async () => {
+    if (!bulkQuestionsJson.trim()) {
+      setSnackbar({ open: true, message: 'Please paste the questions JSON', severity: 'warning' });
+      return;
+    }
+
+    if (!selectedQuiz?._id) {
+      setSnackbar({ open: true, message: 'No channel selected', severity: 'error' });
+      return;
+    }
+
+    setUploadLoading(true);
+    try {
+      // Parse the JSON input
+      const parsedData = JSON.parse(bulkQuestionsJson);
+      const questions = parsedData.questions || parsedData;
+
+      if (!Array.isArray(questions) || questions.length === 0) {
+        throw new Error('Invalid format: questions array is required');
+      }
+
+      // Upload to API
+      const response = await channelService.addBulkQuestions(selectedQuiz._id, questions);
+      
+      console.log('Bulk upload response:', response);
+      
+      // Update the local channel state with new question count
+      const addedCount = response?.data.length || questions.length;
+      
+      setChannels(prevChannels => 
+        prevChannels.map(ch => 
+          ch._id === selectedQuiz._id 
+            ? { ...ch, questionsCount: (ch.questionsCount || 0) + addedCount }
+            : ch
+        )
+      );
+      
+      setSnackbar({ 
+        open: true, 
+        message: `Successfully added ${addedCount} question${addedCount !== 1 ? 's' : ''} to ${selectedQuiz.name}!`, 
+        severity: 'success' 
+      });
+      
+      setOpenBulkUploadDialog(false);
+      setBulkQuestionsJson('');
+      
+      // Optionally refresh channels to get accurate count from server
+      setTimeout(() => fetchChannels(), 1000);
+    } catch (err) {
+      console.error('Error uploading bulk questions:', err);
+      let errorMessage = 'Failed to upload questions';
+      
+      if (err instanceof SyntaxError) {
+        errorMessage = 'Invalid JSON format. Please check your input.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+    } finally {
+      setUploadLoading(false);
+    }
   };
 
   const handleCloseSnackbar = () => {
@@ -317,36 +384,62 @@ const QuizManagement = () => {
       </Dialog>
 
       {/* Bulk Upload Dialog */}
-      <Dialog open={openBulkUploadDialog} onClose={() => setOpenBulkUploadDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Bulk Upload Questions to {selectedQuiz?.title}</DialogTitle>
+      <Dialog open={openBulkUploadDialog} onClose={() => setOpenBulkUploadDialog(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Bulk Upload Questions to {selectedQuiz?.name}</DialogTitle>
         <DialogContent>
           <Box sx={{ mt: 2 }}>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Upload a CSV or JSON file containing multiple questions
+              Paste your questions JSON array below:
             </Typography>
-            <Button
-              variant="outlined"
-              component="label"
-              startIcon={<Upload />}
+            <TextField
               fullWidth
-              sx={{ mb: 2 }}
-            >
-              Choose File
-              <input type="file" hidden accept=".csv,.json" />
-            </Button>
-            <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
-              <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                CSV Format:<br/>
-                question,optionA,optionB,optionC,optionD,correctAnswer,points<br/>
-                "What is 2+2?","2","3","4","5","C",10
+              multiline
+              rows={12}
+              value={bulkQuestionsJson}
+              onChange={(e) => setBulkQuestionsJson(e.target.value)}
+              placeholder={`{
+  "questions": [
+    {
+      "title": "What is the chemical symbol for water?",
+      "questionGroupTitle": "Basic Science",
+      "content": "Select the correct chemical symbol for water.",
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "points": 5,
+      "options": [
+        { "text": "H2O", "isCorrect": true, "explanation": "H2O is the chemical formula for water." },
+        { "text": "O2", "isCorrect": false },
+        { "text": "CO2", "isCorrect": false },
+        { "text": "NaCl", "isCorrect": false }
+      ]
+    }
+  ]
+}`}
+              sx={{
+                fontFamily: 'monospace',
+                fontSize: '0.85rem',
+                '& .MuiInputBase-input': {
+                  fontFamily: 'monospace',
+                }
+              }}
+              disabled={uploadLoading}
+            />
+            <Alert severity="info" sx={{ mt: 2 }}>
+              <Typography variant="caption">
+                <strong>Format:</strong> Paste a JSON object with a "questions" array. Each question should have: title, questionGroupTitle, content, type, difficulty, points, and options array.
               </Typography>
-            </Box>
+            </Alert>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenBulkUploadDialog(false)}>Cancel</Button>
-          <Button variant="contained" startIcon={<Upload />} onClick={() => setOpenBulkUploadDialog(false)}>
-            Upload Questions
+          <Button onClick={() => setOpenBulkUploadDialog(false)} disabled={uploadLoading}>Cancel</Button>
+          <Button 
+            variant="contained" 
+            startIcon={uploadLoading ? <CircularProgress size={20} /> : <Upload />} 
+            onClick={handleBulkUploadSubmit}
+            disabled={uploadLoading}
+          >
+            {uploadLoading ? 'Uploading...' : 'Upload Questions'}
           </Button>
         </DialogActions>
       </Dialog>
