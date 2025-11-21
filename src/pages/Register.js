@@ -114,7 +114,7 @@ const Register = () => {
 
     try {
       await dispatch(registerUser({
-        name: formData.username,
+        username: formData.username,
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,

@@ -114,7 +114,7 @@ const channelService = {
    */
   addUserToChannel: async (channelId, userData) => {
     try {
-      const response = await apiClient.post(`/channel/${channelId}/users`, userData);
+      const response = await apiClient.post(`/channel/${channelId}/invite`, userData);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
