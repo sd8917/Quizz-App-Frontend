@@ -45,6 +45,9 @@ const QuizManagement = () => {
   const [selectedChannelForUser, setSelectedChannelForUser] = useState(null);
   const [userEmail, setUserEmail] = useState('');
   const [addingUser, setAddingUser] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [channelToDelete, setChannelToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Fetch channels on component mount
   useEffect(() => {
@@ -206,6 +209,38 @@ const QuizManagement = () => {
     }
   };
 
+  const handleDeleteChannel = async () => {
+    if (!channelToDelete) return;
+
+    setDeleting(true);
+    try {
+      await channelService.deleteChannel(channelToDelete._id);
+      
+      // Remove channel from local state
+      setChannels(prevChannels => 
+        prevChannels.filter(ch => ch._id !== channelToDelete._id)
+      );
+      
+      setSnackbar({ 
+        open: true, 
+        message: `Channel "${channelToDelete.name}" deleted successfully!`, 
+        severity: 'success' 
+      });
+      
+      setOpenDeleteDialog(false);
+      setChannelToDelete(null);
+    } catch (err) {
+      console.error('Error deleting channel:', err);
+      setSnackbar({ 
+        open: true, 
+        message: err.message || 'Failed to delete channel', 
+        severity: 'error' 
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
@@ -335,7 +370,15 @@ const QuizManagement = () => {
                       Add in Bulk
                     </Button>
                     <Button size="small">Edit</Button>
-                    <Button size="small" color="error">
+                    <Button 
+                      size="small" 
+                      color="error"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setChannelToDelete(channel);
+                        setOpenDeleteDialog(true);
+                      }}
+                    >
                       Delete
                     </Button>
                   </CardActions>
@@ -558,6 +601,36 @@ const QuizManagement = () => {
             startIcon={addingUser ? <CircularProgress size={20} /> : <PersonAdd />}
           >
             {addingUser ? 'Adding...' : 'Add User'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog 
+        open={openDeleteDialog} 
+        onClose={() => !deleting && setOpenDeleteDialog(false)}
+        maxWidth="sm" 
+        fullWidth
+      >
+        <DialogTitle>Delete Channel</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete the channel <strong>"{channelToDelete?.name}"</strong>? 
+            This action cannot be undone and will remove all associated quizzes and questions.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeleteDialog(false)} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button 
+            variant="contained" 
+            color="error"
+            onClick={handleDeleteChannel}
+            disabled={deleting}
+            startIcon={deleting ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogActions>
       </Dialog>
