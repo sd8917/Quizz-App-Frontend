@@ -47,6 +47,8 @@ import {
   AdminPanelSettings,
   Group,
   SupervisorAccount,
+  CheckCircleOutline,
+  BlockOutlined,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
@@ -425,6 +427,7 @@ const UserManagement = () => {
                         label={user.isActive && user.isActive !== "N/A" ? 'Active' : 'Suspended'}
                         size="small"
                         color={getStatusColor(user.isActive)}
+                        sx={{color: "white"}}
                       />
                     </TableCell>
                     <TableCell align="center">
@@ -473,10 +476,14 @@ const UserManagement = () => {
           <Edit sx={{ mr: 1, fontSize: 20 }} /> Update Role
         </MenuItem>
         <MenuItem onClick={() => handleDialogOpen('suspend')}>
-          <Block sx={{ mr: 1, fontSize: 20 }} />{' '}
-          {selectedUser?.status === 'Active' ? 'Suspend' : 'Activate'}
+          {selectedUser?.isActive === true && selectedUser?.isActive !== "N/A" ? (
+            <BlockOutlined sx={{ mr: 1, fontSize: 20 }} />
+          ) : (
+            <CheckCircleOutline sx={{ mr: 1, fontSize: 20 }} />
+          )}
+          {selectedUser?.isActive === true && selectedUser?.isActive !== "N/A" ? 'Suspend' : 'Activate'}
         </MenuItem>
-        <MenuItem onClick={() => handleDialogOpen('delete')}>
+        <MenuItem onClick={() => handleDialogOpen('delete')} disabled={true}>
           <Delete sx={{ mr: 1, fontSize: 20 }} color="error" /> Delete User
         </MenuItem>
       </Menu>
@@ -619,7 +626,7 @@ const UserManagement = () => {
       {/* Suspend/Activate Dialog */}
       <Dialog open={openDialog && dialogType === 'suspend'} onClose={handleDialogClose}>
         <DialogTitle>
-          {selectedUser?.status === 'Active' ? 'Suspend' : 'Activate'} User
+          {selectedUser?.isActive === true && selectedUser?.isActive !== "N/A" ? 'Suspend' : 'Activate'}
         </DialogTitle>
         <DialogContent>
           <Typography>
@@ -630,10 +637,11 @@ const UserManagement = () => {
           <Button onClick={handleDialogClose}>Cancel</Button>
           <Button
             variant="contained"
-            color={selectedUser?.status === 'Active' ? 'warning' : 'success'}
+            color={selectedUser?.isActive === true && selectedUser?.isActive !== "N/A" ? 'warning' : 'success'}
             onClick={handleDialogClose}
+            sx={{color: "white"}}
           >
-            {selectedUser?.status === 'Active' ? 'Suspend' : 'Activate'}
+            {selectedUser?.isActive === true && selectedUser?.isActive !== "N/A" ? 'Suspend' : 'Activate'}
           </Button>
         </DialogActions>
       </Dialog>
