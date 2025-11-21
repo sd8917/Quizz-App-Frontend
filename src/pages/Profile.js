@@ -71,7 +71,7 @@ const Profile = () => {
   // eslint-disable-next-line
   }, [dispatch]); // Only run once on mount
 
-  const displayUser = profile || authUser;
+  const displayUser = profile?.data || authUser;
 
   if (loading && !displayUser) {
     return (
@@ -122,18 +122,18 @@ const Profile = () => {
                 mr: 3,
               }}
             >
-              {displayUser?.name?.charAt(0)?.toUpperCase() || 'U'}
+              {displayUser?.username?.charAt(0)?.toUpperCase() || 'U'}
             </Avatar>
             <Box sx={{ flex: 1 }}>
               <Typography variant="h4" gutterBottom>
-                {displayUser?.data?.username || 'User'}
+                {displayUser?.username || 'User'}
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                {displayUser?.data?.email || 'No email'}
+                {displayUser?.email || 'No email'}
               </Typography>
               <Divider sx={{ mt: 1 }} />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                {displayUser?.data?.roles.map(role => role).join(', ').toUpperCase() || 'User'}
+                {displayUser?.roles?.map(role => role).join(', ').toUpperCase() || 'User'}
               </Typography>
             </Box>
             <Button variant="outlined" startIcon={<Edit />}>
@@ -162,7 +162,7 @@ const Profile = () => {
             <ListItem>
               <ListItemText 
                 primary="Joined" 
-                secondary={displayUser?.timestamp ? new Date(displayUser.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'} 
+                secondary={profile?.timestamp ? new Date(profile?.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'} 
               />
             </ListItem>
           </List>
