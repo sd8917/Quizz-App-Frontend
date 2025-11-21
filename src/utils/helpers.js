@@ -153,3 +153,18 @@ export const memoize = (fn) => {
     return result;
   };
 };
+
+export const  getRoleColor = (role) => {
+    switch (role) {
+      case 'Admin':
+        return 'error';
+      case 'Creator':
+        return 'warning';
+      default:
+        return 'default';
+    }
+};
+
+export const getStatusColor = (status) => {
+  return status === 'true' || status === "N/A" ? 'error' : 'success';
+};

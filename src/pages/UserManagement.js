@@ -51,6 +51,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { userService } from '../services';
+import { getRoleColor, getStatusColor } from '../utils/helpers';
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -85,11 +86,12 @@ const UserManagement = () => {
               username: user.username || 'N/A',
               email: user.email || 'N/A',
               role: user.roles?.[0] ? user.roles[0].charAt(0).toUpperCase() + user.roles[0].slice(1) : 'N/A',
-              status: user.status || 'N/A',
+              isActive: user.isActive || 'N/A',
               quizzesTaken: user.quizzesTaken || 'N/A',
               score: user.score || 'N/A',
               joinedDate: user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A',
-              lastActive: user.lastActive ? new Date(user.lastActive).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A',
+              lastActive: user.activeStatus || 'N/A',
+              isOnline: user.isOnline || false,
             }));
             setData(transformedUsers);
           }
@@ -123,7 +125,7 @@ const UserManagement = () => {
     },
     {
       title: 'Active Users',
-      value: users.filter((u) => u.status === 'Active').length,
+      value: users.filter((u) => u.isActive === true).length,
       icon: <CheckCircle />,
       color: '#10b981',
     },
@@ -199,21 +201,6 @@ const UserManagement = () => {
     }
   };
 
-  const getRoleColor = (role) => {
-    switch (role) {
-      case 'Admin':
-        return 'error';
-      case 'Creator':
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusColor = (status) => {
-    return status === 'Active' ? 'success' : 'error';
-  };
-
   const filteredUsers = users.filter(
     (user) =>
       user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -221,8 +208,8 @@ const UserManagement = () => {
   );
 
   const getFilteredByTab = () => {
-    if (tabValue === 1) return filteredUsers.filter((u) => u.status === 'Active');
-    if (tabValue === 2) return filteredUsers.filter((u) => u.status === 'Suspended');
+    if (tabValue === 1) return filteredUsers.filter((u) => u.isActive === true);
+    if (tabValue === 2) return filteredUsers.filter((u) => (u.isActive === false || u.isActive === 'N/A'));
     return filteredUsers;
   };
 
@@ -435,9 +422,9 @@ const UserManagement = () => {
                     </TableCell>
                     <TableCell align="center">
                       <Chip
-                        label={user.status}
+                        label={user.isActive && user.isActive !== "N/A" ? 'Active' : 'Suspended'}
                         size="small"
-                        color={getStatusColor(user.status)}
+                        color={getStatusColor(user.isActive)}
                       />
                     </TableCell>
                     <TableCell align="center">
