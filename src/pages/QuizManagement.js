@@ -58,8 +58,7 @@ const QuizManagement = () => {
     setLoading(true);
     try {
       const response = await channelService.getAllChannels();
-      console.log('Fetched channels:', response);
-      setChannels(response.channels || response);
+      setChannels(response?.data);
       setError(null);
     } catch (err) {
       console.error('Error fetching channels:', err);
