@@ -10,6 +10,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Register = React.lazy(() => import('./pages/Register'));
+const ForgotPassword = React.lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = React.lazy(() => import('./pages/ResetPassword'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const QuizManagement = React.lazy(() => import('./pages/QuizManagement'));
 const ChannelDetails = React.lazy(() => import('./pages/ChannelDetails'));
@@ -51,6 +53,8 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/team" element={<OurTeam />} />

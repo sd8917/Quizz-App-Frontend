@@ -272,7 +272,8 @@ const Login = () => {
 
                 <Box sx={{ textAlign: 'right', mb: 3 }}>
                   <Link
-                    href="#"
+                    component="button"
+                    type="button"
                     variant="body2"
                     sx={{ 
                       textDecoration: 'none',
@@ -280,7 +281,7 @@ const Login = () => {
                       color: '#667eea',
                       '&:hover': { color: '#764ba2' }
                     }}
-                    onClick={(e) => e.preventDefault()}
+                    onClick={() => navigate('/forgot-password')}
                   >
                     Forgot password?
                   </Link>

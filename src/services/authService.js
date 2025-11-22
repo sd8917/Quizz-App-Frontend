@@ -90,6 +90,34 @@ const authService = {
   getAccessToken: () => {
     return localStorage.getItem('accessToken');
   },
+
+  /**
+   * Request password reset
+   * @param {string} email - User's email address
+   * @returns {Promise} Response from server
+   */
+  forgotPassword: async (email) => {
+    try {
+      const response = await apiClient.post('/forgot-password', { email });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
+   * Reset password with token
+   * @param {Object} data - { token, newPassword }
+   * @returns {Promise} Response from server
+   */
+  resetPassword: async (data) => {
+    try {
+      const response = await apiClient.post('/reset-password', data);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default authService;
