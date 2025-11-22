@@ -83,6 +83,8 @@ src/
 - **Email**: admin@example.com
 - **Password**: admin123
 
+Note :- Will be removed soon
+
 ## 🎯 Key Features Explained
 
 ### Custom Theming
