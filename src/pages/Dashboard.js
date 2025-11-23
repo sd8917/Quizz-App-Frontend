@@ -23,7 +23,6 @@ import {
   Quiz as QuizIcon,
   Leaderboard as LeaderboardIcon,
   Person as PersonIcon,
-  Menu as MenuIcon,
   Logout,
   Settings,
   TrendingUp,
@@ -48,7 +47,7 @@ const Dashboard = () => {
   // Get user role from Redux state
   // API returns: { data: { role, username, email, _id, ... } }
   // After login, authUser directly contains the user object with role property
-  const userRole = authUser?.role || authUser?.data?.role || 'user';
+  const userRole = authUser?.data?.roles?.[0] || authUser?.role || 'user';
 
   React.useEffect(() => {
     // Fetch user profile if not already loaded

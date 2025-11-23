@@ -133,7 +133,7 @@ const Profile = () => {
               </Typography>
               <Divider sx={{ mt: 1 }} />
               <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                {displayUser?.roles?.map(role => role).join(', ').toUpperCase() || 'User'}
+                {displayUser?.roles?.[0].toUpperCase() || displayUser?.role?.toUpperCase()  || 'User'}
               </Typography>
             </Box>
             <Button variant="outlined" startIcon={<Edit />}>
