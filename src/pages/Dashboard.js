@@ -32,6 +32,7 @@ import {
   PlayArrow,
   EmojiEvents,
   Schedule,
+  Terminal,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -616,6 +617,32 @@ const Dashboard = () => {
                 </Box>
                 <Typography variant="body2" color="text.secondary">
                   Create and manage quiz questions
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              sx={{
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 4,
+                },
+              }}
+              onClick={() => navigate('/server-logs')}
+            >
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }}>
+                    <Terminal />
+                  </Avatar>
+                  <Typography variant="h6">Server Logs</Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  View and manage server logs
                 </Typography>
               </CardContent>
             </Card>
