@@ -128,7 +128,7 @@ const channelService = {
    */
   getChannelUsers: async (channelId) => {
     try {
-      const response = await apiClient.get(`/channel/${channelId}/users`);
+      const response = await apiClient.get(`/channel/${channelId}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
