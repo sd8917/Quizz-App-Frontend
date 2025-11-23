@@ -59,6 +59,7 @@ const ChannelDetails = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [currentTab, setCurrentTab] = useState(0);
   const [users, setUsers] = useState([]);
+
   const [usersLoading, setUsersLoading] = useState(false);
   
   // AI Generator state
@@ -89,10 +90,7 @@ const ChannelDetails = () => {
 
       // Handle different response structures
       const questionsData = response?.data
-      const channelData = response.channel || response.data?.channel;
-      
       setQuestions(Array.isArray(questionsData) ? questionsData : []);
-      setChannelInfo(channelData);
       setError(null);
     } catch (err) {
       console.error('Error fetching questions:', err);
@@ -106,9 +104,15 @@ const ChannelDetails = () => {
     setUsersLoading(true);
     try {
       const response = await channelService.getChannelUsers(channelId);
+      const usersData = (response?.data?.channel?.members.filter(user=>{
+        return response?.data?.channel.owner._id !== user.user._id;
+      })) || [];
 
-      
-      const usersData = response.users || response.data?.users || response.data || [];
+      setChannelInfo({
+        name: response?.data?.channel?.name,
+        description: response?.data?.channel?.description,
+        createdAt: response?.data?.channel?.createdAt,
+      });
       setUsers(Array.isArray(usersData) ? usersData : []);
     } catch (err) {
       console.error('Error fetching users:', err);
@@ -433,6 +437,7 @@ const ChannelDetails = () => {
           )}
         </Paper>
 
+
         {channelInfo && (
           <Paper sx={{ p: 3, mb: 4, background: 'linear-gradient(135deg, #667eea15 0%, #764ba205 100%)' }}>
             <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
@@ -607,15 +612,15 @@ const ChannelDetails = () => {
                     <ListItem>
                       <ListItemAvatar>
                         <Avatar sx={{ bgcolor: 'primary.main' }}>
-                          {user.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || 'U'}
+                          {user.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || 'U'}12
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
-                        primary={user.name || user.username || 'User'}
+                        primary={user.user?.name || user.user?.username || 'User'}
                         secondary={
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <Email fontSize="small" />
-                            {user.email}
+                            {user?.user?.email}
                           </Box>
                         }
                       />
