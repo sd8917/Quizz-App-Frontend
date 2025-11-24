@@ -155,10 +155,7 @@ const Contact = () => {
                     Email
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    info@TriviaVerse.com
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    support@TriviaVerse.com
+                    triviaverse.contact@gmail.com
                   </Typography>
                 </Box>
               </Box>
@@ -170,7 +167,7 @@ const Contact = () => {
                     Phone
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    +1 (555) 123-4567
+                    +1 (333) 123-7890
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Mon-Fri, 9AM-6PM EST
@@ -185,13 +182,7 @@ const Contact = () => {
                     Address
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    123 Learning Street
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Education City, EC 12345
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    United States
+                    working remotely
                   </Typography>
                 </Box>
               </Box>
