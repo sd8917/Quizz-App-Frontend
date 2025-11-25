@@ -21,6 +21,7 @@ import {
   Grid,
   IconButton,
   Tooltip,
+  CircularProgress,
 } from '@mui/material';
 import {
   Timer as TimerIcon,
@@ -33,6 +34,7 @@ import {
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
+import quizService from '../services/quizService';
 
 const TakeQuiz = () => {
   const { quizId } = useParams();
@@ -49,184 +51,112 @@ const TakeQuiz = () => {
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [fetchingQuestions, setFetchingQuestions] = useState(false);
 
-  // Sample quiz data - Replace with API call in production
+  // Fetch channel info on component mount
   useEffect(() => {
-    // Simulating API call to fetch quiz
-    const sampleQuiz = {
-      id: quizId,
-      title: 'JavaScript Fundamentals',
-      description: 'Test your knowledge of JavaScript basics',
-      duration: 30, // minutes
-      totalQuestions: 15,
-      passingScore: 70,
-      questions: [
-        {
-          id: 1,
-          question: 'What is the output of: console.log(typeof null)?',
-          options: ['null', 'undefined', 'object', 'number'],
-          correctAnswer: 2, // index of correct option
-          explanation: 'In JavaScript, typeof null returns "object". This is actually a bug in JavaScript that has been kept for backward compatibility. Despite being a primitive value, null is reported as an object.',
-        },
-        {
-          id: 2,
-          question: 'Which method is used to add elements to the end of an array?',
-          options: ['push()', 'pop()', 'shift()', 'unshift()'],
-          correctAnswer: 0,
-          explanation: 'The push() method adds one or more elements to the end of an array and returns the new length. pop() removes the last element, shift() removes the first element, and unshift() adds elements to the beginning.',
-        },
-        {
-          id: 3,
-          question: 'What does "===" operator check?',
-          options: ['Value only', 'Type only', 'Both value and type', 'Reference only'],
-          correctAnswer: 2,
-          explanation: 'The strict equality operator (===) checks both the value and the type. It returns true only if both operands are of the same type and have the same value. Unlike ==, it does not perform type coercion.',
-        },
-        {
-          id: 4,
-          question: 'Which keyword is used to declare a constant in JavaScript?',
-          options: ['var', 'let', 'const', 'static'],
-          correctAnswer: 2,
-          explanation: 'The const keyword declares a block-scoped constant. Once assigned, the value cannot be reassigned. However, if the constant is an object or array, the contents can still be modified.',
-        },
-        {
-          id: 5,
-          question: 'What is a closure in JavaScript?',
-          options: [
-            'A function that has access to variables in its outer scope',
-            'A closed loop',
-            'A private class',
-            'An error handling mechanism'
-          ],
-          correctAnswer: 0,
-          explanation: 'A closure is a function that has access to variables in its outer (enclosing) lexical scope, even after the outer function has returned. Closures are commonly used for data privacy and creating function factories.',
-        },
-        {
-          id: 6,
-          question: 'Which method converts JSON string to JavaScript object?',
-          options: ['JSON.parse()', 'JSON.stringify()', 'JSON.convert()', 'JSON.object()'],
-          correctAnswer: 0,
-          explanation: 'JSON.parse() converts a JSON string into a JavaScript object. Conversely, JSON.stringify() converts a JavaScript object into a JSON string. These methods are essential for working with APIs and data serialization.',
-        },
-        {
-          id: 7,
-          question: 'What is the purpose of "use strict" directive?',
-          options: [
-            'To enforce stricter parsing and error handling',
-            'To make code run faster',
-            'To enable ES6 features',
-            'To prevent memory leaks'
-          ],
-          correctAnswer: 0,
-          explanation: '"use strict" enables strict mode in JavaScript, which catches common coding mistakes and unsafe actions. It prevents the use of undeclared variables, eliminates silent errors, and prohibits certain syntax that may be poorly thought out.',
-        },
-        {
-          id: 8,
-          question: 'Which array method creates a new array with results of calling a function?',
-          options: ['forEach()', 'map()', 'filter()', 'reduce()'],
-          correctAnswer: 1,
-          explanation: 'The map() method creates a new array by calling a provided function on every element in the array. It transforms each element and returns the transformed values in a new array without modifying the original.',
-        },
-        {
-          id: 9,
-          question: 'What does NaN stand for?',
-          options: ['Null and Null', 'Not a Number', 'New Array Number', 'Negative Number'],
-          correctAnswer: 1,
-          explanation: 'NaN stands for "Not a Number" and is a special value indicating that a value is not a legal number. Interestingly, NaN is the only value in JavaScript that is not equal to itself (NaN !== NaN is true).',
-        },
-        {
-          id: 10,
-          question: 'How do you create a promise in JavaScript?',
-          options: [
-            'new Promise()',
-            'Promise.create()',
-            'createPromise()',
-            'Promise.new()'
-          ],
-          correctAnswer: 0,
-          explanation: 'Promises are created using the Promise constructor: new Promise((resolve, reject) => {...}). Promises represent the eventual completion or failure of an asynchronous operation and allow for cleaner async code handling.',
-        },
-        {
-          id: 11,
-          question: 'What is the DOM?',
-          options: [
-            'Document Object Model',
-            'Data Object Manager',
-            'Dynamic Output Module',
-            'Document Oriented Markup'
-          ],
-          correctAnswer: 0,
-          explanation: 'The Document Object Model (DOM) is a programming interface for HTML and XML documents. It represents the page structure as a tree of objects, allowing programs to manipulate the document structure, style, and content dynamically.',
-        },
-        {
-          id: 12,
-          question: 'Which event occurs when a user clicks on an HTML element?',
-          options: ['onmouseclick', 'onclick', 'onpress', 'onhover'],
-          correctAnswer: 1,
-          explanation: 'The onclick event handler is triggered when a user clicks on an HTML element. It can be used inline in HTML or attached via JavaScript using addEventListener. It\'s one of the most commonly used event handlers in web development.',
-        },
-        {
-          id: 13,
-          question: 'What is the difference between "let" and "var"?',
-          options: [
-            'let is block-scoped, var is function-scoped',
-            'No difference',
-            'var is newer than let',
-            'let can be redeclared'
-          ],
-          correctAnswer: 0,
-          explanation: 'let is block-scoped (only exists within the nearest enclosing block), while var is function-scoped (exists throughout the function). let also prevents variable hoisting issues and cannot be redeclared in the same scope, making code more predictable.',
-        },
-        {
-          id: 14,
-          question: 'What does the "this" keyword refer to?',
-          options: [
-            'The current object',
-            'The parent object',
-            'The window object',
-            'The previous object'
-          ],
-          correctAnswer: 0,
-          explanation: 'The "this" keyword refers to the current object or the object that the function is a property of. Its value depends on how the function is called - in methods it refers to the owner object, in regular functions it may refer to the global object (or undefined in strict mode).',
-        },
-        {
-          id: 15,
-          question: 'Which company developed JavaScript?',
-          options: ['Microsoft', 'Netscape', 'Oracle', 'Mozilla'],
-          correctAnswer: 1,
-          explanation: 'JavaScript was created by Brendan Eich at Netscape Communications in 1995. It was initially called Mocha, then LiveScript, and finally JavaScript. Despite its name, JavaScript has no direct relation to Java - the name was chosen for marketing purposes.',
-        },
-      ],
+    const fetchChannelInfo = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Fetch channel info from /channel/:id endpoint
+        const response = await fetch(`http://localhost:8000/api/channel/${quizId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch channel information');
+        }
+        
+        const data = await response.json();
+        const channelData = data.data || data;
+        
+        // Set quiz metadata without questions (will fetch questions on start)
+        const quizMetadata = {
+          id: channelData._id || quizId,
+          title: channelData.name || 'Quiz',
+          description: channelData.description || 'Test your knowledge',
+          duration: 30, // Default duration
+          totalQuestions: channelData.questionCount || 0,
+          passingScore: 70,
+          questions: [], // Will be fetched when quiz starts
+        };
+        
+        setQuiz(quizMetadata);
+        setTimeRemaining(quizMetadata.duration * 60);
+      } catch (err) {
+        console.error('Error fetching channel:', err);
+        setError(err.message || 'Failed to load quiz. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     };
-
-    setQuiz(sampleQuiz);
-    setTimeRemaining(sampleQuiz.duration * 60); // Convert to seconds
+    
+    if (quizId) {
+      fetchChannelInfo();
+    }
   }, [quizId]);
 
-  // Calculate results
-  const calculateResults = useCallback(() => {
-    let correctCount = 0;
-    const questionsWithResults = quiz.questions.map((question) => {
-      const userAnswerIndex = answers[question.id];
-      const isCorrect = userAnswerIndex === question.correctAnswer;
+  // Calculate results from API response
+  const calculateResults = useCallback((apiResponse = null) => {
+    let questionsWithResults;
+    let score;
+    let totalQuestions;
+    let correctCount;
+    
+    if (apiResponse?.data) {
+      // Use API response data
+      const { total, score: apiScore, results } = apiResponse.data;
       
-      if (isCorrect) {
-        correctCount++;
-      }
+      questionsWithResults = results.map((result) => {
+        const question = quiz.questions.find(q => q.id === result.questionId);
+        
+        return {
+          id: result.questionId,
+          question: question?.question || '',
+          userAnswer: result.userAnswer,
+          correctAnswer: result.correctAnswer,
+          options: question?.options || [],
+          isCorrect: result.isCorrect,
+          explanation: question?.explanation || `The correct answer is "${result.correctAnswer}".`,
+        };
+      });
+      
+      score = apiScore;
+      totalQuestions = total;
+      correctCount = apiScore;
+    } else {
+      // Fallback: Calculate locally if API fails
+      let count = 0;
+      questionsWithResults = quiz.questions.map((question) => {
+        const userAnswerIndex = answers[question.id];
+        const isCorrect = userAnswerIndex === question.correctAnswer;
+        
+        if (isCorrect) {
+          count++;
+        }
 
-      return {
-        id: question.id,
-        question: question.question,
-        userAnswer: userAnswerIndex !== undefined ? question.options[userAnswerIndex] : null,
-        correctAnswer: question.options[question.correctAnswer],
-        options: question.options,
-        isCorrect,
-        explanation: question.explanation || `The correct answer is "${question.options[question.correctAnswer]}".`,
-      };
-    });
+        return {
+          id: question.id,
+          question: question.question,
+          userAnswer: userAnswerIndex !== undefined ? question.options[userAnswerIndex] : null,
+          correctAnswer: question.options[question.correctAnswer],
+          options: question.options,
+          isCorrect,
+          explanation: question.explanation || `The correct answer is "${question.options[question.correctAnswer]}".`,
+        };
+      });
+      
+      score = count;
+      totalQuestions = quiz.totalQuestions;
+      correctCount = count;
+    }
 
-    const score = correctCount;
-    const passed = Math.round((correctCount / quiz.totalQuestions) * 100) >= quiz.passingScore;
+    const passed = Math.round((correctCount / totalQuestions) * 100) >= quiz.passingScore;
 
     // Navigate to results page with detailed data
     setTimeout(() => {
@@ -234,7 +164,7 @@ const TakeQuiz = () => {
         state: {
           quizTitle: quiz.title,
           score,
-          totalQuestions: quiz.totalQuestions,
+          totalQuestions,
           correctAnswers: correctCount,
           passed,
           questions: questionsWithResults,
@@ -243,10 +173,28 @@ const TakeQuiz = () => {
     }, 500);
   }, [quiz, answers, navigate]);
 
-  const handleAutoSubmit = useCallback(() => {
+  const handleAutoSubmit = useCallback(async () => {
     setQuizSubmitted(true);
-    calculateResults();
-  }, [calculateResults]);
+    
+    try {
+      // Format answers for API
+      const formattedAnswers = Object.entries(answers).map(([questionId, answerIndex]) => {
+        const question = quiz.questions.find(q => q.id === questionId);
+        return {
+          questionId: questionId,
+          selectedOption: question?.options[answerIndex] || ''
+        };
+      });
+      
+      // Submit to API
+      const response = await quizService.submitQuiz(quizId, formattedAnswers);
+      calculateResults(response);
+    } catch (error) {
+      console.error('Error auto-submitting quiz:', error);
+      // Show results with local calculation if API fails
+      calculateResults();
+    }
+  }, [calculateResults, answers, quiz, quizId]);
 
   // Timer logic
   useEffect(() => {
@@ -321,16 +269,78 @@ const TakeQuiz = () => {
     }
   };
 
-  // Start quiz
-  const handleStartQuiz = () => {
-    setQuizStarted(true);
+  // Start quiz - Fetch questions from API
+  const handleStartQuiz = async () => {
+    setFetchingQuestions(true);
+    setError(null);
+    
+    try {
+      // Fetch questions using getAllQuizzes from quizService
+      const response = await quizService.getAllQuizzes(quizId);
+      const questionsData = response.data || response;
+      
+      if (!questionsData || questionsData.length === 0) {
+        throw new Error('No questions available for this quiz');
+      }
+      
+      // Transform API questions to match the expected format
+      const transformedQuestions = questionsData.map((q, index) => {
+        // Extract text from options array (handle both {text: "...", _id: "..."} and plain string formats)
+        const optionsArray = q.options?.map(opt => 
+          typeof opt === 'string' ? opt : opt.text || opt
+        ) || [];
+        
+        return {
+          id: q._id || index + 1,
+          question: q.questionText || q.question || '',
+          options: optionsArray,
+          correctAnswer: q.correctAnswer || q.correctAnswerIndex || 0,
+          explanation: q.explanation || `The correct answer is "${optionsArray[q.correctAnswer || 0]}".`,
+        };
+      });
+      
+      // Update quiz with fetched questions
+      setQuiz(prev => ({
+        ...prev,
+        questions: transformedQuestions,
+        totalQuestions: transformedQuestions.length,
+      }));
+      
+      setQuizStarted(true);
+    } catch (err) {
+      console.error('Error fetching questions:', err);
+      setError(err.message || 'Failed to load quiz questions. Please try again.');
+      setFetchingQuestions(false);
+    } finally {
+      setFetchingQuestions(false);
+    }
   };
 
   // Submit quiz
-  const handleSubmitQuiz = () => {
+  const handleSubmitQuiz = async () => {
     setShowSubmitDialog(false);
     setQuizSubmitted(true);
-    calculateResults();
+    
+    try {
+      // Format answers for API: [{questionId, selectedOption}]
+      const formattedAnswers = Object.entries(answers).map(([questionId, answerIndex]) => {
+        const question = quiz.questions.find(q => q.id === questionId);
+        return {
+          questionId: questionId,
+          selectedOption: question?.options[answerIndex] || ''
+        };
+      });
+      
+      // Submit to API and get results
+      const response = await quizService.submitQuiz(quizId, formattedAnswers);
+      
+      // Show results with API response data
+      calculateResults(response);
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      // Still show results with local calculation if API fails
+      calculateResults();
+    }
   };
 
   // Exit confirmation
@@ -339,11 +349,25 @@ const TakeQuiz = () => {
     navigate('/dashboard');
   };
 
-  if (!quiz) {
+  if (!quiz || loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Typography>Loading quiz...</Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', gap: 2 }}>
+        <CircularProgress size={60} />
+        <Typography variant="h6" color="text.secondary">Loading quiz information...</Typography>
       </Box>
+    );
+  }
+
+  if (error && !quiz) {
+    return (
+      <Container maxWidth="sm" sx={{ py: 8 }}>
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+        <Button variant="contained" onClick={() => navigate('/dashboard')}>
+          Back to Dashboard
+        </Button>
+      </Container>
     );
   }
 
@@ -359,6 +383,12 @@ const TakeQuiz = () => {
             <Typography variant="body1" color="text.secondary" paragraph>
               {quiz.description}
             </Typography>
+
+            {error && (
+              <Alert severity="error" sx={{ mb: 3 }}>
+                {error}
+              </Alert>
+            )}
 
             <Box sx={{ my: 4 }}>
               <Alert severity="info" sx={{ mb: 3 }}>
@@ -451,6 +481,7 @@ const TakeQuiz = () => {
                 variant="outlined"
                 size="large"
                 onClick={() => navigate('/dashboard')}
+                disabled={fetchingQuestions}
               >
                 Cancel
               </Button>
@@ -458,18 +489,34 @@ const TakeQuiz = () => {
                 variant="contained"
                 size="large"
                 onClick={handleStartQuiz}
+                disabled={fetchingQuestions}
+                startIcon={fetchingQuestions ? <CircularProgress size={20} color="inherit" /> : null}
                 sx={{
                   background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
                   px: 4,
                 }}
               >
-                Start Quiz
+                {fetchingQuestions ? 'Loading Questions...' : 'Start Quiz 1'}
               </Button>
             </Box>
           </Paper>
         </Container>
         <Footer />
       </>
+    );
+  }
+
+  // Check if questions are loaded
+  if (!quiz.questions || quiz.questions.length === 0) {
+    return (
+      <Container maxWidth="sm" sx={{ py: 8 }}>
+        <Alert severity="warning" sx={{ mb: 3 }}>
+          No questions available for this quiz. Please try again later.
+        </Alert>
+        <Button variant="contained" onClick={() => navigate('/dashboard')}>
+          Back to Dashboard
+        </Button>
+      </Container>
     );
   }
 
