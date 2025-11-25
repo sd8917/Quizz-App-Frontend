@@ -35,9 +35,9 @@ const Footer = () => {
       { label: 'Feedback', href: '/feedback' },
     ],
     legal: [
-      { label: 'Privacy Policy', href: '/privacy' },
-      { label: 'Terms of Service', href: '/terms' },
-      { label: 'Cookie Policy', href: '/cookies' },
+      { label: 'Privacy Policy', href: '/privacy-policy' },
+      { label: 'Terms of Service', href: '/terms-conditions' },
+      { label: 'Cookie Policy', href: '/cookie-policy' },
       { label: 'Disclaimer', href: '/disclaimer' },
     ],
     resources: [
@@ -238,7 +238,7 @@ const Footer = () => {
             }}
           >
             <Link
-              href="/privacy"
+              href="/privacy-policy"
               variant="body2"
               underline="none"
               sx={{
@@ -252,7 +252,7 @@ const Footer = () => {
               •
             </Typography>
             <Link
-              href="/terms"
+              href="/terms-conditions"
               variant="body2"
               underline="none"
               sx={{

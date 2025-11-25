@@ -43,12 +43,21 @@ import {
   ContentCopy,
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Footer from '../components/Footer';
 import { quizService, channelService } from '../services';
 
 const ChannelDetails = () => {
   const navigate = useNavigate();
   const { channelId } = useParams();
+  const authUser = useSelector((state) => state.auth.user);
+  
+  // Get user role from Redux state
+  const userRole = authUser?.data?.roles?.[0] || authUser?.role || 'user';
+  
+  // Check if user has access (only admin and creator)
+  const hasAccess = userRole === 'admin' || userRole === 'creator';
+  
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -68,9 +77,16 @@ const ChannelDetails = () => {
   const [generatedQuizData, setGeneratedQuizData] = useState(null);
   const [generating, setGenerating] = useState(false);
 
+  // Role-based access control
+  useEffect(() => {
+    if (!hasAccess) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [hasAccess, navigate]);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (channelId) {
+    if (channelId && hasAccess) {
       fetchQuestions();
     }
     // eslint-disable-next-line 
@@ -255,6 +271,23 @@ const ChannelDetails = () => {
       severity: 'info' 
     });
   };
+
+  // Access control - redirect if user doesn't have permission
+  if (!hasAccess) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', gap: 2 }}>
+        <Alert severity="error" sx={{ maxWidth: 500 }}>
+          <Typography variant="h6" gutterBottom>Access Denied</Typography>
+          <Typography variant="body2">
+            You don't have permission to access this page. Only admins and creators can view channel details.
+          </Typography>
+        </Alert>
+        <Button variant="contained" onClick={() => navigate('/dashboard')}>
+          Back to Dashboard
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>

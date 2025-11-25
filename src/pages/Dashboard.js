@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -17,6 +17,8 @@ import {
   Chip,
   LinearProgress,
   Divider,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -38,6 +40,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, fetchUserProfile } from '../store/slices/authSlice';
 import Footer from '../components/Footer';
+import useFetch from '../hooks/useFetch';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -46,11 +49,19 @@ const Dashboard = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   
   // Get user role from Redux state
-  // API returns: { data: { role, username, email, _id, ... } }
-  // After login, authUser directly contains the user object with role property
   const userRole = authUser?.data?.roles?.[0] || authUser?.role || 'user';
 
-  React.useEffect(() => {
+  // Fetch channels using custom hook
+  const { 
+    data: channels, 
+    loading, 
+    error 
+  } = useFetch(
+    userRole === 'user' ? '/channel' : null,
+    { immediate: userRole === 'user' }
+  );
+
+  useEffect(() => {
     // Fetch user profile if not already loaded
     if (!authUser) {
       dispatch(fetchUserProfile());
@@ -79,8 +90,8 @@ const Dashboard = () => {
 
   // Stats for different roles
   const userStats = [
-    { title: 'Quizzes Taken', value: '12', color: '#6366f1', icon: <QuizIcon /> },
-    { title: 'Highest Score', value: '1850', color: '#10b981', icon: <EmojiEvents /> },
+    { title: 'Available Channels', value: (channels?.length || 0).toString(), color: '#6366f1', icon: <QuizIcon /> },
+    { title: 'Quizzes Taken', value: '12', color: '#10b981', icon: <EmojiEvents /> },
     { title: 'Average Score', value: '1420', color: '#ec4899', icon: <TrendingUp /> },
     { title: 'Global Rank', value: '#24', color: '#f59e0b', icon: <LeaderboardIcon /> },
   ];
@@ -102,7 +113,8 @@ const Dashboard = () => {
   // Select stats based on role
   const stats = userRole === 'admin' ? adminStats : userRole === 'creator' ? creatorStats : userStats;
 
-  const quizzes = [
+  // Dummy data for non-user roles
+  const dummyQuizzes = [
     {
       title: 'General Knowledge',
       questions: 10,
@@ -136,6 +148,9 @@ const Dashboard = () => {
       timeLimit: '30 min',
     },
   ];
+
+  // Use real channels for user role, dummy data for others
+  const quizzes = userRole === 'user' ? (channels || []) : dummyQuizzes;
 
   // Recent activity for users
   const recentActivity = [
@@ -265,36 +280,45 @@ const Dashboard = () => {
         {userRole === 'user' && (
           <>
             <Typography variant="h5" sx={{ mt: 4, mb: 2, fontWeight: 600 }}>
-              Available Quizzes
+              Available Channels
             </Typography>
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+                <CircularProgress />
+              </Box>
+            ) : error ? (
+              <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
+            ) : !channels || channels.length === 0 ? (
+              <Alert severity="info" sx={{ mb: 3 }}>No channels available at the moment.</Alert>
+            ) : null}
             <Grid container spacing={3}>
-              {quizzes.map((quiz, index) => (
-                <Grid item xs={12} md={6} key={index}>
+              {quizzes?.map((channel, index) => (
+                <Grid item xs={12} md={6} key={channel._id || index}>
                   <Card sx={{ height: '100%' }}>
                     <CardContent>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
                         <Typography variant="h6" gutterBottom>
-                          {quiz.title}
+                          {channel.name || channel.title || 'Untitled Channel'}
                         </Typography>
-                        <Chip label={quiz.category} size="small" variant="outlined" />
+                        <Chip label={channel.category || 'General'} size="small" variant="outlined" />
                       </Box>
                       <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-                        <Chip label={`${quiz.questions} Questions`} size="small" icon={<QuizIcon />} />
+                        <Chip label={`${channel.questionCount || 0} Questions`} size="small" icon={<QuizIcon />} />
                         <Chip
-                          label={quiz.difficulty}
+                          label={channel.difficulty || 'Medium'}
                           size="small"
                           color={
-                            quiz.difficulty === 'Easy'
+                            channel.difficulty === 'Easy'
                               ? 'success'
-                              : quiz.difficulty === 'Medium'
+                              : channel.difficulty === 'Medium'
                               ? 'warning'
                               : 'error'
                           }
                         />
-                        <Chip label={quiz.timeLimit} size="small" icon={<Schedule />} />
+                        {channel.timeLimit && <Chip label={channel.timeLimit} size="small" icon={<Schedule />} />}
                       </Box>
                       <Typography variant="body2" color="text.secondary">
-                        Test your knowledge and compete for the top spot on the leaderboard!
+                        {channel.description || 'Test your knowledge and compete for the top spot on the leaderboard!'}
                       </Typography>
                     </CardContent>
                     <CardActions>
@@ -302,11 +326,11 @@ const Dashboard = () => {
                         size="small" 
                         variant="contained" 
                         startIcon={<PlayArrow />}
-                        onClick={() => navigate('/quiz/1')}
+                        onClick={() => navigate(`/quiz/${channel._id}`)}
                       >
                         Start Quiz
                       </Button>
-                      <Button size="small">View Details</Button>
+                      <Button size="small" onClick={() => navigate(`/quiz/${channel._id}`)}>View Details</Button>
                     </CardActions>
                   </Card>
                 </Grid>
@@ -499,7 +523,7 @@ const Dashboard = () => {
             </Typography>
 
             <Grid container spacing={3}>
-              {quizzes.slice(0, 2).map((quiz, index) => (
+              {dummyQuizzes.slice(0, 2).map((quiz, index) => (
                 <Grid item xs={12} md={6} key={index}>
                   <Card>
                     <CardContent>

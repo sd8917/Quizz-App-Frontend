@@ -27,6 +27,9 @@ const OurTeam = React.lazy(() => import('./pages/OurTeam'));
 const Careers = React.lazy(() => import('./pages/Careers'));
 const HelpCenter = React.lazy(() => import('./pages/HelpCenter'));
 const Blog = React.lazy(() => import('./pages/Blog'));
+const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
+const TermsAndConditions = React.lazy(() => import('./pages/TermsAndConditions'));
+const CookiePolicy = React.lazy(() => import('./pages/CookiePolicy'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -62,6 +65,9 @@ function App() {
               <Route path="/careers" element={<Careers />} />
               <Route path="/help" element={<HelpCenter />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-conditions" element={<TermsAndConditions />} />
+              <Route path="/cookie-policy" element={<CookiePolicy />} />
               
               {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
