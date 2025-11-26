@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -22,6 +22,12 @@ import {
   InputAdornment,
   Tabs,
   Tab,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -30,97 +36,157 @@ import {
   TrendingUp,
   Star,
   Timer,
+  FilterList,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
+import { leaderboardService, channelService } from '../services';
 
 const Leaderboard = () => {
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedChannel, setSelectedChannel] = useState('');
+  const [channels, setChannels] = useState([]);
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [channelsLoading, setChannelsLoading] = useState(true);
 
-  const leaderboardData = [
-    {
-      rank: 1,
-      username: 'code_master',
-      avatar: 'C',
-      score: 2400,
-      quizzesTaken: 12,
-      accuracy: 95,
-      badge: 'gold',
-      trend: 'up',
-    },
-    {
-      rank: 2,
-      username: 'quiz_whiz',
-      avatar: 'Q',
-      score: 2150,
-      quizzesTaken: 10,
-      accuracy: 92,
-      badge: 'gold',
-      trend: 'up',
-    },
-    {
-      rank: 3,
-      username: 'admin',
-      avatar: 'A',
-      score: 1800,
-      quizzesTaken: 4,
-      accuracy: 90,
-      badge: 'silver',
-      trend: 'same',
-    },
-    {
-      rank: 4,
-      username: 'react_guru',
-      avatar: 'R',
-      score: 1650,
-      quizzesTaken: 8,
-      accuracy: 88,
-      badge: 'silver',
-      trend: 'up',
-    },
-    {
-      rank: 5,
-      username: 'trivia_fan',
-      avatar: 'T',
-      score: 1500,
-      quizzesTaken: 7,
-      accuracy: 85,
-      badge: 'silver',
-      trend: 'down',
-    },
-    {
-      rank: 6,
-      username: 'js_ninja',
-      avatar: 'J',
-      score: 1350,
-      quizzesTaken: 6,
-      accuracy: 82,
-      badge: 'bronze',
-      trend: 'up',
-    },
-    {
-      rank: 7,
-      username: 'css_wizard',
-      avatar: 'C',
-      score: 1200,
-      quizzesTaken: 5,
-      accuracy: 80,
-      badge: 'bronze',
-      trend: 'up',
-    },
-    {
-      rank: 8,
-      username: 'python_pro',
-      avatar: 'P',
-      score: 1100,
-      quizzesTaken: 5,
-      accuracy: 78,
-      badge: 'bronze',
-      trend: 'same',
-    },
-  ];
+  // Fetch channels on mount
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        const response = await channelService.getAllChannels();
+        // API returns { success, data: [...channels], message }
+        const channelsData = response?.data || [];
+        const channelsList = Array.isArray(channelsData) ? channelsData : [];
+        setChannels(channelsList);
+        // Set first channel as default
+        if (channelsList.length > 0) {
+          setSelectedChannel(channelsList[0]._id);
+        }
+      } catch (err) {
+        console.error('Error fetching channels:', err);
+        setError('Failed to load channels');
+      } finally {
+        setChannelsLoading(false);
+      }
+    };
+    fetchChannels();
+  }, []);
+
+  // Fetch leaderboard data when channel selection changes
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      if (!selectedChannel) {
+        // No channel selected yet
+        setLeaderboardData([]);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      try {
+        // Fetch leaderboard for specific channel: /attempt/channel/:channelId/leaderboard
+        const response = await leaderboardService.getChannelLeaderboard(selectedChannel);
+        // API returns { success, data: { channelId, totalParticipants, leaderboard: [...] } }
+        const data = response?.data?.leaderboard || [];
+        setLeaderboardData(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error('Error fetching leaderboard:', err);
+        setError(err.message || 'Failed to load leaderboard data for this channel');
+        setLeaderboardData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaderboard();
+  }, [selectedChannel]);
+
+  // const leaderboardData = [
+  //   {
+  //     rank: 1,
+  //     username: 'code_master',
+  //     avatar: 'C',
+  //     score: 2400,
+  //     quizzesTaken: 12,
+  //     accuracy: 95,
+  //     badge: 'gold',
+  //     trend: 'up',
+  //   },
+  //   {
+  //     rank: 2,
+  //     username: 'quiz_whiz',
+  //     avatar: 'Q',
+  //     score: 2150,
+  //     quizzesTaken: 10,
+  //     accuracy: 92,
+  //     badge: 'gold',
+  //     trend: 'up',
+  //   },
+  //   {
+  //     rank: 3,
+  //     username: 'admin',
+  //     avatar: 'A',
+  //     score: 1800,
+  //     quizzesTaken: 4,
+  //     accuracy: 90,
+  //     badge: 'silver',
+  //     trend: 'same',
+  //   },
+  //   {
+  //     rank: 4,
+  //     username: 'react_guru',
+  //     avatar: 'R',
+  //     score: 1650,
+  //     quizzesTaken: 8,
+  //     accuracy: 88,
+  //     badge: 'silver',
+  //     trend: 'up',
+  //   },
+  //   {
+  //     rank: 5,
+  //     username: 'trivia_fan',
+  //     avatar: 'T',
+  //     score: 1500,
+  //     quizzesTaken: 7,
+  //     accuracy: 85,
+  //     badge: 'silver',
+  //     trend: 'down',
+  //   },
+  //   {
+  //     rank: 6,
+  //     username: 'js_ninja',
+  //     avatar: 'J',
+  //     score: 1350,
+  //     quizzesTaken: 6,
+  //     accuracy: 82,
+  //     badge: 'bronze',
+  //     trend: 'up',
+  //   },
+  //   {
+  //     rank: 7,
+  //     username: 'css_wizard',
+  //     avatar: 'C',
+  //     score: 1200,
+  //     quizzesTaken: 5,
+  //     accuracy: 80,
+  //     badge: 'bronze',
+  //     trend: 'up',
+  //   },
+  //   {
+  //     rank: 8,
+  //     username: 'python_pro',
+  //     avatar: 'P',
+  //     score: 1100,
+  //     quizzesTaken: 5,
+  //     accuracy: 78,
+  //     badge: 'bronze',
+  //     trend: 'same',
+  //   },
+  // ];
 
   const topStats = [
     {
@@ -169,24 +235,8 @@ const Leaderboard = () => {
     return 'text.secondary';
   };
 
-  const getTrendIcon = (trend) => {
-    if (trend === 'up')
-      return (
-        <TrendingUp
-          sx={{ fontSize: 16, color: 'success.main', transform: 'rotate(0deg)' }}
-        />
-      );
-    if (trend === 'down')
-      return (
-        <TrendingUp
-          sx={{ fontSize: 16, color: 'error.main', transform: 'rotate(180deg)' }}
-        />
-      );
-    return null;
-  };
-
   const filteredData = leaderboardData.filter((user) =>
-    user.username.toLowerCase().includes(searchQuery.toLowerCase())
+    user.username?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -264,175 +314,185 @@ const Leaderboard = () => {
             }}
           >
             <Typography variant="h5" sx={{ fontWeight: 600 }}>
-              Top Players
+              Channel Rankings
             </Typography>
-            <TextField
-              size="small"
-              placeholder="Search players..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ minWidth: 250 }}
-            />
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              <FormControl size="small" sx={{ minWidth: 200 }}>
+                <InputLabel>Filter by Channel</InputLabel>
+                <Select
+                  value={selectedChannel}
+                  label="Filter by Channel"
+                  onChange={(e) => setSelectedChannel(e.target.value)}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <FilterList />
+                    </InputAdornment>
+                  }
+                  disabled={channelsLoading}
+                >
+                  {channels.map((channel) => (
+                    <MenuItem key={channel._id} value={channel._id}>
+                      {channel.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                size="small"
+                placeholder="Search players..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ minWidth: 250 }}
+              />
+            </Box>
           </Box>
 
-          {/* Tabs */}
-          <Tabs
-            value={tabValue}
-            onChange={(e, newValue) => setTabValue(newValue)}
-            sx={{ mb: 3 }}
-          >
-            <Tab label="All Time" />
-            <Tab label="This Week" />
-            <Tab label="This Month" />
-          </Tabs>
+          {/* Loading State */}
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+              <CircularProgress />
+            </Box>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
+            </Alert>
+          )}
 
           {/* Leaderboard Table */}
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600 }}>Rank</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Player</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 600 }}>
-                    Score
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 600 }}>
-                    Quizzes
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 600 }}>
-                    Accuracy
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 600 }}>
-                    Badge
-                  </TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 600 }}>
-                    Trend
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredData.map((player) => (
-                  <TableRow
-                    key={player.rank}
-                    sx={{
-                      '&:hover': {
-                        bgcolor: 'action.hover',
-                        cursor: 'pointer',
-                      },
-                      bgcolor: player.username === 'admin' ? 'primary.lighter' : 'inherit',
-                    }}
-                  >
-                    <TableCell>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1,
-                        }}
-                      >
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: 700,
-                            color: getRankColor(player.rank),
-                            minWidth: 30,
-                          }}
-                        >
-                          #{player.rank}
-                        </Typography>
-                        {player.rank <= 3 && (
-                          <EmojiEvents
+          {!loading && !error && (
+            <>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 600 }}>Rank</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Player</TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 600 }}>
+                        Best Score
+                      </TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 600 }}>
+                        Performance
+                      </TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 600 }}>
+                        Status
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {filteredData.map((player, index) => {
+                        const rank = index + 1;
+                        return (
+                          <TableRow
+                            key={player._id || player.userId}
                             sx={{
-                              color: getRankColor(player.rank),
-                              fontSize: 20,
+                              '&:hover': {
+                                bgcolor: 'action.hover',
+                                cursor: 'pointer',
+                              },
                             }}
-                          />
-                        )}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar
-                          sx={{
-                            bgcolor: getBadgeColor(player.badge),
-                            color: 'white',
-                            fontWeight: 600,
-                          }}
-                        >
-                          {player.avatar}
-                        </Avatar>
-                        <Box>
-                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                            {player.username}
-                          </Typography>
-                          {player.username === 'admin' && (
-                            <Chip
-                              label="You"
-                              size="small"
-                              color="primary"
-                              sx={{ height: 20, fontSize: '0.7rem' }}
-                            />
-                          )}
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                        {player.score.toLocaleString()}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        pts
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="body1">{player.quizzesTaken}</Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Chip
-                        label={`${player.accuracy}%`}
-                        size="small"
-                        color={
-                          player.accuracy >= 90
-                            ? 'success'
-                            : player.accuracy >= 80
-                            ? 'warning'
-                            : 'default'
-                        }
-                      />
-                    </TableCell>
-                    <TableCell align="center">
-                      <Box
-                        sx={{
-                          display: 'inline-block',
-                          width: 16,
-                          height: 16,
-                          borderRadius: '50%',
-                          bgcolor: getBadgeColor(player.badge),
-                          border: '2px solid',
-                          borderColor: 'background.paper',
-                          boxShadow: 1,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align="center">{getTrendIcon(player.trend)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                          >
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Typography
+                                  variant="h6"
+                                  sx={{
+                                    fontWeight: 700,
+                                    color: getRankColor(rank),
+                                    minWidth: 30,
+                                  }}
+                                >
+                                  #{rank}
+                                </Typography>
+                                {rank <= 3 && (
+                                  <EmojiEvents
+                                    sx={{
+                                      color: getRankColor(rank),
+                                      fontSize: 20,
+                                    }}
+                                  />
+                                )}
+                              </Box>
+                            </TableCell>
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <Avatar sx={{ bgcolor: 'primary.main', fontWeight: 600 }}>
+                                  {player.username?.charAt(0)?.toUpperCase() || player.email?.charAt(0)?.toUpperCase() || 'U'}
+                                </Avatar>
+                                <Box>
+                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                    {player.username || 'Anonymous'}
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    {player.email || ''}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                                {player.bestPercentage?.toFixed(2)}%
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Chip
+                                label={
+                                  player.bestPercentage >= 90
+                                    ? 'Excellent'
+                                    : player.bestPercentage >= 80
+                                    ? 'Great'
+                                    : player.bestPercentage >= 70
+                                    ? 'Good'
+                                    : 'Needs Work'
+                                }
+                                size="small"
+                                color={
+                                  player.bestPercentage >= 90
+                                    ? 'success'
+                                    : player.bestPercentage >= 70
+                                    ? 'warning'
+                                    : 'error'
+                                }
+                                sx={{ fontWeight: 600 }}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Chip
+                                label={player.bestPercentage >= 70 ? 'Passed' : 'Failed'}
+                                size="small"
+                                variant="outlined"
+                                color={player.bestPercentage >= 70 ? 'success' : 'error'}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
 
-          {/* No Results */}
-          {filteredData.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography color="text.secondary">No players found</Typography>
-            </Box>
+              {/* No Results */}
+              {filteredData.length === 0 && (
+                <Box sx={{ textAlign: 'center', py: 4 }}>
+                  <EmojiEvents sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                  <Typography variant="h6" color="text.secondary">
+                    No leaderboard data for this channel
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    Users will appear here once they complete the quiz
+                  </Typography>
+                </Box>
+              )}
+            </>
           )}
         </Paper>
 

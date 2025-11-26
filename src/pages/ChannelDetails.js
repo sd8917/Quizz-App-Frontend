@@ -29,6 +29,12 @@ import {
   Tab,
   Avatar,
   ListItemAvatar,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -41,11 +47,14 @@ import {
   Email,
   AutoAwesome,
   ContentCopy,
+  EmojiEvents,
+  TrendingUp,
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Footer from '../components/Footer';
 import { quizService, channelService } from '../services';
+import leaderboardService from '../services/leaderboardService';
 
 const ChannelDetails = () => {
   const navigate = useNavigate();
@@ -71,6 +80,11 @@ const ChannelDetails = () => {
 
   const [usersLoading, setUsersLoading] = useState(false);
   
+  // Leaderboard state
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [leaderboardError, setLeaderboardError] = useState(null);
+  
   // AI Generator state
   const [quizTopic, setQuizTopic] = useState('');
   const [numQuestions, setNumQuestions] = useState(5);
@@ -95,6 +109,9 @@ const ChannelDetails = () => {
   useEffect(() => {
     if (currentTab === 1 && channelId) {
       fetchUsers();
+    }
+    if (currentTab === 2 && channelId) {
+      fetchLeaderboard();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTab, channelId]);
@@ -135,6 +152,21 @@ const ChannelDetails = () => {
       setSnackbar({ open: true, message: 'Failed to load users', severity: 'error' });
     } finally {
       setUsersLoading(false);
+    }
+  };
+
+  const fetchLeaderboard = async () => {
+    setLeaderboardLoading(true);
+    setLeaderboardError(null);
+    try {
+      const response = await leaderboardService.getChannelLeaderboard(channelId);
+      const leaderboardData = response?.data?.leaderboard || [];
+      setLeaderboard(Array.isArray(leaderboardData) ? leaderboardData : []);
+    } catch (err) {
+      console.error('Error fetching leaderboard:', err);
+      setLeaderboardError(err.message || 'Failed to load leaderboard');
+    } finally {
+      setLeaderboardLoading(false);
     }
   };
 
@@ -507,6 +539,15 @@ const ChannelDetails = () => {
                 </Box>
               } 
             />
+            <Tab 
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <EmojiEvents />
+                  Leaderboard
+                  <Chip label={leaderboard.length} size="small" color="warning" />
+                </Box>
+              } 
+            />
           </Tabs>
         </Paper>
 
@@ -665,6 +706,145 @@ const ChannelDetails = () => {
                   </React.Fragment>
                 ))}
               </List>
+            </Paper>
+          )
+        )}
+
+        {/* Leaderboard Tab */}
+        {currentTab === 2 && (
+          leaderboardLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+              <CircularProgress />
+            </Box>
+          ) : leaderboardError ? (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {leaderboardError}
+            </Alert>
+          ) : leaderboard.length === 0 ? (
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              <EmojiEvents sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+              <Typography variant="h6" color="text.secondary">
+                No leaderboard data available
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                Users will appear here once they complete the quiz
+              </Typography>
+            </Box>
+          ) : (
+            <Paper>
+              <Box sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                  Top Performers
+                </Typography>
+                <List>
+                  {leaderboard.map((entry, index) => {
+                    const rank = index + 1;
+                    const getRankColor = (r) => {
+                      if (r === 1) return '#FFD700';
+                      if (r === 2) return '#C0C0C0';
+                      if (r === 3) return '#CD7F32';
+                      return 'text.secondary';
+                    };
+
+                    return (
+                      <React.Fragment key={entry._id || index}>
+                        <ListItem
+                          sx={{
+                            py: 2,
+                            '&:hover': {
+                              bgcolor: 'action.hover',
+                            },
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+                            {/* Rank */}
+                            <Box sx={{ minWidth: 60, display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography
+                                variant="h6"
+                                sx={{
+                                  fontWeight: 700,
+                                  color: getRankColor(rank),
+                                }}
+                              >
+                                #{rank}
+                              </Typography>
+                              {rank <= 3 && (
+                                <EmojiEvents
+                                  sx={{
+                                    color: getRankColor(rank),
+                                    fontSize: 20,
+                                  }}
+                                />
+                              )}
+                            </Box>
+
+                            {/* User Info */}
+                            <ListItemAvatar>
+                              <Avatar sx={{ bgcolor: 'primary.main' }}>
+                                {entry.username?.charAt(0)?.toUpperCase() || 
+                                 entry.email?.charAt(0)?.toUpperCase() || 'U'}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <Box sx={{ flex: 1 }}>
+                              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                {entry.username || 'Anonymous User'}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {entry.email || ''}
+                              </Typography>
+                            </Box>
+
+                            {/* Best Percentage */}
+                            <Box sx={{ textAlign: 'center', minWidth: 120 }}>
+                              <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                                {entry.bestPercentage?.toFixed(2)}%
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                best score
+                              </Typography>
+                            </Box>
+
+                            {/* Performance Badge */}
+                            <Box sx={{ textAlign: 'center', minWidth: 100 }}>
+                              <Chip
+                                label={
+                                  entry.bestPercentage >= 90
+                                    ? 'Excellent'
+                                    : entry.bestPercentage >= 80
+                                    ? 'Great'
+                                    : entry.bestPercentage >= 70
+                                    ? 'Good'
+                                    : 'Needs Work'
+                                }
+                                size="small"
+                                color={
+                                  entry.bestPercentage >= 90
+                                    ? 'success'
+                                    : entry.bestPercentage >= 70
+                                    ? 'warning'
+                                    : 'error'
+                                }
+                                sx={{ fontWeight: 600 }}
+                              />
+                            </Box>
+
+                            {/* Pass/Fail Status */}
+                            <Box sx={{ textAlign: 'center', minWidth: 80 }}>
+                              <Chip
+                                label={entry.bestPercentage >= 70 ? 'Passed' : 'Failed'}
+                                size="small"
+                                variant="outlined"
+                                color={entry.bestPercentage >= 70 ? 'success' : 'error'}
+                              />
+                            </Box>
+                          </Box>
+                        </ListItem>
+                        {index < leaderboard.length - 1 && <Divider />}
+                      </React.Fragment>
+                    );
+                  })}
+                </List>
+              </Box>
             </Paper>
           )
         )}

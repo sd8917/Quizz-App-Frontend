@@ -41,7 +41,7 @@ const Register = () => {
   // Redirect if already logged in
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate('/profile', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -123,7 +123,7 @@ const Register = () => {
       setAlertMessage({ type: 'success', text: 'Registration successful! Redirecting to profile...' });
       
       setTimeout(() => {
-        navigate('/profile', { replace: true });
+        navigate('/dashboard', { replace: true });
       }, 1500);
     } catch (error) {
       console.error('Registration error:', error);

@@ -36,6 +36,20 @@ const leaderboardService = {
   },
 
   /**
+   * Get channel-specific leaderboard
+   * @param {string} channelId - Channel ID
+   * @returns {Promise} Channel leaderboard data
+   */
+  getChannelLeaderboard: async (channelId) => {
+    try {
+      const response = await apiClient.get(`/attempt/channel/${channelId}/leaderboard`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
    * Get user's rank
    * @returns {Promise} User rank data
    */

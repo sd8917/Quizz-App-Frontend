@@ -54,13 +54,43 @@ const TakeQuiz = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fetchingQuestions, setFetchingQuestions] = useState(false);
+  const [submissionData, setSubmissionData] = useState(null);
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
 
-  // Fetch channel info on component mount
+  // Fetch channel info and check submission status on component mount
   useEffect(() => {
     const fetchChannelInfo = async () => {
       setLoading(true);
       setError(null);
       try {
+        // First, check if user has already submitted this quiz
+        const attemptsResponse = await quizService.checkUserAttempts();
+        const attempts = attemptsResponse.data || [];
+        
+        // Check if user has submitted for this channel
+        const existingAttempt = attempts.find(attempt => 
+          attempt.channelId?._id === quizId || attempt.channelId === quizId
+        );
+        
+        if (existingAttempt) {
+          setAlreadySubmitted(true);
+          setSubmissionData(existingAttempt);
+          
+          // Set quiz metadata from submission
+          const quizMetadata = {
+            id: existingAttempt.channelId?._id || quizId,
+            title: existingAttempt.channelId?.name || 'Quiz',
+            description: 'Test your knowledge',
+            duration: 30,
+            totalQuestions: existingAttempt.total || 0,
+            passingScore: 70,
+            questions: [],
+          };
+          setQuiz(quizMetadata);
+          setLoading(false);
+          return;
+        }
+        
         // Fetch channel info from /channel/:id endpoint
         const response = await fetch(`http://localhost:8000/api/channel/${quizId}`, {
           headers: {
@@ -338,8 +368,19 @@ const TakeQuiz = () => {
       calculateResults(response);
     } catch (error) {
       console.error('Error submitting quiz:', error);
-      // Still show results with local calculation if API fails
-      calculateResults();
+      
+      // Check if error is due to already submitted
+      const errorMessage = error?.message || error?.error || '';
+      if (errorMessage.includes('already submitted') || errorMessage.includes('already attempted')) {
+        setQuizSubmitted(false);
+        setError('This quiz has already been submitted. Multiple submissions are not allowed.');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 3000);
+      } else {
+        // Still show results with local calculation if API fails for other reasons
+        calculateResults();
+      }
     }
   };
 
@@ -355,6 +396,149 @@ const TakeQuiz = () => {
         <CircularProgress size={60} />
         <Typography variant="h6" color="text.secondary">Loading quiz information...</Typography>
       </Box>
+    );
+  }
+
+  // Show already submitted screen
+  if (alreadySubmitted && submissionData) {
+    return (
+      <>
+        <Container maxWidth="md" sx={{ py: 8 }}>
+          <Paper elevation={3} sx={{ p: 4 }}>
+            <Box sx={{ textAlign: 'center', mb: 4 }}>
+              <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
+              <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
+                Quiz Already Submitted
+              </Typography>
+              <Typography variant="body1" color="text.secondary" paragraph>
+                You have already completed this quiz. View your submission details below.
+              </Typography>
+            </Box>
+
+            <Card sx={{ mb: 3, background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%)' }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
+                  {submissionData.channelId?.name || quiz.title}
+                </Typography>
+                
+                <Grid container spacing={3}>
+                  <Grid item xs={6} sm={3}>
+                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Score
+                      </Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                        {submissionData.score}/{submissionData.total}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Percentage
+                      </Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                        {submissionData.percentage.toFixed(2)}%
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Status
+                      </Typography>
+                      <Chip 
+                        label={submissionData.percentage >= 70 ? 'Passed' : 'Failed'} 
+                        color={submissionData.percentage >= 70 ? 'success' : 'error'}
+                        sx={{ mt: 1, fontWeight: 600 }}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6} sm={3}>
+                    <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'background.paper', borderRadius: 2 }}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Submitted
+                      </Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 600, mt: 1 }}>
+                        {new Date(submissionData.submittedAt).toLocaleDateString()}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {new Date(submissionData.submittedAt).toLocaleTimeString()}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+
+            <Card sx={{ mb: 3 }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                  Answer Details
+                </Typography>
+                <Box sx={{ mt: 2 }}>
+                  {submissionData.answers?.map((answer, index) => (
+                    <Box 
+                      key={answer._id || index} 
+                      sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between',
+                        p: 2, 
+                        mb: 1,
+                        bgcolor: answer.isCorrect ? 'success.lighter' : 'error.lighter',
+                        borderRadius: 1,
+                        border: 1,
+                        borderColor: answer.isCorrect ? 'success.main' : 'error.main',
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, minWidth: 80 }}>
+                          Question {index + 1}
+                        </Typography>
+                        <Typography variant="body2">
+                          Your Answer: <strong>{answer.selectedOption}</strong>
+                        </Typography>
+                      </Box>
+                      <Chip 
+                        label={answer.isCorrect ? 'Correct' : 'Incorrect'} 
+                        color={answer.isCorrect ? 'success' : 'error'}
+                        size="small"
+                        sx={{ fontWeight: 600 }}
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              </CardContent>
+            </Card>
+
+            <Alert severity="info" sx={{ mb: 3 }}>
+              You can only submit this quiz once. Multiple submissions are not allowed.
+            </Alert>
+
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => navigate('/dashboard')}
+              >
+                Back to Dashboard
+              </Button>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => navigate('/leaderboard')}
+                sx={{
+                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                }}
+              >
+                View Leaderboard
+              </Button>
+            </Box>
+          </Paper>
+        </Container>
+        <Footer />
+      </>
     );
   }
 

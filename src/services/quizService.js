@@ -78,6 +78,19 @@ const quizService = {
   },
 
   /**
+   * Check user's attempt status (submitted or not)
+   * @returns {Promise} List of user's quiz attempts
+   */
+  checkUserAttempts: async () => {
+    try {
+      const response = await apiClient.get('/attempt/user');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
    * Submit quiz answers
    * @param {string} channelId - Channel ID
    * @param {Array} answers - User answers [{questionId, selectedOption}]
@@ -85,7 +98,7 @@ const quizService = {
    */
   submitQuiz: async (channelId, answers) => {
     try {
-      const response = await apiClient.post(`/quiz/channel/${channelId}/submit`, { answers });
+      const response = await apiClient.post(`/attempt/channel/${channelId}/submit`, { answers });
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
