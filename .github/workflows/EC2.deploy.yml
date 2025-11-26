@@ -1,5 +1,8 @@
 name: Deploy to EC2
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
