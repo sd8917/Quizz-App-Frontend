@@ -45,7 +45,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "deploy.tar.gz,deploy-ec2.sh"
+          source: "deploy.tar.gz,deploy-quick.sh"
           target: "/tmp"
 
       - name: Execute deployment script on EC2
@@ -56,9 +56,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /tmp
-            chmod +x deploy-ec2.sh
-            sudo ./deploy-ec2.sh
-            rm -f deploy.tar.gz deploy-ec2.sh
+            chmod +x deploy-quick.sh
+            sudo ./deploy-quick.sh
+            rm -f deploy.tar.gz deploy-quick.sh
 
       - name: Verify deployment
         uses: appleboy/ssh-action@master
@@ -67,5 +67,9 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo systemctl status nginx
-            curl -I http://localhost || echo "Warning: Health check failed"
+            sudo systemctl status nginx --no-pager
+            echo "Testing local access..."
+            curl -f -I http://localhost || echo "Warning: Local access failed"
+            echo "Testing domain access..."
+            curl -f -I https://triviaverse.site || echo "Warning: Domain access failed"
+            echo "Deployment verification complete"

@@ -77,6 +77,7 @@ const Footer = () => {
             <img 
               src="/logo192.png" 
               alt="QuizApp Logo" 
+              loading="lazy"
               style={{ height: '32px', marginRight: '12px' }}
             />
             <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>

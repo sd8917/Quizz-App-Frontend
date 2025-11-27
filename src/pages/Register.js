@@ -430,6 +430,8 @@ const Register = () => {
               }}
             >
               <Box
+                role="img"
+                aria-label="Students studying and taking interactive quizzes"
                 sx={{
                   width: '100%',
                   height: '100%',

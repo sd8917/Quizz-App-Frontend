@@ -413,6 +413,8 @@ const Login = () => {
               }}
             >
               <Box
+                role="img"
+                aria-label="Students collaborating and learning together"
                 sx={{
                   width: '100%',
                   height: '100%',

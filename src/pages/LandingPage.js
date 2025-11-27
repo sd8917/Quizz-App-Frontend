@@ -214,6 +214,7 @@ const LandingPage = () => {
                   <img
                     src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop"
                     alt="Students learning"
+                    loading="lazy"
                     style={{ width: '100%', display: 'block' }}
                   />
                 </Paper>
@@ -364,6 +365,7 @@ const LandingPage = () => {
                           '1551434678-7d9d27d15f8e'
                         }?w=500&h=400&fit=crop`}
                         alt={step.title}
+                        loading="lazy"
                         style={{
                           width: '100%',
                           maxWidth: 400,
