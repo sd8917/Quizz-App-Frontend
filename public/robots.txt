@@ -1,0 +1,13 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow admin pages
+Disallow: /dashboard/admin
+Disallow: /quiz-management
+
+# Sitemap
+Sitemap: https://triviaverse.site/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
