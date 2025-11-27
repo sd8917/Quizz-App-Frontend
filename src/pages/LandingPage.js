@@ -213,8 +213,10 @@ const LandingPage = () => {
                 >
                   <img
                     src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop"
-                    alt="Students learning"
-                    loading="lazy"
+                    alt="Students learning with interactive quizzes on TriviaVerse"
+                    fetchpriority="high"
+                    width="800"
+                    height="600"
                     style={{ width: '100%', display: 'block' }}
                   />
                 </Paper>
@@ -366,6 +368,8 @@ const LandingPage = () => {
                         }?w=500&h=400&fit=crop`}
                         alt={step.title}
                         loading="lazy"
+                        width="500"
+                        height="400"
                         style={{
                           width: '100%',
                           maxWidth: 400,

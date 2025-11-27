@@ -76,8 +76,10 @@ const Footer = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
             <img 
               src="/logo192.png" 
-              alt="QuizApp Logo" 
+              alt="TriviaVerse Logo - Interactive Quiz Platform" 
               loading="lazy"
+              width="32"
+              height="32"
               style={{ height: '32px', marginRight: '12px' }}
             />
             <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>

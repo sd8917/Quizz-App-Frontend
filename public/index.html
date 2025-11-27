@@ -53,7 +53,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://api.triviaverse.site" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop" fetchpriority="high" />
+    
+    <!-- Optimize font loading with display=swap -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;800&display=swap" rel="stylesheet" /></noscript>
     
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
