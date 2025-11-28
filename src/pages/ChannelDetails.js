@@ -253,6 +253,11 @@ const ChannelDetails = () => {
       const data = response?.data ?? response;
       const generatedQuestions = Array.isArray(data) ? data : (data?.questions || []);
 
+      if (generatedQuestions.length === 0) {
+        setSnackbar({ open: true, message: 'No questions were generated. Please try again.', severity: 'warning' });
+        return;
+      }
+
       const quizData = {
         id: `q_${Date.now()}`,
         title: `AI Generated: ${quizTopic}`,
