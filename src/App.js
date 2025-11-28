@@ -30,6 +30,8 @@ const Blog = React.lazy(() => import('./pages/Blog'));
 const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
 const TermsAndConditions = React.lazy(() => import('./pages/TermsAndConditions'));
 const CookiePolicy = React.lazy(() => import('./pages/CookiePolicy'));
+const Disclaimer = React.lazy(() => import('./pages/Disclaimer'));
+const Tutorial = React.lazy(() => import('./pages/Tutorial'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -68,6 +70,8 @@ function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-conditions" element={<TermsAndConditions />} />
               <Route path="/cookie-policy" element={<CookiePolicy />} />
+              <Route path="/disclaimer" element={<Suspense fallback={<div>Loading...</div>}><Disclaimer /></Suspense>} />
+              <Route path="/tutorial" element={<Suspense fallback={<div>Loading...</div>}><Tutorial /></Suspense>} />
               
               {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

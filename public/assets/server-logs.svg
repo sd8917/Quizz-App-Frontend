@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="140" viewBox="0 0 600 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="600" height="140" rx="12" fill="#fff" stroke="#eef2ff"/>
+  <g transform="translate(16,16)">
+    <rect x="0" y="0" width="120" height="108" rx="6" fill="#f1f5f9"/>
+    <text x="140" y="28" font-family="Arial" font-size="14" fill="#111827">Server Logs</text>
+    <text x="140" y="50" font-family="Arial" font-size="12" fill="#6b7280">View recent errors, requests, and activity for diagnostics.</text>
+    <rect x="140" y="62" width="420" height="8" rx="4" fill="#eef2ff"/>
+    <rect x="140" y="76" width="360" height="8" rx="4" fill="#eef2ff"/>
+    <rect x="140" y="90" width="300" height="8" rx="4" fill="#eef2ff"/>
+  </g>
+</svg>

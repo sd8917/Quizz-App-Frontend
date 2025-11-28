@@ -17,9 +17,13 @@ import {
   GitHub,
   Email,
 } from '@mui/icons-material';
+import { useState } from 'react';
+import ExternalRedirectModal from './ExternalRedirectModal';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [pendingUrl, setPendingUrl] = useState('');
 
   const footerLinks = {
     company: [
@@ -41,10 +45,10 @@ const Footer = () => {
       { label: 'Disclaimer', href: '/disclaimer' },
     ],
     resources: [
-      { label: 'Documentation', href: '/docs' },
-      { label: 'API Reference', href: '/api' },
+      { label: 'Documentation', href: 'https://api.triviaverse.site/api-docs/' },
+      { label: 'API Reference', href: 'https://api.triviaverse.site/health/' },
       { label: 'Community', href: '/community' },
-      { label: 'Tutorials', href: '/tutorials' },
+      { label: 'Tutorials', href: '/tutorial' },
     ],
   };
 
@@ -198,26 +202,36 @@ const Footer = () => {
             </Typography>
             <Stack spacing={1}>
               {footerLinks.resources.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  underline="none"
-                  sx={{
-                    color: 'text.secondary',
-                    fontSize: '0.875rem',
-                    '&:hover': {
-                      color: 'primary.main',
-                    },
-                  }}
-                >
-                  {link.label}
-                </Link>
-              ))}
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    underline="none"
+                    sx={{
+                      color: 'text.secondary',
+                      fontSize: '0.875rem',
+                      '&:hover': {
+                        color: 'primary.main',
+                      },
+                    }}
+                    onClick={(e) => {
+                      // Intercept Documentation and API Reference to show external redirect modal
+                      if (link.label === 'Documentation' || link.label === "API Reference") {
+                        e.preventDefault();
+                        setPendingUrl(link.href);
+                        setModalOpen(true);
+                      }
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
             </Stack>
           </Grid>
         </Grid>
 
         <Divider sx={{ my: 3 }} />
+
+        <ExternalRedirectModal open={modalOpen} onClose={() => setModalOpen(false)} url={pendingUrl} />
 
         {/* Bottom Footer */}
         <Box
@@ -269,7 +283,7 @@ const Footer = () => {
               •
             </Typography>
             <Link
-              href="/sitemap"
+              href="/sitemap.xml"
               variant="body2"
               underline="none"
               sx={{

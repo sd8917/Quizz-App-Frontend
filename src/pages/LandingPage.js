@@ -416,7 +416,7 @@ const LandingPage = () => {
                 >
                   <CardMedia
                     component="img"
-                    height="200"
+                    height="100"
                     image={service.image}
                     alt={service.title}
                   />

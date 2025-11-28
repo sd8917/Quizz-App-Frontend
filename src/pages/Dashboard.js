@@ -190,7 +190,7 @@ const Dashboard = () => {
         }}
       >
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700 }} onClick={()=> navigate("/")}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700, cursor: 'pointer' }} onClick={()=> navigate("/")}>
             TriviaVerse
           </Typography>
           <Chip 

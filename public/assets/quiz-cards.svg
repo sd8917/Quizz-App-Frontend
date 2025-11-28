@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="640" height="140" viewBox="0 0 640 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="640" height="140" rx="12" fill="#fff" stroke="#eef2ff"/>
+  <g transform="translate(16,16)">
+    <rect x="0" y="0" width="180" height="108" rx="8" fill="#f8fafc" stroke="#e6eefc"/>
+    <text x="20" y="26" font-family="Arial" font-size="14" fill="#111827">General Knowledge</text>
+    <rect x="200" y="0" width="180" height="108" rx="8" fill="#f8fafc" stroke="#e6eefc"/>
+    <text x="220" y="26" font-family="Arial" font-size="14" fill="#111827">Science</text>
+    <rect x="400" y="0" width="180" height="108" rx="8" fill="#f8fafc" stroke="#e6eefc"/>
+    <text x="420" y="26" font-family="Arial" font-size="14" fill="#111827">Short Quiz</text>
+  </g>
+</svg>

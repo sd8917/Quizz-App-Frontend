@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="120" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="120" rx="12" fill="#ffffff" stroke="#eef2ff"/>
+  <g transform="translate(16,16)">
+    <circle cx="28" cy="28" r="24" fill="#FFD700"/>
+    <text x="28" y="34" font-family="Arial" font-size="16" fill="#111827" text-anchor="middle">A</text>
+    <text x="68" y="32" font-family="Arial" font-size="14" fill="#111827">Admin</text>
+
+    <circle cx="148" cy="28" r="24" fill="#8B5CF6"/>
+    <text x="148" y="34" font-family="Arial" font-size="16" fill="#fff" text-anchor="middle">C</text>
+    <text x="188" y="32" font-family="Arial" font-size="14" fill="#111827">Creator</text>
+
+    <circle cx="268" cy="28" r="24" fill="#10B981"/>
+    <text x="268" y="34" font-family="Arial" font-size="16" fill="#fff" text-anchor="middle">U</text>
+    <text x="308" y="32" font-family="Arial" font-size="14" fill="#111827">User</text>
+  </g>
+</svg>
