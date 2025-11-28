@@ -24,6 +24,10 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Snackbar,
   Tabs,
   Tab,
@@ -81,6 +85,8 @@ const ChannelDetails = () => {
   // AI Generator state
   const [quizTopic, setQuizTopic] = useState('');
   const [numQuestions, setNumQuestions] = useState(5);
+  const [difficulty, setDifficulty] = useState('medium');
+  const [marks, setMarks] = useState(1);
   const [generatedQuizData, setGeneratedQuizData] = useState(null);
   const [generating, setGenerating] = useState(false);
 
@@ -234,42 +240,33 @@ const ChannelDetails = () => {
 
     setGenerating(true);
     try {
-      // Simulate AI generation (replace with actual API call)
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const mockQuestions = [];
-      for (let i = 1; i <= numQuestions; i++) {
-        mockQuestions.push({
-          id: `q_gen_${i}`,
-          question: `${quizTopic} question ${i}`,
-          options: [
-            { text: "Option A", isCorrect: i === 1, explanation: i === 1 ? "Correct explanation" : "" },
-            { text: "Option B", isCorrect: i === 2, explanation: i === 2 ? "Correct explanation" : "" },
-            { text: "Option C", isCorrect: i === 3, explanation: i === 3 ? "Correct explanation" : "" },
-            { text: "Option D", isCorrect: i > 3, explanation: i > 3 ? "Correct explanation" : "" }
-          ],
-          correctAnswer: i === 1 ? "Option A" : i === 2 ? "Option B" : i === 3 ? "Option C" : "Option D"
-        });
-      }
+      // Call backend AI generation endpoint
+      const payload = {
+        topic: quizTopic.trim(),
+        difficulty: difficulty, // 'easy' | 'medium' | 'hard'
+        numberOfQuestions: Number(numQuestions),
+        marks: Number(marks),
+      };
+
+      const response = await quizService.generateAIQuestions(payload);
+      // Response may be an array or an object containing a `questions` array
+      const data = response?.data ?? response;
+      const generatedQuestions = Array.isArray(data) ? data : (data?.questions || []);
 
       const quizData = {
         id: `q_${Date.now()}`,
         title: `AI Generated: ${quizTopic}`,
-        category: "AI Generated",
-        questions: mockQuestions
+        category: 'AI Generated',
+        questions: generatedQuestions,
       };
 
       setGeneratedQuizData(quizData);
-      setSnackbar({ 
-        open: true, 
-        message: `Successfully generated ${numQuestions} questions!`, 
-        severity: 'success' 
-      });
+      setSnackbar({ open: true, message: `Successfully generated ${generatedQuestions.length} questions!`, severity: 'success' });
     } catch (err) {
       console.error('Error generating quiz:', err);
       setSnackbar({ 
         open: true, 
-        message: 'Failed to generate quiz. Please try again.', 
+        message: err?.message || 'Failed to generate quiz. Please try again.', 
         severity: 'error' 
       });
     } finally {
@@ -402,6 +399,35 @@ const ChannelDetails = () => {
                 onChange={(e) => setNumQuestions(parseInt(e.target.value) || 5)}
                 disabled={generating}
                 inputProps={{ min: 1, max: 50 }}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel id="difficulty-label">Difficulty</InputLabel>
+                <Select
+                  labelId="difficulty-label"
+                  label="Difficulty"
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                  disabled={generating}
+                >
+                  <MenuItem value="easy">Easy</MenuItem>
+                  <MenuItem value="medium">Medium</MenuItem>
+                  <MenuItem value="hard">Hard</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                label="Marks per Question"
+                type="number"
+                value={marks}
+                onChange={(e) => setMarks(parseInt(e.target.value) || 1)}
+                disabled={generating}
+                inputProps={{ min: 1 }}
               />
             </Grid>
           </Grid>
