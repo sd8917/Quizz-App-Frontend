@@ -106,6 +106,20 @@ const quizService = {
   },
 
   /**
+   * Generate questions using AI endpoint
+   * @param {Object} payload - { topic, difficulty, numberOfQuestions, marks }
+   * @returns {Promise} Generated questions or object containing questions
+   */
+  generateAIQuestions: async (payload) => {
+    try {
+      const response = await apiClient.post('/ai/generate-questions', payload);
+      return response.data ?? response;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
    * Get user's quiz attempts
    * @returns {Promise} List of quiz attempts
    */
