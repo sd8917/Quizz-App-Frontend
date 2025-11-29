@@ -35,7 +35,7 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import quizService from '../services/quizService';
-
+import { channelService } from '../services';
 const TakeQuiz = () => {
   const { quizId } = useParams();
   const navigate = useNavigate();
@@ -92,19 +92,14 @@ const TakeQuiz = () => {
         }
         
         // Fetch channel info from /channel/:id endpoint
-        const response = await fetch(`http://localhost:8000/api/channel/${quizId}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
-        
-        if (!response.ok) {
+        const response = await channelService.getChannelUsers(quizId);
+       
+        if (!response?.success) {
           throw new Error('Failed to fetch channel information');
         }
-        
-        const data = await response.json();
-        const channelData = data.data || data;
-        
+
+        const channelData = response.data;
+      
         // Set quiz metadata without questions (will fetch questions on start)
         const quizMetadata = {
           id: channelData._id || quizId,
@@ -390,7 +385,7 @@ const TakeQuiz = () => {
     navigate('/dashboard');
   };
 
-  if (!quiz || loading) {
+  if (loading) {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', gap: 2 }}>
         <CircularProgress size={60} />
