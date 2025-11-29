@@ -495,8 +495,8 @@ const PrivacyPolicy = () => {
             <li>
               <Typography variant="body1">
                 By visiting this page on our website:{' '}
-                <Link href="http://triviaverse.site/contact" target="_blank" rel="noopener">
-                  http://triviaverse.site/contact
+                <Link href="https://triviaverse.site/contact" target="_blank" rel="noopener">
+                  https://triviaverse.site/contact
                 </Link>
               </Typography>
             </li>
