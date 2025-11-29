@@ -70,12 +70,12 @@ const HelpCenter = () => {
       answer: 'Click on the "Get Started" button on the homepage and fill in your details. You\'ll receive a confirmation email to verify your account.',
     },
     {
-      question: 'Is QuizApp free to use?',
-      answer: 'Yes! QuizApp offers a free plan with access to thousands of quizzes. We also have premium plans with additional features for power users.',
+      question: 'Is TriviaVerse free to use?',
+      answer: 'Yes! TriviaVerse offers a free plan with access to thousands of quizzes. We also have premium plans with additional features for power users.',
     },
     {
       question: 'How do I create my own quiz?',
-      answer: 'After logging in, navigate to the Dashboard and click on "Create Quiz". Follow the step-by-step wizard to add questions, set time limits, and publish your quiz.',
+      answer: 'After logging in, please drop an email to update your role to "Creator" then navigate to the Dashboard and click on "Create Quiz". Follow the step-by-step wizard to add questions, set time limits, and publish your quiz. More details will be available in the Tutorial footer menu!',
     },
     {
       question: 'Can I track my progress?',
@@ -87,7 +87,7 @@ const HelpCenter = () => {
     },
     {
       question: 'What if I encounter a technical issue?',
-      answer: 'Please contact our support team through the Contact page or email us at support@quizapp.com. We typically respond within 24 hours.',
+      answer: 'Please contact our support team through the Contact page or email us at triviaverse.contact@gmail.com. We typically respond within 24 hours.',
     },
   ];
 

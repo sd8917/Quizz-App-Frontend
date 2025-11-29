@@ -109,8 +109,8 @@ const CookiePolicy = () => {
             <li>
               <Typography variant="body1">
                 <strong>Website</strong> refers to triviaverse, accessible from{' '}
-                <Link href="http://triviaverse.s3-website.ap-south-1.amazonaws.com/" target="_blank" rel="noopener">
-                  http://triviaverse.s3-website.ap-south-1.amazonaws.com/
+                <Link href="https://triviaverse.site/" target="_blank" rel="noopener">
+                  https://triviaverse.site/
                 </Link>
               </Typography>
             </li>

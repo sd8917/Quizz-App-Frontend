@@ -204,7 +204,7 @@ const Careers = () => {
             Don't see the right position?
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Send us your resume at careers@quizapp.com
+            Send us your resume at triviaverse.contact@gmail.com
           </Typography>
           <Button
             variant="outlined"

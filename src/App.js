@@ -32,6 +32,7 @@ const TermsAndConditions = React.lazy(() => import('./pages/TermsAndConditions')
 const CookiePolicy = React.lazy(() => import('./pages/CookiePolicy'));
 const Disclaimer = React.lazy(() => import('./pages/Disclaimer'));
 const Tutorial = React.lazy(() => import('./pages/Tutorial'));
+const Feedback = React.lazy(() => import('./pages/Feedback'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -72,6 +73,7 @@ function App() {
               <Route path="/cookie-policy" element={<CookiePolicy />} />
               <Route path="/disclaimer" element={<Suspense fallback={<div>Loading...</div>}><Disclaimer /></Suspense>} />
               <Route path="/tutorial" element={<Suspense fallback={<div>Loading...</div>}><Tutorial /></Suspense>} />
+              <Route path="/feedback" element={<Suspense fallback={<div>Loading...</div>}><Feedback /></Suspense>} />
               
               {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
