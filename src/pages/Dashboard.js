@@ -199,7 +199,6 @@ const Dashboard = () => {
     setStatsLoading(true);
     try {
       const data = await userService.getAdminStats();
-      console.log("setAdminStats data =", data);
       setAdminStats(data?.data);
       setStatsError(null);
     } catch (err) {
