@@ -250,7 +250,7 @@ const Login = () => {
 
     // Use backend API URL - for development it's localhost:8000
     const backendUrl = BASE_URL;
-    const googleAuthUrl = `${backendUrl}/api/auth/google`;
+    const googleAuthUrl = `${backendUrl}/auth/google`;
 
     const popup = window.open(
       googleAuthUrl,
