@@ -23,8 +23,8 @@ import {
 } from '@mui/icons-material';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, clearError } from '../store/slices/authSlice';
-
+import { loginUser, clearError, setAuthenticated, updateUser } from '../store/slices/authSlice';
+import { BASE_URL } from '../services/api';
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,6 +48,101 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
+
+  // Listen for messages from Google OAuth popup
+  React.useEffect(() => {
+    const handleMessage = (event) => {
+      // Skip messages without a type or that aren't from our OAuth flow
+      if (!event.data?.type) {
+        // Silently ignore messages without type (MetaMask, webpack, etc)
+        return;
+      }
+      
+      // Only handle Google OAuth messages
+      if (event.data.type !== 'GOOGLE_LOGIN_SUCCESS' && event.data.type !== 'GOOGLE_LOGIN_ERROR') {
+        // Silently ignore other types
+        return;
+      }
+      // Handle success
+      if (event.data?.type === 'GOOGLE_LOGIN_SUCCESS') {
+        const { accessToken, refreshToken, user } = event.data;
+        
+        if (!accessToken || !refreshToken || !user) {
+          setAlertMessage({ 
+            type: 'error', 
+            text: 'Authentication failed: Invalid token data' 
+          });
+          return;
+        }
+        // Store tokens
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('user', JSON.stringify(user));
+
+        // Update Redux state
+        dispatch(setAuthenticated(true));
+        dispatch(updateUser(user));
+  
+        setAlertMessage({ type: 'success', text: 'Google login successful! Redirecting to dashboard...' });
+        
+        // Navigate to dashboard
+        setTimeout(() => {
+          navigate('/dashboard', { replace: true });
+        }, 1500);
+      } 
+      // Handle error
+      else if (event.data?.type === 'GOOGLE_LOGIN_ERROR') {
+        const errorMsg = event.data.error || 'Google authentication failed';
+        console.error('❌ Google login error:', errorMsg);
+        setAlertMessage({ 
+          type: 'error', 
+          text: errorMsg
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [navigate, dispatch]);
+
+  // Fallback: Check localStorage for tokens (in case postMessage doesn't work or backend fails)
+  React.useEffect(() => {
+
+    const checkTokens = setInterval(() => {
+      const token = localStorage.getItem('accessToken');
+      const user = localStorage.getItem('user');
+      
+      if (token && user && !isAuthenticated) {
+
+        try {
+          const userData = JSON.parse(user);
+          
+          // Update Redux state
+          dispatch(setAuthenticated(true));
+          dispatch(updateUser(userData));
+   
+          setAlertMessage({ type: 'success', text: 'Google login successful! Redirecting to dashboard...' });
+          
+          // Navigate to dashboard
+          setTimeout(() => {
+            navigate('/dashboard', { replace: true });
+          }, 1000);
+          
+          // Clear interval since we found tokens
+          clearInterval(checkTokens);
+        } catch (error) {
+          console.error('❌ Error parsing user data:', error);
+        }
+      }
+    }, 200); // Check every 200ms for faster detection
+
+    return () => {
+      clearInterval(checkTokens);
+    };
+  }, [isAuthenticated, navigate, dispatch]);
 
   // Check for session expiry
   React.useEffect(() => {
@@ -148,7 +243,54 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    setAlertMessage({ type: 'info', text: 'Google login coming soon!' });
+    const width = 500;
+    const height = 600;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+
+    // Use backend API URL - for development it's localhost:8000
+    const backendUrl = BASE_URL;
+    const googleAuthUrl = `${backendUrl}/api/auth/google`;
+
+    const popup = window.open(
+      googleAuthUrl,
+      'Google Login',
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
+
+    // Check if popup was blocked
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      console.error('❌ Popup blocked by browser');
+      setAlertMessage({ 
+        type: 'error', 
+        text: 'Popup blocked! Please allow popups for this site.' 
+      });
+    } else {
+      setAlertMessage({ 
+        type: 'info', 
+        text: 'Complete the Google sign-in in the popup window...' 
+      });
+      
+      // Monitor popup - close it after 5 minutes if still open
+      // This helps catch cases where backend fails to redirect
+      const popupMonitor = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(popupMonitor);
+        }
+      }, 1000);
+      
+      setTimeout(() => {
+        if (!popup.closed) {
+          console.warn('⚠️ Popup still open after 5 minutes, closing...');
+          popup.close();
+          clearInterval(popupMonitor);
+          setAlertMessage({
+            type: 'warning',
+            text: 'Google sign-in popup closed (timeout). Please try again.'
+          });
+        }
+      }, 5 * 60 * 1000);
+    }
   };
 
   return (

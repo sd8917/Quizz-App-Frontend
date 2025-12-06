@@ -33,6 +33,7 @@ const CookiePolicy = React.lazy(() => import('./pages/CookiePolicy'));
 const Disclaimer = React.lazy(() => import('./pages/Disclaimer'));
 const Tutorial = React.lazy(() => import('./pages/Tutorial'));
 const Feedback = React.lazy(() => import('./pages/Feedback'));
+const GoogleCallback = React.lazy(() => import('./pages/GoogleCallback'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -60,6 +61,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/auth/google/callback" element={<GoogleCallback />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/about" element={<About />} />
