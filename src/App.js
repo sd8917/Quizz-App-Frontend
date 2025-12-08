@@ -5,6 +5,8 @@ import { Provider } from 'react-redux';
 import store from './store';
 import theme from './theme/theme';
 import ProtectedRoute from './components/ProtectedRoute';
+import RenderProfiler from './components/RenderProfiler';
+import PerformanceDashboard from './components/PerformanceDashboard';
 
 // Lazy loading for better performance
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
@@ -55,43 +57,46 @@ function App() {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Router>
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/auth/google/callback" element={<GoogleCallback />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/team" element={<OurTeam />} />
-              <Route path="/careers" element={<Careers />} />
-              <Route path="/help" element={<HelpCenter />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-conditions" element={<TermsAndConditions />} />
-              <Route path="/cookie-policy" element={<CookiePolicy />} />
-              <Route path="/disclaimer" element={<Suspense fallback={<div>Loading...</div>}><Disclaimer /></Suspense>} />
-              <Route path="/tutorial" element={<Suspense fallback={<div>Loading...</div>}><Tutorial /></Suspense>} />
-              <Route path="/feedback" element={<Suspense fallback={<div>Loading...</div>}><Feedback /></Suspense>} />
-              
-              {/* Protected Routes */}
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/quiz-management" element={<ProtectedRoute><QuizManagement /></ProtectedRoute>} />
-              <Route path="/channel/:channelId" element={<ProtectedRoute><ChannelDetails /></ProtectedRoute>} />
-              <Route path="/quiz/:quizId" element={<ProtectedRoute><TakeQuiz /></ProtectedRoute>} />
-              <Route path="/quiz-results" element={<ProtectedRoute><QuizResults /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
-              <Route path="/user-management" element={<ProtectedRoute><UserManagement /></ProtectedRoute> } />
-              <Route path="/server-logs" element={<ProtectedRoute><ServerLogs /></ProtectedRoute>} />
-              
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </Router>
+        <RenderProfiler id="App">
+          <Router>
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/auth/google/callback" element={<GoogleCallback />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/team" element={<OurTeam />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/help" element={<HelpCenter />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-conditions" element={<TermsAndConditions />} />
+                <Route path="/cookie-policy" element={<CookiePolicy />} />
+                <Route path="/disclaimer" element={<Suspense fallback={<div>Loading...</div>}><Disclaimer /></Suspense>} />
+                <Route path="/tutorial" element={<Suspense fallback={<div>Loading...</div>}><Tutorial /></Suspense>} />
+                <Route path="/feedback" element={<Suspense fallback={<div>Loading...</div>}><Feedback /></Suspense>} />
+                
+                {/* Protected Routes */}
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/quiz-management" element={<ProtectedRoute><QuizManagement /></ProtectedRoute>} />
+                <Route path="/channel/:channelId" element={<ProtectedRoute><ChannelDetails /></ProtectedRoute>} />
+                <Route path="/quiz/:quizId" element={<ProtectedRoute><TakeQuiz /></ProtectedRoute>} />
+                <Route path="/quiz-results" element={<ProtectedRoute><QuizResults /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+                <Route path="/user-management" element={<ProtectedRoute><UserManagement /></ProtectedRoute> } />
+                <Route path="/server-logs" element={<ProtectedRoute><ServerLogs /></ProtectedRoute>} />
+                
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
+          </Router>
+        </RenderProfiler>
+        <PerformanceDashboard />
       </ThemeProvider>
     </Provider>
   );
