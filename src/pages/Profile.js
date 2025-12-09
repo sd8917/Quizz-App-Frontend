@@ -15,11 +15,18 @@ import {
   CardContent,
   Grid,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Snackbar,
 } from '@mui/material';
-import { ArrowBack, Edit, Email as EmailIcon, CalendarMonth, EmojiEvents, Quiz } from '@mui/icons-material';
+import { ArrowBack, Edit, Email as EmailIcon, CalendarMonth, EmojiEvents, Quiz, Close } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserProfile } from '../store/slices/authSlice';
+import { fetchUserProfile, updateUser } from '../store/slices/authSlice';
+import { userService } from '../services';
 import Footer from '../components/Footer';
 
 const Profile = () => {
@@ -29,6 +36,16 @@ const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Modal state
+  const [openModal, setOpenModal] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState('');
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -72,6 +89,75 @@ const Profile = () => {
   }, [dispatch]); // Only run once on mount
 
   const displayUser = profile?.data || authUser;
+
+  // Handle modal open
+  const handleOpenModal = () => {
+    setFormData({
+      username: displayUser?.username || '',
+      email: displayUser?.email || '',
+    });
+    setUpdateError('');
+    setOpenModal(true);
+  };
+
+  // Handle modal close
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setUpdateError('');
+  };
+
+  // Handle form input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle profile update
+  const handleUpdateProfile = async () => {
+    // Validation
+    if (!formData.username.trim()) {
+      setUpdateError('Username is required');
+      return;
+    }
+    if (!formData.email.trim()) {
+      setUpdateError('Email is required');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setUpdateError('Please enter a valid email');
+      return;
+    }
+
+    setUpdating(true);
+    setUpdateError('');
+
+    try {
+      const response = await userService.updateProfile({
+        username: formData.username,
+        email: formData.email,
+      });
+
+      // Update Redux store
+      dispatch(updateUser(response.data || response));
+      
+      // Update local state
+      setProfile(response);
+      
+      // Show success message
+      setUpdateSuccess(true);
+      
+      // Close modal
+      handleCloseModal();
+    } catch (err) {
+      console.error('Profile update error:', err);
+      setUpdateError(err?.message || 'Failed to update profile. Please try again.');
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   if (loading && !displayUser) {
     return (
@@ -162,6 +248,7 @@ const Profile = () => {
             <Button 
               variant="contained" 
               startIcon={<Edit />}
+              onClick={handleOpenModal}
               sx={{
                 background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
                 px: 3,
@@ -301,6 +388,124 @@ const Profile = () => {
           </Grid>
         </Grid>
       </Container>
+
+      {/* Edit Profile Modal */}
+      <Dialog 
+        open={openModal} 
+        onClose={handleCloseModal}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          fontWeight: 700,
+        }}>
+          Edit Profile
+          <IconButton 
+            onClick={handleCloseModal}
+            sx={{ color: 'white' }}
+            disabled={updating}
+          >
+            <Close />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent sx={{ mt: 3 }}>
+          {updateError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {updateError}
+            </Alert>
+          )}
+
+          <TextField
+            fullWidth
+            label="Username"
+            name="username"
+            value={formData.username}
+            onChange={handleInputChange}
+            margin="normal"
+            disabled={updating}
+            sx={{ mb: 2 }}
+            InputProps={{
+              sx: { borderRadius: 2 }
+            }}
+          />
+
+          <TextField
+            fullWidth
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            margin="normal"
+            disabled={true}
+            sx={{ mb: 2 }}
+            InputProps={{
+              sx: { borderRadius: 2 }
+            }}
+          />
+
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            Note: Changing your email may require verification
+          </Typography>
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, pb: 3 }}>
+          <Button 
+            onClick={handleCloseModal}
+            disabled={updating}
+            sx={{ 
+              borderRadius: 2,
+              px: 3,
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleUpdateProfile}
+            variant="contained"
+            disabled={updating}
+            sx={{
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              borderRadius: 2,
+              px: 3,
+              '&:hover': {
+                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+              },
+            }}
+          >
+            {updating ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Save Changes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={updateSuccess}
+        autoHideDuration={4000}
+        onClose={() => setUpdateSuccess(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setUpdateSuccess(false)} 
+          severity="success" 
+          sx={{ width: '100%', borderRadius: 2 }}
+        >
+          Profile updated successfully!
+        </Alert>
+      </Snackbar>
+
       <Footer />
     </Box>
   );
