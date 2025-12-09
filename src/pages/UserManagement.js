@@ -33,6 +33,7 @@ import {
   FormControl,
   InputLabel,
   CircularProgress,
+  Alert,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -53,6 +54,7 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { userService } from '../services';
 import { getRoleColor, getStatusColor,getActiveColor } from '../utils/helpers';
+import useFetch from '../hooks/useFetch';
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -69,6 +71,22 @@ const UserManagement = () => {
     email: '',
     role: '',
   });
+
+  // Add User Form State
+  const [addUserFormData, setAddUserFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    role: 'user',
+  });
+  const [formError, setFormError] = useState('');
+
+  // Use useFetch hook for registering new users
+  const { 
+    loading: addUserLoading, 
+    error: addUserError, 
+    execute: registerNewUser 
+  } = useFetch(null, { immediate: false });
 
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -163,6 +181,16 @@ const UserManagement = () => {
         role: selectedUser.role,
       });
     }
+    if (type === 'add') {
+      // Reset add user form when opening
+      setAddUserFormData({
+        username: '',
+        email: '',
+        password: '',
+        role: 'user',
+      });
+      setFormError('');
+    }
     setOpenDialog(true);
     handleMenuClose();
   };
@@ -171,11 +199,91 @@ const UserManagement = () => {
     setOpenDialog(false);
     setDialogType('');
     setEditFormData({ username: '', email: '', role: '' });
+    setAddUserFormData({ username: '', email: '', password: '', role: 'user' });
+    setFormError('');
   };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle Add User Form Changes
+  const handleAddUserChange = (e) => {
+    const { name, value } = e.target;
+    setAddUserFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (formError) setFormError('');
+  };
+
+  // Add User Submit Handler using useFetch
+  const handleAddUser = async () => {
+    // Validation
+    if (!addUserFormData.username || !addUserFormData.email || !addUserFormData.password) {
+      setFormError('All fields are required');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(addUserFormData.email)) {
+      setFormError('Please enter a valid email address');
+      return;
+    }
+
+    // Password validation
+    if (addUserFormData.password.length < 6) {
+      setFormError('Password must be at least 6 characters long');
+      return;
+    }
+
+    try {
+      setFormError('');
+
+      // Prepare user data for registration
+      const userData = {
+        username: addUserFormData.username,
+        email: addUserFormData.email,
+        password: addUserFormData.password,
+        roles: [addUserFormData.role], // Backend expects roles as array
+      };
+
+      // Use useFetch's execute method to register the new user
+      const result = await registerNewUser('/register', {
+        method: 'POST',
+        body: userData,
+      });
+
+      if (!result && addUserError) {
+        // If execute returns null, there was an error
+        setFormError(addUserError);
+        return;
+      }
+      
+      // Refresh user list after successful addition
+      const usersResponse = await userService.getAllUsers();
+      if (usersResponse?.data) {
+        const transformedUsers = usersResponse.data.map((user) => ({
+          id: user._id,
+          username: user.username || 'N/A',
+          email: user.email || 'N/A',
+          role: user.roles?.[0] ? user.roles[0].charAt(0).toUpperCase() + user.roles[0].slice(1) : 'N/A',
+          isActive: user.isActive || 'N/A',
+          quizzesTaken: user.quizzesTaken || 'N/A',
+          score: user.score || 'N/A',
+          joinedDate: user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A',
+          lastActive: user.activeStatus || 'N/A',
+          isOnline: user.isOnline || false,
+        }));
+        setData(transformedUsers);
+      }
+
+      // Close dialog and reset form
+      handleDialogClose();
+    } catch (err) {
+      console.error('Error adding user:', err);
+      setFormError(err.message || err.error || 'Failed to create user. Please try again.');
+    }
   };
 
   const handleSaveRole = async () => {
@@ -246,7 +354,14 @@ const UserManagement = () => {
   
     if (loading) {
       return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '100vh',
+          }}
+        >
           <CircularProgress />
         </Box>
       );
@@ -264,44 +379,37 @@ const UserManagement = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* AppBar */}
-      <AppBar 
-        position="static" 
-        elevation={0}
-        sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
-        }}
-      >
+      {/* Header */}
+      <AppBar position="static" elevation={0}>
         <Toolbar>
           <IconButton
             edge="start"
             color="inherit"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate(-1)}
+            sx={{ mr: 2 }}
           >
             <ArrowBack />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             User Management
           </Typography>
           <Button
             variant="contained"
             startIcon={<Add />}
+            onClick={() => handleDialogOpen('add')}
             sx={{
               bgcolor: 'white',
-              color: '#667eea',
-              fontWeight: 600,
+              color: 'primary.main',
               '&:hover': { bgcolor: 'grey.100' },
             }}
-            onClick={() => handleDialogOpen('add')}
           >
             Add User
           </Button>
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        {/* Stats Cards */}
+      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+        {/* Statistics Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           {stats.map((stat, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
@@ -313,48 +421,40 @@ const UserManagement = () => {
               >
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <Avatar
+                    <Box
                       sx={{
-                        bgcolor: stat.color,
-                        width: 40,
-                        height: 40,
+                        p: 1,
+                        borderRadius: 2,
+                        bgcolor: `${stat.color}20`,
+                        color: stat.color,
                         mr: 2,
                       }}
                     >
                       {stat.icon}
-                    </Avatar>
+                    </Box>
+                    <Box>
+                      <Typography variant="h4" fontWeight="bold">
+                        {stat.value}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {stat.title}
+                      </Typography>
+                    </Box>
                   </Box>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: stat.color }}>
-                    {stat.value}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {stat.title}
-                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
           ))}
         </Grid>
 
-        {/* Main User Table */}
-        <Paper sx={{ p: 3 }}>
-          {/* Header with Search */}
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mb: 3,
-              flexWrap: 'wrap',
-              gap: 2,
-            }}
-          >
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
-              All Users
-            </Typography>
+        {/* Users Table */}
+        <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+          {/* Search and Tabs */}
+          <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider' }}>
             <TextField
-              size="small"
               placeholder="Search users..."
+              variant="outlined"
+              size="small"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               InputProps={{
@@ -364,25 +464,19 @@ const UserManagement = () => {
                   </InputAdornment>
                 ),
               }}
-              sx={{ minWidth: 250 }}
+              sx={{ mb: 2, width: { xs: '100%', sm: '400px' } }}
             />
+            <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)}>
+              <Tab label="All Users" />
+              <Tab label="Active" />
+              <Tab label="Suspended" />
+            </Tabs>
           </Box>
 
-          {/* Tabs */}
-          <Tabs
-            value={tabValue}
-            onChange={(e, newValue) => setTabValue(newValue)}
-            sx={{ mb: 3 }}
-          >
-            <Tab label="All Users" />
-            <Tab label="Active" />
-            <Tab label="Suspended" />
-          </Tabs>
-
-          {/* Users Table */}
+          {/* Table */}
           <TableContainer>
             <Table>
-              <TableHead>
+              <TableHead sx={{ bgcolor: 'grey.50' }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600 }}>User</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
@@ -407,30 +501,27 @@ const UserManagement = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {getFilteredByTab().map((user) => (
-                  <TableRow
-                    key={user.id}
-                    sx={{
-                      '&:hover': { bgcolor: 'action.hover' },
-                    }}
-                  >
+                {getFilteredByTab().map((user, index) => (
+                  <TableRow key={index} hover>
                     <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Avatar
                           sx={{
-                            bgcolor:
-                              user.role === 'Admin'
-                                ? 'error.main'
-                                : user.role === 'Creator'
-                                ? 'warning.main'
-                                : 'primary.main',
+                            mr: 2,
+                            bgcolor: `${stats.find((s) => s.title.includes(user.role))?.color || '#6366f1'}20`,
+                            color: stats.find((s) => s.title.includes(user.role))?.color || '#6366f1',
                           }}
                         >
-                          {user.username.charAt(0).toUpperCase()}
+                          {user.username[0]?.toUpperCase()}
                         </Avatar>
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                          {user.username}
-                        </Typography>
+                        <Box>
+                          <Typography variant="subtitle2" fontWeight={600}>
+                            {user.username}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Joined {user.joinedDate}
+                          </Typography>
+                        </Box>
                       </Box>
                     </TableCell>
                     <TableCell>
@@ -610,40 +701,70 @@ const UserManagement = () => {
       <Dialog open={openDialog && dialogType === 'add'} onClose={handleDialogClose} maxWidth="sm" fullWidth>
         <DialogTitle>Add New User</DialogTitle>
         <DialogContent>
+          {formError && (
+            <Alert severity="error" sx={{ mb: 2, mt: 1 }}>
+              {formError}
+            </Alert>
+          )}
+          
           <TextField
             autoFocus
             margin="dense"
             label="Username"
+            name="username"
             fullWidth
+            value={addUserFormData.username}
+            onChange={handleAddUserChange}
             sx={{ mb: 2, mt: 1 }}
+            required
           />
           <TextField
             margin="dense"
             label="Email"
+            name="email"
             type="email"
             fullWidth
+            value={addUserFormData.email}
+            onChange={handleAddUserChange}
             sx={{ mb: 2 }}
+            required
           />
           <TextField
             margin="dense"
             label="Password"
+            name="password"
             type="password"
             fullWidth
+            value={addUserFormData.password}
+            onChange={handleAddUserChange}
             sx={{ mb: 2 }}
+            required
+            helperText="Minimum 6 characters"
           />
           <FormControl fullWidth>
             <InputLabel>Role</InputLabel>
-            <Select label="Role" defaultValue="User">
-              <MenuItem value="User">User</MenuItem>
-              <MenuItem value="Creator">Creator</MenuItem>
-              <MenuItem value="Admin">Admin</MenuItem>
+            <Select 
+              name="role"
+              label="Role" 
+              value={addUserFormData.role}
+              onChange={handleAddUserChange}
+            >
+              <MenuItem value="user">User</MenuItem>
+              <MenuItem value="creator">Creator</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
             </Select>
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button variant="contained" onClick={handleDialogClose}>
-            Add User
+          <Button onClick={handleDialogClose} disabled={addUserLoading}>
+            Cancel
+          </Button>
+          <Button 
+            variant="contained" 
+            onClick={handleAddUser}
+            disabled={addUserLoading}
+          >
+            {addUserLoading ? <CircularProgress size={20} /> : 'Add User'}
           </Button>
         </DialogActions>
       </Dialog>
