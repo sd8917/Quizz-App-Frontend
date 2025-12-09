@@ -43,6 +43,7 @@ import { logoutUser, fetchUserProfile } from '../store/slices/authSlice';
 import Footer from '../components/Footer';
 import useFetch from '../hooks/useFetch';
 import { userService } from '../services';
+import {getWelcomeMessage } from '../utils/helpers';
 
 const Dashboard = () => {
   useSEO('dashboard');
@@ -183,13 +184,6 @@ const Dashboard = () => {
     { title: 'JavaScript Pro', attempts: 145, avgScore: 1420, rating: 4.5 },
     { title: 'CSS Mastery', attempts: 108, avgScore: 1580, rating: 4.7 },
   ];
-
-  // Get welcome message based on role
-  const getWelcomeMessage = () => {
-    if (userRole === 'admin') return 'Welcome back, Admin! 👨‍💼';
-    if (userRole === 'creator') return 'Welcome back, Creator! 🎨';
-    return 'Welcome back, User! 👋';
-  };
 
   const getRoleColor = () => {
     if (userRole === 'admin') return 'error';
@@ -373,7 +367,7 @@ const Dashboard = () => {
                           </Box>
 
                           <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-                            <Chip label={`${channel.questionCount || 0} Questions`} size="small" icon={<QuizIcon />} />
+                            <Chip label={`${channel.totalQuestions || 0} Questions`} size="small" icon={<QuizIcon />} />
                             <Chip
                               label={channel.difficulty || 'Medium'}
                               size="small"
@@ -385,7 +379,7 @@ const Dashboard = () => {
                                   : 'error'
                               }
                             />
-                            {channel.timeLimit && <Chip label={channel.timeLimit} size="small" icon={<Schedule />} />}
+                            {channel.duration && <Chip label={channel.duration + " min"} size="small" icon={<Schedule />} />}
                           </Box>
                           <Typography variant="body2" color="text.secondary">
                             {channel.description || 'Test your knowledge and compete for the top spot on the leaderboard!'}
