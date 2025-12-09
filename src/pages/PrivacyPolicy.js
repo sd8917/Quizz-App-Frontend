@@ -11,9 +11,11 @@ import {
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 
 const PrivacyPolicy = () => {
+  useSEO('privacy');
   const navigate = useNavigate();
 
   return (

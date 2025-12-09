@@ -25,21 +25,22 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://triviaverse.site/" />
-    <meta property="og:title" content="QuizApp - Master Any Topic with Interactive Quizzes" />
-    <meta property="og:description" content="Test your knowledge with interactive quizzes. Track progress, compete on leaderboards, and master any topic with QuizApp." />
-    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:site_name" content="QuizApp" />
+    <meta property="og:title" content="TriviaVerse - Master Any Topic with Interactive Quizzes" />
+    <meta property="og:description" content="Test your knowledge with interactive quizzes. Track progress, compete on leaderboards, and master any topic with TriviaVerse." />
+    <meta property="og:image" content="%PUBLIC_URL%/logo.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="TriviaVerse - Interactive Quizzes Logo" />
+    <meta property="og:site_name" content="TriviaVerse" />
     <meta property="og:locale" content="en_US" />
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://triviaverse.site/" />
-    <meta name="twitter:title" content="QuizApp - Master Any Topic with Interactive Quizzes" />
+    <meta name="twitter:title" content="TriviaVerse - Master Any Topic with Interactive Quizzes" />
     <meta name="twitter:description" content="Test your knowledge with interactive quizzes. Track progress, compete on leaderboards, and master any topic." />
-    <meta name="twitter:image" content="%PUBLIC_URL%/og-image.png" />
-    <meta name="twitter:creator" content="@QuizApp" />
+    <meta name="twitter:image" content="%PUBLIC_URL%/logo.png" />
+    <meta name="twitter:image:alt" content="TriviaVerse Logo" />
+    <meta name="twitter:creator" content="@TriviaVerse" />
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://triviaverse.site/" />
@@ -47,10 +48,15 @@
     <!-- Sitemap -->
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
     
-    <!-- Icons -->
+    <!-- Icons and Logo -->
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Logo Image for SEO -->
+    <meta property="og:image" content="%PUBLIC_URL%/logo.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="image" content="%PUBLIC_URL%/logo.png" />
     
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -71,21 +77,28 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "TriviaVerse",
-      "alternateName": "QuizApp",
+      "alternateName": "Interactive Quiz Platform",
       "url": "https://triviaverse.site",
-      "logo": "https://triviaverse.site/logo512.png",
-      "description": "Interactive quiz platform for testing knowledge, tracking progress, and competing with others",
+      "logo": "https://triviaverse.site/logo.png",
+      "description": "Interactive quiz platform for testing knowledge, tracking progress, and competing with others worldwide",
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "Web Browser",
+      "browserRequirements": "HTML5",
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "USD"
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
       },
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "4.8",
         "ratingCount": "1247"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "TriviaVerse Team",
+        "url": "https://triviaverse.site"
       },
       "featureList": [
         "Interactive Quizzes",
@@ -95,6 +108,127 @@
         "Team Management",
         "Performance Analytics"
       ]
+    }
+    </script>
+    
+    <!-- Organization Schema for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "TriviaVerse",
+      "url": "https://triviaverse.site",
+      "logo": "https://triviaverse.site/logo.png",
+      "description": "Interactive quiz platform for learning and assessment",
+      "sameAs": [
+        "https://www.facebook.com/triviaverse",
+        "https://www.twitter.com/triviaverse",
+        "https://www.linkedin.com/company/triviaverse"
+      ],
+      "contact": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Service",
+        "email": "support@triviaverse.site"
+      }
+    }
+    </script>
+    
+    <!-- BreadcrumbList Schema for Navigation -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://triviaverse.site"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "About",
+          "item": "https://triviaverse.site/about"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Help",
+          "item": "https://triviaverse.site/help"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Blog",
+          "item": "https://triviaverse.site/blog"
+        }
+      ]
+    }
+    </script>
+
+    <!-- FAQPage Schema for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I create a quiz on TriviaVerse?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sign up for an account, navigate to Quiz Management, and follow our intuitive quiz creation wizard to add questions and set difficulty levels."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is TriviaVerse free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! TriviaVerse offers free access to all core features including taking quizzes, tracking progress, and competing on leaderboards."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I create team quizzes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Absolutely! You can create custom quizzes and invite team members to compete together with our team management features."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Offer/Pricing Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "Interactive Quiz Platform",
+      "description": "Comprehensive online quiz platform with leaderboards, progress tracking, and team management",
+      "provider": {
+        "@type": "Organization",
+        "name": "TriviaVerse",
+        "url": "https://triviaverse.site"
+      },
+      "areaServed": "World",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "TriviaVerse Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Free Quiz Platform"
+            },
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        ]
+      }
     }
     </script>
   </head>

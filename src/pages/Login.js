@@ -23,9 +23,11 @@ import {
 } from '@mui/icons-material';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSEO } from '../hooks/useSEO';
 import { loginUser, clearError, setAuthenticated, updateUser } from '../store/slices/authSlice';
 import { BASE_URL } from '../services/api';
 const Login = () => {
+  useSEO('login');
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();

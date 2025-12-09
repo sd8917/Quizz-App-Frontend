@@ -37,6 +37,7 @@ import {
   Terminal,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, fetchUserProfile } from '../store/slices/authSlice';
 import Footer from '../components/Footer';
@@ -44,6 +45,7 @@ import useFetch from '../hooks/useFetch';
 import { userService } from '../services';
 
 const Dashboard = () => {
+  useSEO('dashboard');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.user);

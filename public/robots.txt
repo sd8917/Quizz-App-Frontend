@@ -5,11 +5,25 @@ Allow: /
 # Disallow protected user pages
 Disallow: /profile
 Disallow: /quiz-management
+Disallow: /quiz-results
+Disallow: /channel/
+Disallow: /quiz/
 Disallow: /user-management
 Disallow: /server-logs
+Disallow: /auth/
+Disallow: /api/
 
-# Sitemap
+# Allow specific static assets
+Allow: /static/
+
+# Sitemaps
 Sitemap: https://triviaverse.site/sitemap.xml
 
-# Crawl-delay (reduced for better indexing)
+# Crawl optimization
+User-agent: Googlebot
+Crawl-delay: 0
+Request-rate: 10/1s
+
+User-agent: *
 Crawl-delay: 1
+Request-rate: 5/1s

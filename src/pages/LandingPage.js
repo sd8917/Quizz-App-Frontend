@@ -25,11 +25,13 @@ import {
   Verified as VerifiedIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 import { faqs , features, steps ,services, stats, testimonials} from '../utils/constant';
 import {  useSelector } from 'react-redux';
 
 const LandingPage = () => {
+  useSEO('home');
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   
   const navigate = useNavigate();
