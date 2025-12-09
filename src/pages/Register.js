@@ -24,9 +24,11 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSEO } from '../hooks/useSEO';
 import { registerUser, clearError } from '../store/slices/authSlice';
 
 const Register = () => {
+  useSEO('register');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated, loading: authLoading, error: authError } = useSelector((state) => state.auth);

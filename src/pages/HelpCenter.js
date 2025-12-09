@@ -26,9 +26,11 @@ import {
   ContactSupport as SupportIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 
 const HelpCenter = () => {
+  useSEO('help');
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedFaq, setExpandedFaq] = useState(false);

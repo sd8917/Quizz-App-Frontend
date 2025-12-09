@@ -37,10 +37,12 @@ import {
   FilterList,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 import { leaderboardService, channelService } from '../services';
 
 const Leaderboard = () => {
+  useSEO('leaderboard');
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedChannel, setSelectedChannel] = useState('');

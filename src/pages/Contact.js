@@ -14,9 +14,11 @@ import {
 } from '@mui/material';
 import { ArrowBack, Email, Phone, LocationOn } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 import contactService from '../services/contactService';
 const Contact = () => {
+  useSEO('contact');
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',

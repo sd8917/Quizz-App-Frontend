@@ -17,9 +17,11 @@ import {
   TrendingUp as TrendingIcon,
   Person as PersonIcon,
 } from '@mui/icons-material';
+import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 
 const Blog = () => {
+  useSEO('blog');
   // Sample blog posts - you can update these later
   const blogPosts = [
     {

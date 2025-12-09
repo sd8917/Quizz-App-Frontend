@@ -14,9 +14,11 @@ import {
 } from '@mui/material';
 import { ArrowBack, EmojiEvents, People, Psychology } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 
 const About = () => {
+  useSEO('about');
   const navigate = useNavigate();
 
   const features = [
