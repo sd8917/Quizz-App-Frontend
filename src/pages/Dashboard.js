@@ -35,6 +35,7 @@ import {
   EmojiEvents,
   Schedule,
   Terminal,
+  AutoAwesome,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useSEO } from '../hooks/useSEO';
@@ -573,6 +574,55 @@ const Dashboard = () => {
                     </Box>
                     <Typography variant="body2" color="text.secondary">
                       See how users engage with your content
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={4}>
+                <Card
+                  sx={{
+                    cursor: 'pointer',
+                    transition: 'all 0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4,
+                    },
+                    background: 'linear-gradient(135deg, #f093fb15 0%, #f5576c05 100%)',
+                    border: '2px solid #f093fb50',
+                    position: 'relative',
+                    overflow: 'visible',
+                  }}
+                  onClick={() => navigate('/subscription')}
+                >
+                  <Chip
+                    icon={<AutoAwesome sx={{ fontSize: 16 }} />}
+                    label="New"
+                    size="small"
+                    sx={{
+                      position: 'absolute',
+                      top: -10,
+                      right: 16,
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      color: 'white',
+                      fontWeight: 700,
+                      fontSize: '0.7rem',
+                    }}
+                  />
+                  <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Avatar 
+                        sx={{ 
+                          background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                          mr: 2,
+                        }}
+                      >
+                        <AutoAwesome />
+                      </Avatar>
+                      <Typography variant="h6">AI Features</Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Unlock AI-powered quiz generation tools
                     </Typography>
                   </CardContent>
                 </Card>

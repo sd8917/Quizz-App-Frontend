@@ -71,6 +71,12 @@ export const pageMetas = {
     keywords: 'terms of service, conditions',
     canonicalUrl: 'https://triviaverse.site/terms-conditions',
   },
+  subscription: {
+    title: 'AI Features Subscription',
+    description: 'Unlock powerful AI features for quiz creation. AI-generated questions, smart analytics, and advanced tools for creators.',
+    keywords: 'AI quiz generator, AI subscription, quiz creator tools, AI-powered quizzes, premium features',
+    canonicalUrl: 'https://triviaverse.site/subscription',
+  },
 };
 
 

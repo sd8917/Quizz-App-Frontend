@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import theme from './theme/theme';
 import ProtectedRoute from './components/ProtectedRoute';
+import CreatorRoute from './components/CreatorRoute';
 
 // Lazy loading for better performance
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
@@ -34,6 +35,7 @@ const Disclaimer = React.lazy(() => import('./pages/Disclaimer'));
 const Tutorial = React.lazy(() => import('./pages/Tutorial'));
 const Feedback = React.lazy(() => import('./pages/Feedback'));
 const GoogleCallback = React.lazy(() => import('./pages/GoogleCallback'));
+const Subscription = React.lazy(() => import('./pages/Subscription'));
 
 // Loading component
 const LoadingFallback = () => (
@@ -85,6 +87,7 @@ function App() {
               <Route path="/quiz-results" element={<ProtectedRoute><QuizResults /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+              <Route path="/subscription" element={<CreatorRoute><Subscription /></CreatorRoute>} />
               <Route path="/user-management" element={<ProtectedRoute><UserManagement /></ProtectedRoute> } />
               <Route path="/server-logs" element={<ProtectedRoute><ServerLogs /></ProtectedRoute>} />
               
