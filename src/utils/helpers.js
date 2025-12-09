@@ -186,8 +186,8 @@ export const getActiveColor=(value)=>{
  Get welcome message based on role
 
  */
-export const getWelcomeMessage = (userRole) => {
-    if (userRole === 'admin') return 'Welcome back, Admin! 👨‍💼';
-    if (userRole === 'creator') return 'Welcome back, Creator! 🎨';
-    return 'Welcome back, User! 👋';
+export const getWelcomeMessage = (userRole , name) => {
+    if (userRole === 'admin') return `Welcome back, ${name ? name : "Admin"}! 👨‍💼`;
+    if (userRole === 'creator') return `Welcome back, ${name ? name : "Creator"}! 🎨`;
+    return `Welcome back, ${name ? name : "User"}! 👋`;
 };
