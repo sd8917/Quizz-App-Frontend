@@ -133,51 +133,8 @@ const Dashboard = () => {
   // Select stats based on role
   const stats = userRole === 'admin' ? adminStatsCards : userRole === 'creator' ? creatorStats : userStats;
 
-  // Dummy data for non-user roles
-  const dummyQuizzes = [
-    {
-      title: 'General Knowledge',
-      questions: 10,
-      difficulty: 'Easy',
-      status: 'Available',
-      category: 'Trivia',
-      timeLimit: '10 min',
-    },
-    {
-      title: 'React Basics',
-      questions: 15,
-      difficulty: 'Medium',
-      status: 'Available',
-      category: 'Programming',
-      timeLimit: '15 min',
-    },
-    {
-      title: 'World History',
-      questions: 20,
-      difficulty: 'Hard',
-      status: 'Available',
-      category: 'History',
-      timeLimit: '20 min',
-    },
-    {
-      title: 'JavaScript Advanced',
-      questions: 25,
-      difficulty: 'Hard',
-      status: 'Available',
-      category: 'Programming',
-      timeLimit: '30 min',
-    },
-  ];
-
   // Use real channels for user role, dummy data for others
-  const quizzes = userRole === 'user' ? (channels || []) : dummyQuizzes;
-
-  // Recent activity for users
-  const recentActivity = [
-    { quiz: 'React Basics', score: 1850, date: '2 days ago', status: 'completed' },
-    { quiz: 'General Knowledge', score: 1420, date: '5 days ago', status: 'completed' },
-    { quiz: 'JavaScript Pro', score: 1650, date: '1 week ago', status: 'completed' },
-  ];
+  const quizzes = userRole === 'user' ? (channels || []) : [];
 
   // Creator's quiz performance
   const creatorQuizzes = [
@@ -285,7 +242,7 @@ const Dashboard = () => {
 
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flex: 1 }}>
         <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
-          {getWelcomeMessage()}
+          {getWelcomeMessage(userRole)}
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
           {userRole === 'admin' && 'Manage your platform and monitor performance'}
@@ -407,35 +364,10 @@ const Dashboard = () => {
             <Typography variant="h5" sx={{ mt: 4, mb: 2, fontWeight: 600 }}>
               Recent Activity
             </Typography>
-            <Grid container spacing={3}>
-              {recentActivity.map((activity, index) => (
-                <Grid item xs={12} md={4} key={index}>
-                  <Card>
-                    <CardContent>
-                      <Typography variant="h6" gutterBottom>
-                        {activity.quiz}
-                      </Typography>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Score
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          {activity.score} pts
-                        </Typography>
-                      </Box>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={(activity.score / 2000) * 100} 
-                        sx={{ mb: 1 }}
-                      />
-                      <Typography variant="caption" color="text.secondary">
-                        {activity.date}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+
+            <Box>
+              Comming soon
+            </Box>
           </>
         )}
 
@@ -638,46 +570,9 @@ const Dashboard = () => {
               Available Quizzes
             </Typography>
 
-            <Grid container spacing={3}>
-              {dummyQuizzes.slice(0, 2).map((quiz, index) => (
-                <Grid item xs={12} md={6} key={index}>
-                  <Card>
-                    <CardContent>
-                      <Typography variant="h6" gutterBottom>
-                        {quiz.title}
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                        <Chip label={`${quiz.questions} Questions`} size="small" />
-                        <Chip
-                          label={quiz.difficulty}
-                          size="small"
-                          color={
-                            quiz.difficulty === 'Easy'
-                              ? 'success'
-                              : quiz.difficulty === 'Medium'
-                              ? 'warning'
-                              : 'error'
-                          }
-                        />
-                      </Box>
-                      <Typography variant="body2" color="text.secondary">
-                        Test your knowledge and improve your skills
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button 
-                        size="small" 
-                        variant="contained"
-                        onClick={() => navigate('/quiz/1')}
-                      >
-                        Start Quiz
-                      </Button>
-                      <Button size="small">View Details</Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+            <Box>
+              Coming soon public quizzes
+            </Box>
 
             <Typography variant="h5" sx={{ mt: 4, mb: 2, fontWeight: 600 }}>
               Quick Actions
