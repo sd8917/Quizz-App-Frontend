@@ -35,6 +35,7 @@ import {
   EmojiEvents,
   Schedule,
   Terminal,
+  AutoAwesome,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useSEO } from '../hooks/useSEO';
@@ -43,6 +44,7 @@ import { logoutUser, fetchUserProfile } from '../store/slices/authSlice';
 import Footer from '../components/Footer';
 import useFetch from '../hooks/useFetch';
 import { userService } from '../services';
+import {getWelcomeMessage } from '../utils/helpers';
 
 const Dashboard = () => {
   useSEO('dashboard');
@@ -183,13 +185,6 @@ const Dashboard = () => {
     { title: 'JavaScript Pro', attempts: 145, avgScore: 1420, rating: 4.5 },
     { title: 'CSS Mastery', attempts: 108, avgScore: 1580, rating: 4.7 },
   ];
-
-  // Get welcome message based on role
-  const getWelcomeMessage = () => {
-    if (userRole === 'admin') return 'Welcome back, Admin! 👨‍💼';
-    if (userRole === 'creator') return 'Welcome back, Creator! 🎨';
-    return 'Welcome back, User! 👋';
-  };
 
   const getRoleColor = () => {
     if (userRole === 'admin') return 'error';
@@ -373,7 +368,7 @@ const Dashboard = () => {
                           </Box>
 
                           <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-                            <Chip label={`${channel.questionCount || 0} Questions`} size="small" icon={<QuizIcon />} />
+                            <Chip label={`${channel.totalQuestions || 0} Questions`} size="small" icon={<QuizIcon />} />
                             <Chip
                               label={channel.difficulty || 'Medium'}
                               size="small"
@@ -385,7 +380,7 @@ const Dashboard = () => {
                                   : 'error'
                               }
                             />
-                            {channel.timeLimit && <Chip label={channel.timeLimit} size="small" icon={<Schedule />} />}
+                            {channel.duration && <Chip label={channel.duration + " min"} size="small" icon={<Schedule />} />}
                           </Box>
                           <Typography variant="body2" color="text.secondary">
                             {channel.description || 'Test your knowledge and compete for the top spot on the leaderboard!'}
@@ -579,6 +574,55 @@ const Dashboard = () => {
                     </Box>
                     <Typography variant="body2" color="text.secondary">
                       See how users engage with your content
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={4}>
+                <Card
+                  sx={{
+                    cursor: 'pointer',
+                    transition: 'all 0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4,
+                    },
+                    background: 'linear-gradient(135deg, #f093fb15 0%, #f5576c05 100%)',
+                    border: '2px solid #f093fb50',
+                    position: 'relative',
+                    overflow: 'visible',
+                  }}
+                  onClick={() => navigate('/subscription')}
+                >
+                  <Chip
+                    icon={<AutoAwesome sx={{ fontSize: 16 }} />}
+                    label="New"
+                    size="small"
+                    sx={{
+                      position: 'absolute',
+                      top: -10,
+                      right: 16,
+                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      color: 'white',
+                      fontWeight: 700,
+                      fontSize: '0.7rem',
+                    }}
+                  />
+                  <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Avatar 
+                        sx={{ 
+                          background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                          mr: 2,
+                        }}
+                      >
+                        <AutoAwesome />
+                      </Avatar>
+                      <Typography variant="h6">AI Features</Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Unlock AI-powered quiz generation tools
                     </Typography>
                   </CardContent>
                 </Card>
