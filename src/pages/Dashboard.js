@@ -15,7 +15,6 @@ import {
   Menu,
   MenuItem,
   Chip,
-  LinearProgress,
   Divider,
   CircularProgress,
   Alert,
