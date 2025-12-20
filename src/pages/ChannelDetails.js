@@ -252,15 +252,15 @@ const ChannelDetails = () => {
       // Response may be an array or an object containing a `questions` array
       const data = response?.data ?? response;
       const generatedQuestions = Array.isArray(data) ? data : (data?.questions || []);
+  
+      // const quizData = {
+      //   id: `q_${Date.now()}`,
+      //   title: `AI Generated: ${quizTopic}`,
+      //   category: 'AI Generated',
+      //   questions: generatedQuestions,
+      // };
 
-      const quizData = {
-        id: `q_${Date.now()}`,
-        title: `AI Generated: ${quizTopic}`,
-        category: 'AI Generated',
-        questions: generatedQuestions,
-      };
-
-      setGeneratedQuizData(quizData);
+      setGeneratedQuizData(generatedQuestions);
       setSnackbar({ open: true, message: `Successfully generated ${generatedQuestions.length} questions!`, severity: 'success' });
     } catch (err) {
       console.error('Error generating quiz:', err);
