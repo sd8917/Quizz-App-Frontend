@@ -74,7 +74,7 @@ const Disclaimer = () => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="md" sx={{ mt: 4, mb: 6 }}>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 6 }}>
         <Paper sx={{ p: { xs: 3, md: 4 } }} elevation={2}>
           <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
         </Paper>

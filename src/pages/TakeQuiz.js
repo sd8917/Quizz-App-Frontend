@@ -398,7 +398,7 @@ const TakeQuiz = () => {
   if (alreadySubmitted && submissionData) {
     return (
       <>
-        <Container maxWidth="md" sx={{ py: 8 }}>
+        <Container maxWidth="lg" sx={{ py: 8 }}>
           <Paper elevation={3} sx={{ p: 4 }}>
             <Box sx={{ textAlign: 'center', mb: 4 }}>
               <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
@@ -554,7 +554,7 @@ const TakeQuiz = () => {
   if (!quizStarted) {
     return (
       <>
-        <Container maxWidth="md" sx={{ py: 8 }}>
+        <Container maxWidth="lg" sx={{ py: 8 }}>
           <Paper elevation={3} sx={{ p: 4 }}>
             <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 3 }}>
               {quiz.title}
