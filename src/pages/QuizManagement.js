@@ -435,7 +435,7 @@ const QuizManagement = () => {
       </Snackbar>
 
       {/* Add Question Dialog */}
-      <Dialog open={openAddQuestionDialog} onClose={() => setOpenAddQuestionDialog(false)} maxWidth="md" fullWidth>
+      <Dialog open={openAddQuestionDialog} onClose={() => setOpenAddQuestionDialog(false)} maxWidth="lg" fullWidth>
         <DialogTitle>Add Question to {selectedQuiz?.title}</DialogTitle>
         <DialogContent>
           <TextField
@@ -502,7 +502,7 @@ const QuizManagement = () => {
       </Dialog>
 
       {/* Bulk Upload Dialog */}
-      <Dialog open={openBulkUploadDialog} onClose={() => setOpenBulkUploadDialog(false)} maxWidth="md" fullWidth>
+      <Dialog open={openBulkUploadDialog} onClose={() => setOpenBulkUploadDialog(false)} maxWidth="lg" fullWidth>
         <DialogTitle>Bulk Upload Questions to {selectedQuiz?.name}</DialogTitle>
         <DialogContent>
           <Box sx={{ mt: 2 }}>

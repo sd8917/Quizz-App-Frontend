@@ -47,8 +47,10 @@ const LandingPage = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          minHeight: '100vh',
+          minHeight: '80vh',
           display: 'flex',
+          padding: '50px',
+          paddingTop: '0px',
           alignItems: 'center',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
           position: 'relative',
@@ -76,22 +78,22 @@ const LandingPage = () => {
                     color: 'white',
                     mb: 3,
                     backdropFilter: 'blur(10px)',
-                    fontWeight: 600,
+                    fontWeight: 500,
                   }}
                 />
                 <Typography
                   variant="h1"
                   sx={{
                     fontWeight: 800,
-                    fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
+                    fontSize: { xs: '2.5rem', md: '2.5rem', lg: '3.5rem' },
                     lineHeight: 1.2,
                     mb: 3,
                     textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
                   }}
                 >
-                  Master Any Topic with
+                  Master Any Topic 
                   <Box component="span" sx={{ display: 'block', color: '#fbbf24' }}>
-                    Interactive Quizzes
+                   with  Interactive Quizzes
                   </Box>
                 </Typography>
                 <Typography
@@ -201,7 +203,7 @@ const LandingPage = () => {
                 }}
               >
                 <Paper
-                  elevation={20}
+                  elevation={50}
                   sx={{
                     borderRadius: 4,
                     overflow: 'hidden',
@@ -217,8 +219,8 @@ const LandingPage = () => {
                     src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop"
                     alt="Students learning with interactive quizzes on TriviaVerse"
                     fetchpriority="high"
-                    width="800"
-                    height="600"
+                    width="400"
+                    height="400"
                     style={{ width: '100%', display: 'block' }}
                   />
                 </Paper>
@@ -556,7 +558,7 @@ const LandingPage = () => {
 
       {/* FAQ Section */}
       <Box sx={{ py: 10, bgcolor: '#f9fafb' }}>
-        <Container maxWidth="md">
+        <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center', mb: 6 }}>
             <Chip
               label="FAQ"
@@ -612,7 +614,7 @@ const LandingPage = () => {
           textAlign: 'center',
         }}
       >
-        <Container maxWidth="md">
+        <Container maxWidth="lg">
           <Typography variant="h2" sx={{ fontWeight: 800, mb: 3 }}>
             Ready to Get Started?
           </Typography>

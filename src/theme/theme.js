@@ -2,6 +2,15 @@ import { createTheme } from '@mui/material/styles';
 
 // Custom color palette
 const theme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1050, // Custom size between md (900px) and original lg (1200px)
+      xl: 1536,
+    },
+  },
   palette: {
     mode: 'light',
     primary: {

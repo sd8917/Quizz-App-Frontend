@@ -190,7 +190,7 @@ const Profile = () => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="md" sx={{ mt: 4, mb: 4, flex: 1 }}>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flex: 1 }}>
         {error && (
           <Alert severity="warning" sx={{ mb: 3 }}>
             {error}

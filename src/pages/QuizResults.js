@@ -95,7 +95,7 @@ const QuizResults = () => {
           pb: 8,
         }}
       >
-        <Container maxWidth="md" sx={{ py: 6 }}>
+        <Container maxWidth="lg" sx={{ py: 6 }}>
           {/* Score Card */}
           <Paper 
             elevation={6} 
