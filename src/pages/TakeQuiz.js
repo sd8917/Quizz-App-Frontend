@@ -51,11 +51,113 @@ const TakeQuiz = () => {
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
+  const [showFullscreenWarning, setShowFullscreenWarning] = useState(false);
+  const [fullscreenExitCount, setFullscreenExitCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fetchingQuestions, setFetchingQuestions] = useState(false);
   const [submissionData, setSubmissionData] = useState(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+
+  // Fullscreen handling
+  const enterFullscreen = () => {
+    if (document.fullscreenElement) {
+      // Already in fullscreen, no need to request again
+      return;
+    }
+
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(err => {
+        // If fullscreen fails, show a message or handle gracefully
+        setError('Fullscreen mode is required for this quiz. Please allow fullscreen and try again.');
+      });
+    } else {
+      console.warn('Fullscreen API not supported');
+      setError('Your browser does not support fullscreen mode, which is required for this quiz.');
+    }
+  };
+
+  const handleFullscreenChange = useCallback(async () => {
+    if (!document.fullscreenElement) {
+      const newCount = fullscreenExitCount + 1;
+      setFullscreenExitCount(newCount);
+      setShowFullscreenWarning(true);
+
+      // Report to backend if exit count exceeds 3
+      if (newCount > 3) {
+        try {
+          await quizService.reportFullscreenViolation(quizId, newCount);
+          // redirect to /
+          navigate('/dashboard');
+        } catch (error) {
+          console.error('Failed to report fullscreen violation:', error);
+        }
+      }
+    }
+    // eslint-disable-next-line
+  }, [fullscreenExitCount, quizId]);
+
+  // Add fullscreen event listener when quiz starts
+  useEffect(() => {
+    if (quizStarted && !quizSubmitted) {
+      document.addEventListener('fullscreenchange', handleFullscreenChange);
+      enterFullscreen();
+    }
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  // eslint-disable-next-line
+  }, [quizStarted, quizSubmitted, handleFullscreenChange]);
+
+  // Prevent cheating actions when quiz is active
+  useEffect(() => {
+    if (!quizStarted || quizSubmitted) return;
+
+    const preventDefault = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const preventShortcuts = (e) => {
+      // Prevent common copy/paste shortcuts and other potentially cheating keys
+      if (e.ctrlKey || e.metaKey) {
+        const key = e.key.toLowerCase();
+        if (['c', 'v', 'x', 'a', 's', 'u', 'p', 'i', 'j', 'k'].includes(key)) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+      // Prevent F12 (dev tools), F11 (fullscreen toggle), and other function keys
+      if (e.key.startsWith('F') && ['F12', 'F11', 'F5', 'F3'].includes(e.key)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      // Prevent Print Screen
+      if (e.key === 'PrintScreen') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    // Add event listeners to prevent cheating
+    document.addEventListener('contextmenu', preventDefault);
+    document.addEventListener('copy', preventDefault);
+    document.addEventListener('paste', preventDefault);
+    document.addEventListener('cut', preventDefault);
+    document.addEventListener('selectstart', preventDefault);
+    document.addEventListener('keydown', preventShortcuts);
+
+    return () => {
+      // Remove event listeners when quiz ends
+      document.removeEventListener('contextmenu', preventDefault);
+      document.removeEventListener('copy', preventDefault);
+      document.removeEventListener('paste', preventDefault);
+      document.removeEventListener('cut', preventDefault);
+      document.removeEventListener('selectstart', preventDefault);
+      document.removeEventListener('keydown', preventShortcuts);
+    };
+  }, [quizStarted, quizSubmitted]);
 
   // Fetch channel info and check submission status on component mount
   useEffect(() => {
@@ -1046,6 +1148,36 @@ const TakeQuiz = () => {
           </DialogActions>
         </Dialog>
 
+        {/* Fullscreen warning dialog */}
+        <Dialog open={showFullscreenWarning} disableEscapeKeyDown={true}>
+          <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <WarningIcon color="warning" />
+            Fullscreen Required
+          </DialogTitle>
+          <DialogContent>
+            <Typography paragraph>
+              Please stay in fullscreen mode to continue the quiz. Exiting fullscreen is not allowed during the quiz.It may cause end your test session.
+            </Typography>
+            {fullscreenExitCount > 1 && (
+              <>
+                <Alert severity="warning" sx={{ mt: 2 }}>
+                  You have attempted to exit fullscreen {fullscreenExitCount} times. Please remain in fullscreen mode to continue the quiz.
+                </Alert>
+              </>
+              
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => {
+              // Request fullscreen immediately as part of the user gesture
+              enterFullscreen();
+              setShowFullscreenWarning(false);
+            }} variant="contained">
+              Okay
+            </Button>
+          </DialogActions>
+        </Dialog>
+
         {/* Submitting overlay */}
         {quizSubmitted && (
           <Dialog open={quizSubmitted}>
@@ -1062,7 +1194,7 @@ const TakeQuiz = () => {
           </Dialog>
         )}
       </Box>
-      <Footer />
+      
     </>
   );
 };
