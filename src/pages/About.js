@@ -131,6 +131,7 @@ const About = () => {
                       height: 56,
                       mb: 2,
                     }}
+                    alt='Icon avatar'
                   >
                     {feature.icon}
                   </Avatar>

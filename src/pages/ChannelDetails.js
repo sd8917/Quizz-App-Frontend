@@ -704,7 +704,7 @@ const ChannelDetails = () => {
                   <React.Fragment key={user._id || user.email || index}>
                     <ListItem>
                       <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: 'primary.main' }}>
+                        <Avatar sx={{ bgcolor: 'primary.main' }}  alt='Email icon'>
                           {user.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || 'U'}12
                         </Avatar>
                       </ListItemAvatar>
@@ -799,7 +799,7 @@ const ChannelDetails = () => {
 
                             {/* User Info */}
                             <ListItemAvatar>
-                              <Avatar sx={{ bgcolor: 'primary.main' }}>
+                              <Avatar sx={{ bgcolor: 'primary.main' }}  alt='Name icon'>
                                 {entry.username?.charAt(0)?.toUpperCase() || 
                                  entry.email?.charAt(0)?.toUpperCase() || 'U'}
                               </Avatar>

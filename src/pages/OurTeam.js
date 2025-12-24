@@ -111,6 +111,7 @@ const OurTeam = () => {
                       border: '4px solid',
                       borderColor: 'primary.main',
                     }}
+                    alt="member name icon"
                   />
                   <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
                     {member.name}

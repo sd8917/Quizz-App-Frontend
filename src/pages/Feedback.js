@@ -157,7 +157,7 @@ const Feedback = () => {
               {list.map((item, idx) => (
                 <ListItem key={item._id || idx} alignItems="flex-start" sx={{ mb: 1 }}>
                   <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: 'primary.main' }}>{(item.name || 'U').charAt(0)}</Avatar>
+                    <Avatar sx={{ bgcolor: 'primary.main' }} alt='name avatar'>{(item.name || 'U').charAt(0)}</Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={<Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}><Typography sx={{ fontWeight: 700 }}>{item.name}</Typography><Rating value={item.rating || 5} size="small" readOnly /></Box>}
