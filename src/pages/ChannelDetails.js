@@ -287,10 +287,10 @@ const ChannelDetails = () => {
 
   const handleAddToChannel = async () => {
     // This would integrate with your bulk upload functionality
-    setSnackbar({ 
-      open: true, 
-      message: 'Feature coming soon! Use the copy button to paste into bulk upload.', 
-      severity: 'info' 
+    setSnackbar({
+      open: true,
+      message: 'Feature coming soon! Use the copy button to paste into bulk upload.',
+      severity: 'info'
     });
   };
 
@@ -618,7 +618,7 @@ const ChannelDetails = () => {
                         color="primary"
                         sx={{ fontWeight: 600, minWidth: 50 }}
                       />
-                      <Typography sx={{ flexGrow: 1, fontWeight: 500 }}>
+                      <Typography sx={{ bgcolor: 'grey.100', fontFamily: 'monospace', flexGrow: 1, fontWeight: 500,whiteSpace: "pre-wrap"  }}>
                         {question?.questionText}
                       </Typography>
                       <Chip
