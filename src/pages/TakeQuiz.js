@@ -51,11 +51,51 @@ const TakeQuiz = () => {
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
+  const [showFullscreenWarning, setShowFullscreenWarning] = useState(false);
+  const [fullscreenExitCount, setFullscreenExitCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fetchingQuestions, setFetchingQuestions] = useState(false);
   const [submissionData, setSubmissionData] = useState(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+
+  // Fullscreen handling
+  const enterFullscreen = () => {
+    if (document.fullscreenElement) {
+      // Already in fullscreen, no need to request again
+      return;
+    }
+
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error('Error entering fullscreen:', err);
+        // If fullscreen fails, show a message or handle gracefully
+        setError('Fullscreen mode is required for this quiz. Please allow fullscreen and try again.');
+      });
+    } else {
+      console.warn('Fullscreen API not supported');
+      setError('Your browser does not support fullscreen mode, which is required for this quiz.');
+    }
+  };
+
+  const handleFullscreenChange = useCallback(() => {
+    if (!document.fullscreenElement) {
+      setFullscreenExitCount(prev => prev + 1);
+      setShowFullscreenWarning(true);
+    }
+  }, []);
+
+  // Add fullscreen event listener when quiz starts
+  useEffect(() => {
+    if (quizStarted && !quizSubmitted) {
+      document.addEventListener('fullscreenchange', handleFullscreenChange);
+      enterFullscreen();
+    }
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [quizStarted, quizSubmitted, handleFullscreenChange]);
 
   // Fetch channel info and check submission status on component mount
   useEffect(() => {
@@ -1042,6 +1082,36 @@ const TakeQuiz = () => {
             </Button>
             <Button onClick={handleExitQuiz} variant="contained" color="error">
               Exit Without Saving
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Fullscreen warning dialog */}
+        <Dialog open={showFullscreenWarning} disableEscapeKeyDown={true}>
+          <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <WarningIcon color="warning" />
+            Fullscreen Required
+          </DialogTitle>
+          <DialogContent>
+            <Typography paragraph>
+              Please stay in fullscreen mode to continue the quiz. Exiting fullscreen is not allowed during the quiz.It may cause end your test session.
+            </Typography>
+            {fullscreenExitCount > 1 && (
+              <>
+                <Alert severity="warning" sx={{ mt: 2 }}>
+                  You have attempted to exit fullscreen {fullscreenExitCount} times. Please remain in fullscreen mode to continue the quiz.
+                </Alert>
+              </>
+              
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => {
+              // Request fullscreen immediately as part of the user gesture
+              enterFullscreen();
+              setShowFullscreenWarning(false);
+            }} variant="contained">
+              Okay
             </Button>
           </DialogActions>
         </Dialog>
