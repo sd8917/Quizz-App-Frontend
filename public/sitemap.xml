@@ -6,7 +6,7 @@
   
   <!-- Homepage -->
   <url>
-    <loc>https://triviaverse.site/</loc>
+    <loc>https://www.triviaverse.site/</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -14,56 +14,56 @@
   
   <!-- Public Pages -->
   <url>
-    <loc>https://triviaverse.site/login</loc>
+    <loc>https://www.triviaverse.site/login</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/register</loc>
+    <loc>https://www.triviaverse.site/register</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/about</loc>
+    <loc>https://www.triviaverse.site/about</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/team</loc>
+    <loc>https://www.triviaverse.site/team</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/careers</loc>
+    <loc>https://www.triviaverse.site/careers</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/blog</loc>
+    <loc>https://www.triviaverse.site/blog</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/help</loc>
+    <loc>https://www.triviaverse.site/help</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/contact</loc>
+    <loc>https://www.triviaverse.site/contact</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -71,42 +71,42 @@
   
   <!-- Legal Pages -->
   <url>
-    <loc>https://triviaverse.site/privacy-policy</loc>
+    <loc>https://www.triviaverse.site/privacy-policy</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/terms-conditions</loc>
+    <loc>https://www.triviaverse.site/terms-conditions</loc>
     <lastmod>2025-11-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/cookie-policy</loc>
+    <loc>https://www.triviaverse.site/cookie-policy</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://triviaverse.site/disclaimer</loc>
+    <loc>https://www.triviaverse.site/disclaimer</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
 
   <url>
-    <loc>https://triviaverse.site/tutorial</loc>
+    <loc>https://www.triviaverse.site/tutorial</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://triviaverse.site/feedback</loc>
+    <loc>https://www.triviaverse.site/feedback</loc>
     <lastmod>2025-12-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
