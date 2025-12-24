@@ -315,8 +315,15 @@ const Dashboard = () => {
                                 <Typography variant="h6" gutterBottom>
                                   {channel.name || channel.title || 'Untitled Channel'}
                                 </Typography>
-                                <Typography variant="caption" color="text.secondary">
-                                  {channel.category || 'General'}
+                                
+                                 <Typography variant="caption" color="text.success" sx={{ 
+                                    color: 'white', 
+                                    bgcolor: 'success.main', 
+                                    padding: "5px",
+                                    borderRadius: "5px"
+                                    
+                                  }}>
+                                  {channel?.isPublic || "Public"}
                                 </Typography>
                               </Box>
                             </Box>

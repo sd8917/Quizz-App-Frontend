@@ -20,6 +20,10 @@ import {
   CircularProgress,
   Alert,
   Snackbar,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import { ArrowBack, Add, Upload, PostAdd, PersonAdd } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +38,7 @@ const QuizManagement = () => {
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [channelName, setChannelName] = useState('');
   const [channelDescription, setChannelDescription] = useState('');
+  const [channelType, setChannelType] = useState('public'); // Default to public
   const [channels, setChannels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -48,6 +53,12 @@ const QuizManagement = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [channelToDelete, setChannelToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [channelToEdit, setChannelToEdit] = useState(null);
+  const [editChannelName, setEditChannelName] = useState('');
+  const [editChannelDescription, setEditChannelDescription] = useState('');
+  const [editChannelType, setEditChannelType] = useState('public');
+  const [updating, setUpdating] = useState(false);
 
   // Fetch channels on component mount
   useEffect(() => {
@@ -80,13 +91,15 @@ const QuizManagement = () => {
       const channelData = {
         name: channelName,
         description: channelDescription,
+        type: channelType,
       };
-      
+
       await channelService.createChannel(channelData);
       setSnackbar({ open: true, message: 'Channel created successfully', severity: 'success' });
       setOpenDialog(false);
       setChannelName('');
       setChannelDescription('');
+      setChannelType('public');
       
       // Refresh channels list
       fetchChannels();
@@ -212,29 +225,84 @@ const QuizManagement = () => {
     setDeleting(true);
     try {
       await channelService.deleteChannel(channelToDelete._id);
-      
+
       // Remove channel from local state
-      setChannels(prevChannels => 
+      setChannels(prevChannels =>
         prevChannels.filter(ch => ch._id !== channelToDelete._id)
       );
-      
-      setSnackbar({ 
-        open: true, 
-        message: `Channel "${channelToDelete.name}" deleted successfully!`, 
-        severity: 'success' 
+
+      setSnackbar({
+        open: true,
+        message: `Channel "${channelToDelete.name}" deleted successfully!`,
+        severity: 'success'
       });
-      
+
       setOpenDeleteDialog(false);
       setChannelToDelete(null);
     } catch (err) {
       console.error('Error deleting channel:', err);
-      setSnackbar({ 
-        open: true, 
-        message: err.message || 'Failed to delete channel', 
-        severity: 'error' 
+      setSnackbar({
+        open: true,
+        message: err.message || 'Failed to delete channel',
+        severity: 'error'
       });
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleEditChannel = (channel) => {
+    setChannelToEdit(channel);
+    setEditChannelName(channel.name);
+    setEditChannelDescription(channel.description || '');
+    setEditChannelType(channel.type || 'public');
+    setOpenEditDialog(true);
+  };
+
+  const handleUpdateChannel = async () => {
+    if (!editChannelName.trim()) {
+      setSnackbar({ open: true, message: 'Channel name is required', severity: 'warning' });
+      return;
+    }
+
+    if (!channelToEdit) return;
+
+    setUpdating(true);
+    try {
+      const channelData = {
+        name: editChannelName,
+        description: editChannelDescription,
+        type: editChannelType,
+      };
+
+      await channelService.updateChannel(channelToEdit._id, channelData);
+
+      // Update local state
+      setChannels(prevChannels =>
+        prevChannels.map(ch =>
+          ch._id === channelToEdit._id
+            ? { ...ch, name: editChannelName, description: editChannelDescription, type: editChannelType }
+            : ch
+        )
+      );
+
+      setSnackbar({
+        open: true,
+        message: 'Channel updated successfully',
+        severity: 'success'
+      });
+
+      setOpenEditDialog(false);
+      setChannelToEdit(null);
+    } catch (err) {
+      console.error('Error updating channel:', err);
+      setSnackbar({
+        open: true,
+        message: err.message || 'Failed to update channel',
+        severity: 'error'
+      });
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -366,7 +434,15 @@ const QuizManagement = () => {
                     >
                       Add in Bulk
                     </Button>
-                    <Button size="small">Edit</Button>
+                    <Button
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditChannel(channel);
+                      }}
+                    >
+                      Edit
+                    </Button>
                     <Button 
                       size="small" 
                       color="error"
@@ -386,6 +462,7 @@ const QuizManagement = () => {
         )}
       </Container>
 
+       {/* Create channel dialogbox */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Create New Quiz Channel</DialogTitle>
         <DialogContent>
@@ -409,6 +486,17 @@ const QuizManagement = () => {
             placeholder="e.g., Its about ai exam and its summary for quick learning of user."
             sx={{ mt: 2 }}
           />
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>Channel Type</InputLabel>
+            <Select
+              value={channelType}
+              label="Channel Type"
+              onChange={(e) => setChannelType(e.target.value)}
+            >
+              <MenuItem value="public">Public</MenuItem>
+              <MenuItem value="private">Private</MenuItem>
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} disabled={loading}>Cancel</Button>
@@ -417,7 +505,7 @@ const QuizManagement = () => {
             onClick={handleCreateChannel}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} /> : 'Create 1'}
+            {loading ? <CircularProgress size={24} /> : 'Create'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -628,6 +716,54 @@ const QuizManagement = () => {
             startIcon={deleting ? <CircularProgress size={20} color="inherit" /> : null}
           >
             {deleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit Channel Dialog */}
+      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Edit Channel</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Channel Name"
+            fullWidth
+            value={editChannelName}
+            onChange={(e) => setEditChannelName(e.target.value)}
+            placeholder="e.g., Ai developer MCQ"
+          />
+          <TextField
+            margin="dense"
+            label="Channel Description"
+            fullWidth
+            multiline
+            rows={3}
+            value={editChannelDescription}
+            onChange={(e) => setEditChannelDescription(e.target.value)}
+            placeholder="e.g., Its about ai exam and its summary for quick learning of user."
+            sx={{ mt: 2 }}
+          />
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>Channel Type</InputLabel>
+            <Select
+              value={editChannelType}
+              label="Channel Type"
+              onChange={(e) => setEditChannelType(e.target.value)}
+            >
+              <MenuItem value="public">Public</MenuItem>
+              <MenuItem value="private">Private</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenEditDialog(false)} disabled={updating}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleUpdateChannel}
+            disabled={updating}
+          >
+            {updating ? <CircularProgress size={24} /> : 'Update'}
           </Button>
         </DialogActions>
       </Dialog>
