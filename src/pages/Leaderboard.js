@@ -201,6 +201,7 @@ const Leaderboard = () => {
                         height: 40,
                         mr: 2,
                       }}
+                       alt="stat icon"
                     >
                       {stat.icon}
                     </Avatar>
@@ -342,7 +343,7 @@ const Leaderboard = () => {
                             </TableCell>
                             <TableCell>
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <Avatar sx={{ bgcolor: 'primary.main', fontWeight: 600 }}>
+                                <Avatar sx={{ bgcolor: 'primary.main', fontWeight: 600 }}  alt="user name icon">
                                   {player.username?.charAt(0)?.toUpperCase() || player.email?.charAt(0)?.toUpperCase() || 'U'}
                                 </Avatar>
                                 <Box>

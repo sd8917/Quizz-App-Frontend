@@ -529,6 +529,7 @@ const LandingPage = () => {
                     <Avatar
                       src={testimonial.avatar}
                       sx={{ width: 60, height: 60, mr: 2 }}
+                      alt='Profile avatar'
                     />
                     <Box>
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>

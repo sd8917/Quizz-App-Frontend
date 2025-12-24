@@ -219,6 +219,7 @@ const Profile = () => {
                 boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)',
                 border: '4px solid white',
               }}
+               alt="name icon"
             >
               {displayUser?.username?.charAt(0)?.toUpperCase() || 'U'}
             </Avatar>

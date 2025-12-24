@@ -152,7 +152,7 @@ const Blog = () => {
                   {blogPosts[0].excerpt}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                  <Avatar sx={{ width: 40, height: 40 }}>
+                  <Avatar sx={{ width: 40, height: 40 }}  alt='Person icon'>
                     <PersonIcon />
                   </Avatar>
                   <Box>
@@ -210,7 +210,7 @@ const Blog = () => {
                     {post.excerpt}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <Avatar sx={{ width: 32, height: 32 }}>
+                    <Avatar sx={{ width: 32, height: 32 }} alt='Person icon'>
                       <PersonIcon fontSize="small" />
                     </Avatar>
                     <Box>

@@ -206,7 +206,7 @@ const Dashboard = () => {
             color="inherit"
             onClick={handleMenuOpen}
           >
-            <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}  alt='Name icon'>
               {authUser?.username?.charAt(0)?.toUpperCase() || 'U'}
             </Avatar>
           </IconButton>
@@ -261,7 +261,7 @@ const Dashboard = () => {
               >
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar sx={{ bgcolor: stat.color, mr: 2 }}>
+                    <Avatar sx={{ bgcolor: stat.color, mr: 2 }}  alt='stat icon'>
                       {stat.icon}
                     </Avatar>
                   </Box>
@@ -308,15 +308,22 @@ const Dashboard = () => {
                         <CardContent>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                              <Avatar sx={{ bgcolor: color, width: 44, height: 44 }}>
+                              <Avatar sx={{ bgcolor: color, width: 44, height: 44 }} alt='Quiz icon'>
                                 <QuizIcon />
                               </Avatar>
                               <Box>
                                 <Typography variant="h6" gutterBottom>
                                   {channel.name || channel.title || 'Untitled Channel'}
                                 </Typography>
-                                <Typography variant="caption" color="text.secondary">
-                                  {channel.category || 'General'}
+                                
+                                 <Typography variant="caption" color="text.success" sx={{ 
+                                    color: 'white', 
+                                    bgcolor: 'success.main', 
+                                    padding: "5px",
+                                    borderRadius: "5px"
+                                    
+                                  }}>
+                                  {channel?.isPublic || "Public"}
                                 </Typography>
                               </Box>
                             </Box>
@@ -442,7 +449,7 @@ const Dashboard = () => {
                 >
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
+                      <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }} alt='Create icon'>
                         <Create />
                       </Avatar>
                       <Typography variant="h6">Create New Quiz Channel</Typography>
@@ -470,7 +477,7 @@ const Dashboard = () => {
                 >
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: 'success.main', mr: 2 }}>
+                      <Avatar sx={{ bgcolor: 'success.main', mr: 2 }} alt='Assessment icon'>
                         <Assessment />
                       </Avatar>
                       <Typography variant="h6">View Analytics</Typography>
@@ -498,7 +505,7 @@ const Dashboard = () => {
                 >
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: 'secondary.main', mr: 2 }}>
+                      <Avatar sx={{ bgcolor: 'secondary.main', mr: 2 }} alt='Community icon'>
                         <People />
                       </Avatar>
                       <Typography variant="h6">Community</Typography>
@@ -547,6 +554,7 @@ const Dashboard = () => {
                           background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
                           mr: 2,
                         }}
+                        alt='Ai icon'
                       >
                         <AutoAwesome />
                       </Avatar>
@@ -592,7 +600,7 @@ const Dashboard = () => {
                 >
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }}>
+                      <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }} alt='Leaderboard icon'>
                         <LeaderboardIcon />
                       </Avatar>
                       <Typography variant="h6">Leaderboard</Typography>
@@ -618,7 +626,7 @@ const Dashboard = () => {
             >
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'info.main', mr: 2 }}>
+                  <Avatar sx={{ bgcolor: 'info.main', mr: 2 }} alt='Person icon'>
                     <PersonIcon />
                   </Avatar>
                   <Typography variant="h6">User Management</Typography>
@@ -644,7 +652,7 @@ const Dashboard = () => {
             >
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'success.main', mr: 2 }}>
+                  <Avatar sx={{ bgcolor: 'success.main', mr: 2 }} alt='Quiz icon'>
                     <QuizIcon />
                   </Avatar>
                   <Typography variant="h6">Quiz Management</Typography>
@@ -670,7 +678,7 @@ const Dashboard = () => {
             >
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }}>
+                  <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }} alt='server icon'>
                     <Terminal />
                   </Avatar>
                   <Typography variant="h6">Server Logs</Typography>

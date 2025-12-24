@@ -511,6 +511,7 @@ const UserManagement = () => {
                             bgcolor: `${stats.find((s) => s.title.includes(user.role))?.color || '#6366f1'}20`,
                             color: stats.find((s) => s.title.includes(user.role))?.color || '#6366f1',
                           }}
+                           alt="username icon"
                         >
                           {user.username[0]?.toUpperCase()}
                         </Avatar>
