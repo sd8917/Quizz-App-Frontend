@@ -68,7 +68,6 @@ const TakeQuiz = () => {
 
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen().catch(err => {
-        console.error('Error entering fullscreen:', err);
         // If fullscreen fails, show a message or handle gracefully
         setError('Fullscreen mode is required for this quiz. Please allow fullscreen and try again.');
       });
@@ -78,12 +77,25 @@ const TakeQuiz = () => {
     }
   };
 
-  const handleFullscreenChange = useCallback(() => {
+  const handleFullscreenChange = useCallback(async () => {
     if (!document.fullscreenElement) {
-      setFullscreenExitCount(prev => prev + 1);
+      const newCount = fullscreenExitCount + 1;
+      setFullscreenExitCount(newCount);
       setShowFullscreenWarning(true);
+
+      // Report to backend if exit count exceeds 3
+      if (newCount > 3) {
+        try {
+          await quizService.reportFullscreenViolation(quizId, newCount);
+          // redirect to /
+          navigate('/dashboard');
+        } catch (error) {
+          console.error('Failed to report fullscreen violation:', error);
+        }
+      }
     }
-  }, []);
+    // eslint-disable-next-line
+  }, [fullscreenExitCount, quizId]);
 
   // Add fullscreen event listener when quiz starts
   useEffect(() => {
@@ -95,7 +107,57 @@ const TakeQuiz = () => {
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
+  // eslint-disable-next-line
   }, [quizStarted, quizSubmitted, handleFullscreenChange]);
+
+  // Prevent cheating actions when quiz is active
+  useEffect(() => {
+    if (!quizStarted || quizSubmitted) return;
+
+    const preventDefault = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const preventShortcuts = (e) => {
+      // Prevent common copy/paste shortcuts and other potentially cheating keys
+      if (e.ctrlKey || e.metaKey) {
+        const key = e.key.toLowerCase();
+        if (['c', 'v', 'x', 'a', 's', 'u', 'p', 'i', 'j', 'k'].includes(key)) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+      // Prevent F12 (dev tools), F11 (fullscreen toggle), and other function keys
+      if (e.key.startsWith('F') && ['F12', 'F11', 'F5', 'F3'].includes(e.key)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      // Prevent Print Screen
+      if (e.key === 'PrintScreen') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    // Add event listeners to prevent cheating
+    document.addEventListener('contextmenu', preventDefault);
+    document.addEventListener('copy', preventDefault);
+    document.addEventListener('paste', preventDefault);
+    document.addEventListener('cut', preventDefault);
+    document.addEventListener('selectstart', preventDefault);
+    document.addEventListener('keydown', preventShortcuts);
+
+    return () => {
+      // Remove event listeners when quiz ends
+      document.removeEventListener('contextmenu', preventDefault);
+      document.removeEventListener('copy', preventDefault);
+      document.removeEventListener('paste', preventDefault);
+      document.removeEventListener('cut', preventDefault);
+      document.removeEventListener('selectstart', preventDefault);
+      document.removeEventListener('keydown', preventShortcuts);
+    };
+  }, [quizStarted, quizSubmitted]);
 
   // Fetch channel info and check submission status on component mount
   useEffect(() => {
@@ -1132,7 +1194,7 @@ const TakeQuiz = () => {
           </Dialog>
         )}
       </Box>
-      <Footer />
+      
     </>
   );
 };

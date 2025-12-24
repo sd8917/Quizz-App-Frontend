@@ -131,6 +131,21 @@ const quizService = {
       throw error.response?.data || error.message;
     }
   },
+
+  /**
+   * Report fullscreen violation
+   * @param {string} channelId - Channel ID
+   * @param {number} exitCount - Number of fullscreen exits
+   * @returns {Promise} Response from backend
+   */
+  reportFullscreenViolation: async (channelId, exitCount) => {
+    try {
+      const response = await apiClient.post(`/attempt/channel/${channelId}/fullscreen-violation`, { exitCount });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default quizService;
