@@ -791,7 +791,7 @@ const TakeQuiz = () => {
                 </Box>
 
                 {/* Question text */}
-                <Typography variant="h6" sx={{ mb: 4, lineHeight: 1.6 }}>
+                <Typography variant="h6" sx={{ bgcolor: 'grey.100', fontFamily: 'monospace', mb: 4, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
                   {currentQuestion.question}
                 </Typography>
 
