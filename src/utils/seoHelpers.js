@@ -40,6 +40,7 @@ export const pageMetas = {
     description: 'Compete with users worldwide and see your ranking on our global leaderboard.',
     keywords: 'quiz leaderboard, rankings, global competition',
     canonicalUrl: 'https://triviaverse.site/leaderboard',
+    isProtected: true,
   },
   blog: {
     title: 'Blog & Resources',
@@ -76,6 +77,7 @@ export const pageMetas = {
     description: 'Unlock powerful AI features for quiz creation. AI-generated questions, smart analytics, and advanced tools for creators.',
     keywords: 'AI quiz generator, AI subscription, quiz creator tools, AI-powered quizzes, premium features',
     canonicalUrl: 'https://triviaverse.site/subscription',
+    isProtected: true,
   },
 };
 
@@ -94,6 +96,7 @@ export const pageMetas = {
  * @param {string} config.canonicalUrl - Canonical URL
  * @param {string} config.ogImage - OG image URL
  * @param {string} config.ogType - Open Graph type (default: "website")
+ * @param {boolean} config.isProtected - Whether the page requires authentication
  */
 export const updatePageMeta = (config) => {
   const {
@@ -103,6 +106,7 @@ export const updatePageMeta = (config) => {
     canonicalUrl,
     ogImage = 'https://triviaverse.site/logo.png',
     ogType = 'website',
+    isProtected = false,
   } = config;
 
   // Update document title
@@ -120,6 +124,13 @@ export const updatePageMeta = (config) => {
   updateMetaTag('twitter:title', title);
   updateMetaTag('twitter:description', description);
   updateMetaTag('twitter:image', ogImage);
+
+  // Set robots meta tag based on protection status
+  if (isProtected) {
+    updateMetaTag('robots', 'noindex, nofollow');
+  } else {
+    updateMetaTag('robots', 'index, follow');
+  }
 
   // Update canonical URL
   if (canonicalUrl) {
