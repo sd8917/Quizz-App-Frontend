@@ -3,13 +3,27 @@ import axios from 'axios';
 // Base API configuration
 const BASE_URL = 'https://api.triviaverse.site/api';
 
-// Create axios instance with default config
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
   timeout: 30000, // 10 seconds
+  withCredentials: true,
 });
 
 // Request interceptor - Add auth token to requests
@@ -21,30 +35,66 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  Promise.reject
 );
 
 // Response interceptor - Handle 401 errors
 apiClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error) => {
-    // If error is 401, clear storage and redirect to login
+
+    const originalRequest = error.config;
+
+    // If 401 & not already retried
     if (error.response?.status === 401) {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('user');
       
-      // Dispatch custom event for auth components to listen
-      window.dispatchEvent(new CustomEvent('auth:logout', { 
-        detail: { reason: 'Token expired' } 
-      }));
-      
-      // Redirect to login if not already there
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login?session=expired';
+      if (isRefreshing) {
+        // Queue pending requests
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          })
+          .catch(Promise.reject);
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const { data } = await axios.get(`${BASE_URL}/refresh`, {
+          withCredentials: true,
+        });
+
+        const newAccessToken = data?.data?.accessToken;
+
+        if (!newAccessToken) throw new Error("No access token");
+
+        localStorage.setItem("accessToken", newAccessToken);
+        apiClient.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        processQueue(null, newAccessToken);
+
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+
+        // Logout
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+
+        window.dispatchEvent(
+          new CustomEvent("auth:logout", {
+            detail: { reason: "Session expired" },
+          })
+        );
+
+        window.location.href = "/login?session=expired";
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
