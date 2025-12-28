@@ -118,6 +118,33 @@ const authService = {
       throw error.response?.data || error.message;
     }
   },
+
+  /**
+   * Refresh access token using refresh token
+   * @returns {Promise} Response with new tokens
+   */
+  refreshToken: async () => {
+    try {
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
+
+      const response = await apiClient.get('/refresh', { withCredentials: true });
+
+      // Update stored tokens
+      if (response.data?.data?.accessToken) {
+        localStorage.setItem('accessToken', response.data.data.accessToken);
+      }
+      if (response.data?.data?.refreshToken) {
+        localStorage.setItem('refreshToken', response.data.data.refreshToken);
+      }
+
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default authService;
