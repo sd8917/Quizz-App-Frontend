@@ -1,3 +1,9 @@
+import {
+  Quiz as QuizIcon,
+  Leaderboard as LeaderboardIcon,
+  Person as PersonIcon,
+  Terminal
+} from '@mui/icons-material';
 /**
  * Performance Optimization Utilities
  * Helper functions for optimizing React and Material-UI applications
@@ -191,3 +197,37 @@ export const getWelcomeMessage = (userRole , name) => {
     if (userRole === 'creator') return `Welcome back, ${name ? name : "Creator"}! 🎨`;
     return `Welcome back, ${name ? name : "User"}! 👋`;
 };
+
+/*
+  Add more card Admin dashboard and its route
+*/
+export const AdminDashboardRoutes = [
+  {
+    title: 'Leaderboard',
+    description: ' Check your rank and compete with other players',
+    icon: <LeaderboardIcon />,
+    iconBg: 'warning.main',
+    navigateTo: '/leaderboard',
+  },
+  {
+    title: 'User Management',
+    description: 'Manage users, roles, and permissions',
+    icon: <PersonIcon />,
+    iconBg: 'info.main',
+    navigateTo: '/user-management',
+  },
+  {
+    title: 'Quiz Management',
+    description: 'Create and manage quiz questions',
+    icon: <QuizIcon />,
+    iconBg: 'success.main',
+    navigateTo: '/quiz-management',
+  },
+  {
+    title: 'Server Logs',
+    description: 'View and manage server logs',
+    icon: <Terminal />,
+    iconBg: 'warning.main',
+    navigateTo: '/server-logs',
+  },
+];

@@ -43,11 +43,12 @@ import { logoutUser, fetchUserProfile } from '../store/slices/authSlice';
 import Footer from '../components/Footer';
 import useFetch from '../hooks/useFetch';
 import { userService } from '../services';
-import {getWelcomeMessage } from '../utils/helpers';
+import {AdminDashboardRoutes, getWelcomeMessage } from '../utils/helpers';
 import QuickStats from '../components/UI/QuickStats';
 import DashboardTitle from '../components/UI/DashboardTitle';
 import UserRoleDashboard from '../components/UI/UserRoleDashboard';
 import { channelColors } from '../utils/constant';
+import AdminDashboardCards from '../components/UI/AdminDashboardCard';
 
 const Dashboard = () => {
   useSEO('dashboard');
@@ -560,110 +561,18 @@ const Dashboard = () => {
             </Typography>
 
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6} md={4}>
-                <Card
-                  sx={{
-                    cursor: 'pointer',
-                    transition: 'all 0.3s',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: 4,
-                    },
-                  }}
-                  onClick={() => navigate('/leaderboard')}
-                >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }} alt='Leaderboard icon'>
-                        <LeaderboardIcon />
-                      </Avatar>
-                      <Typography variant="h6">Leaderboard</Typography>
-                    </Box>
-                    <Typography variant="body2" color="text.secondary">
-                      Check your rank and compete with other players
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 4,
-                },
-              }}
-              onClick={() => navigate('/user-management')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'info.main', mr: 2 }} alt='Person icon'>
-                    <PersonIcon />
-                  </Avatar>
-                  <Typography variant="h6">User Management</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Manage users, roles, and permissions
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 4,
-                },
-              }}
-              onClick={() => navigate('/quiz-management')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'success.main', mr: 2 }} alt='Quiz icon'>
-                    <QuizIcon />
-                  </Avatar>
-                  <Typography variant="h6">Quiz Management</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Create and manage quiz questions
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 4,
-                },
-              }}
-              onClick={() => navigate('/server-logs')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }} alt='server icon'>
-                    <Terminal />
-                  </Avatar>
-                  <Typography variant="h6">Server Logs</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  View and manage server logs
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+              {AdminDashboardRoutes.map((card) => (
+                <Grid item xs={12} sm={6} md={4} key={card.title}>
+                  <AdminDashboardCards
+                    title={card.title}
+                    description={card.description}
+                    icon={card.icon}
+                    iconBg={card.iconBg}
+                    navigateTo={card.navigateTo}
+                  />
+                </Grid>
+              ))}
+             </Grid>
           </>
         )}
       </Container>
