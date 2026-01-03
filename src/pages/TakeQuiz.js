@@ -204,15 +204,16 @@ const TakeQuiz = () => {
       
         // Set quiz metadata without questions (will fetch questions on start)
         const quizMetadata = {
-          id: channelData._id || quizId,
-          title: channelData.name || 'Quiz',
-          description: channelData.description || 'Test your knowledge',
-          duration: 30, // Default duration
-          totalQuestions: channelData.questionCount || 0,
-          passingScore: 70,
+          id: channelData?.channel?._id || quizId,
+          title: channelData?.channel?.name || 'Quiz',
+          description: 'Test your knowledge',
+          duration: channelData?.channel?.duration || 30, // Default duration
+          totalQuestions: channelData?.channel?.totalQuestions || 0,
+          passingScore: channelData?.channel?.passingScore || 70,
+          pointPerQuestion: channelData?.channel?.pointsPerQuestion || 1,
           questions: [], // Will be fetched when quiz starts
         };
-        
+
         setQuiz(quizMetadata);
         setTimeRemaining(quizMetadata.duration * 60);
       } catch (err) {

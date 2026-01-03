@@ -43,7 +43,12 @@ import { logoutUser, fetchUserProfile } from '../store/slices/authSlice';
 import Footer from '../components/Footer';
 import useFetch from '../hooks/useFetch';
 import { userService } from '../services';
-import {getWelcomeMessage } from '../utils/helpers';
+import {AdminDashboardRoutes, getWelcomeMessage } from '../utils/helpers';
+import QuickStats from '../components/UI/QuickStats';
+import DashboardTitle from '../components/UI/DashboardTitle';
+import UserRoleDashboard from '../components/UI/UserRoleDashboard';
+import { channelColors } from '../utils/constant';
+import AdminDashboardCards from '../components/UI/AdminDashboardCard';
 
 const Dashboard = () => {
   useSEO('dashboard');
@@ -110,8 +115,6 @@ const Dashboard = () => {
     { title: 'Active Users', value: '156', color: '#f59e0b', icon: <People /> },
   ];
 
-  // Palette for channel cards (used when channel.color not provided)
-  const channelColors = ['#6366f1', '#10b981', '#ec4899', '#f59e0b', '#06b6d4', '#8b5cf6'];
 
   // Compute admin stat cards from fetched adminStats state
   const adminStatsCards = adminStats
@@ -245,39 +248,10 @@ const Dashboard = () => {
         <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
           {getWelcomeMessage(userRole)}
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          {userRole === 'admin' && 'Manage your platform and monitor performance'}
-          {userRole === 'creator' && 'Track your quiz performance and create new content'}
-          {userRole === 'user' && 'Continue your learning journey and compete with others'}
-        </Typography>
 
-        <Grid container spacing={3}>
-          {stats.map((stat, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card
-                sx={{
-                  height: '100%',
-                  background: `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}05 100%)`,
-                  border: `1px solid ${stat.color}30`,
-                }}
-              >
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar sx={{ bgcolor: stat.color, mr: 2 }}  alt='stat icon'>
-                      {stat.icon}
-                    </Avatar>
-                  </Box>
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: stat.color }}>
-                    {stat.value}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {stat.title}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        <DashboardTitle userRole={userRole} />
+
+        <QuickStats stats={stats} />
 
         {/* USER VIEW - Available Quizzes */}
         {userRole === 'user' && (
@@ -294,80 +268,8 @@ const Dashboard = () => {
             ) : !channels || channels.length === 0 ? (
               <Alert severity="info" sx={{ mb: 3 }}>No channels available at the moment.</Alert>
             ) : null}
-            <Grid container spacing={3}>
-              {quizzes?.map((channel, index) => (
-                <Grid item xs={12} md={6} key={channel._id || index}>
-                  {(() => {
-                    const color = channel.color || channelColors[index % channelColors.length];
-                    return (
-                      <Card
-                        sx={{
-                          height: '100%',
-                          background: `linear-gradient(135deg, ${color}15 0%, ${color}05 100%)`,
-                          border: `1px solid ${color}30`,
-                        }}
-                      >
-                        <CardContent>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 2 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                              <Avatar sx={{ bgcolor: color, width: 44, height: 44 }} alt='Quiz icon'>
-                                <QuizIcon />
-                              </Avatar>
-                              <Box>
-                                <Typography variant="h6" gutterBottom>
-                                  {channel.name || channel.title || 'Untitled Channel'}
-                                </Typography>
-                                
-                                 <Typography variant="caption" color="text.success" sx={{ 
-                                    color: 'white', 
-                                    bgcolor: 'success.main', 
-                                    padding: "5px",
-                                    borderRadius: "5px"
-                                    
-                                  }}>
-                                  {channel?.isPublic || "Public"}
-                                </Typography>
-                              </Box>
-                            </Box>
-                            <Chip label={channel.category || 'General'} size="small" variant="outlined" />
-                          </Box>
 
-                          <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-                            <Chip label={`${channel.totalQuestions || 0} Questions`} size="small" icon={<QuizIcon />} />
-                            <Chip
-                              label={channel.difficulty || 'Medium'}
-                              size="small"
-                              color={
-                                channel.difficulty === 'Easy'
-                                  ? 'success'
-                                  : channel.difficulty === 'Medium'
-                                  ? 'warning'
-                                  : 'error'
-                              }
-                            />
-                            {channel.duration && <Chip label={channel.duration + " min"} size="small" icon={<Schedule />} />}
-                          </Box>
-                          <Typography variant="body2" color="text.secondary">
-                            {channel.description || 'Test your knowledge and compete for the top spot on the leaderboard!'}
-                          </Typography>
-                        </CardContent>
-                        <CardActions>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            startIcon={<PlayArrow />}
-                            onClick={() => navigate(`/quiz/${channel._id}`)}
-                          >
-                            Start Quiz
-                          </Button>
-                          <Button size="small" onClick={() => navigate(`/quiz/${channel._id}`)}>View Details</Button>
-                        </CardActions>
-                      </Card>
-                    );
-                  })()}
-                </Grid>
-              ))}
-            </Grid>
+            <UserRoleDashboard quizzes={quizzes}/>
 
             <Typography variant="h5" sx={{ mt: 4, mb: 2, fontWeight: 600 }}>
               Recent Activity
@@ -659,110 +561,18 @@ const Dashboard = () => {
             </Typography>
 
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6} md={4}>
-                <Card
-                  sx={{
-                    cursor: 'pointer',
-                    transition: 'all 0.3s',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: 4,
-                    },
-                  }}
-                  onClick={() => navigate('/leaderboard')}
-                >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }} alt='Leaderboard icon'>
-                        <LeaderboardIcon />
-                      </Avatar>
-                      <Typography variant="h6">Leaderboard</Typography>
-                    </Box>
-                    <Typography variant="body2" color="text.secondary">
-                      Check your rank and compete with other players
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 4,
-                },
-              }}
-              onClick={() => navigate('/user-management')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'info.main', mr: 2 }} alt='Person icon'>
-                    <PersonIcon />
-                  </Avatar>
-                  <Typography variant="h6">User Management</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Manage users, roles, and permissions
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 4,
-                },
-              }}
-              onClick={() => navigate('/quiz-management')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'success.main', mr: 2 }} alt='Quiz icon'>
-                    <QuizIcon />
-                  </Avatar>
-                  <Typography variant="h6">Quiz Management</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  Create and manage quiz questions
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 4,
-                },
-              }}
-              onClick={() => navigate('/server-logs')}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }} alt='server icon'>
-                    <Terminal />
-                  </Avatar>
-                  <Typography variant="h6">Server Logs</Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  View and manage server logs
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+              {AdminDashboardRoutes.map((card) => (
+                <Grid item xs={12} sm={6} md={4} key={card.title}>
+                  <AdminDashboardCards
+                    title={card.title}
+                    description={card.description}
+                    icon={card.icon}
+                    iconBg={card.iconBg}
+                    navigateTo={card.navigateTo}
+                  />
+                </Grid>
+              ))}
+             </Grid>
           </>
         )}
       </Container>

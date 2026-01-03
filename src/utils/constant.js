@@ -171,3 +171,7 @@ export const services = [
     },
 ];
 
+  // Palette for channel cards (used when channel.color not provided)
+export const channelColors = ['#6366f1', '#10b981', '#ec4899', '#f59e0b', '#06b6d4', '#8b5cf6'];
+
+
