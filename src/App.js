@@ -1,11 +1,12 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material';
+import { ThemeProvider, CssBaseline } from '@mui/material';
 import { Provider } from 'react-redux';
 import store from './store';
 import theme from './theme/theme';
 import ProtectedRoute from './components/ProtectedRoute';
 import CreatorRoute from './components/CreatorRoute';
+import LoadingFallback from './components/LoadFallback';
 
 // Lazy loading for better performance
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
@@ -36,21 +37,6 @@ const Tutorial = React.lazy(() => import('./pages/Tutorial'));
 const Feedback = React.lazy(() => import('./pages/Feedback'));
 const GoogleCallback = React.lazy(() => import('./pages/GoogleCallback'));
 const Subscription = React.lazy(() => import('./pages/Subscription'));
-
-// Loading component
-const LoadingFallback = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    }}
-  >
-    <CircularProgress size={60} sx={{ color: 'white' }} />
-  </Box>
-);
 
 function App() {
   return (

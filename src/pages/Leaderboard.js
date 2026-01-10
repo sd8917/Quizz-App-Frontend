@@ -132,19 +132,6 @@ const Leaderboard = () => {
     },
   ];
 
-  // const getBadgeColor = (badge) => {
-  //   switch (badge) {
-  //     case 'gold':
-  //       return '#FFD700';
-  //     case 'silver':
-  //       return '#C0C0C0';
-  //     case 'bronze':
-  //       return '#CD7F32';
-  //     default:
-  //       return '#gray';
-  //   }
-  // };
-
   const getRankColor = (rank) => {
     if (rank === 1) return '#FFD700';
     if (rank === 2) return '#C0C0C0';

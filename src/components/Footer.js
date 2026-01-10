@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { useState } from 'react';
 import ExternalRedirectModal from './ExternalRedirectModal';
+import ScrollToTopButton from './UI/ScrollToTopButton';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -72,6 +73,7 @@ const Footer = () => {
         borderColor: 'divider',
       }}
     >
+      <ScrollToTopButton />
       <Container maxWidth="lg">
         {/* Main Footer Content */}
         <Grid container spacing={4}>

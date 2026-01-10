@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Container,
   Box,
@@ -19,15 +19,14 @@ import {
   Help as HelpIcon,
   Search as SearchIcon,
   ExpandMore as ExpandIcon,
-  School as SchoolIcon,
-  Security as SecurityIcon,
-  Payment as PaymentIcon,
-  Settings as SettingsIcon,
   ContactSupport as SupportIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
+import { categories, faqs } from '../utils/helpers';
+import AppBarNav from '../components/UI/AppBarNav';
+
 
 const HelpCenter = () => {
   useSEO('help');
@@ -39,59 +38,6 @@ const HelpCenter = () => {
     setExpandedFaq(isExpanded ? panel : false);
   };
 
-  const categories = [
-    {
-      icon: <SchoolIcon sx={{ fontSize: 40 }} />,
-      title: 'Getting Started',
-      description: 'Learn the basics of using QuizApp',
-      color: '#667eea',
-    },
-    {
-      icon: <SecurityIcon sx={{ fontSize: 40 }} />,
-      title: 'Account & Privacy',
-      description: 'Manage your account and privacy settings',
-      color: '#10b981',
-    },
-    {
-      icon: <PaymentIcon sx={{ fontSize: 40 }} />,
-      title: 'Billing & Plans',
-      description: 'Information about pricing and payments',
-      color: '#f59e0b',
-    },
-    {
-      icon: <SettingsIcon sx={{ fontSize: 40 }} />,
-      title: 'Features & Settings',
-      description: 'Explore features and customize settings',
-      color: '#ec4899',
-    },
-  ];
-
-  const faqs = [
-    {
-      question: 'How do I create an account?',
-      answer: 'Click on the "Get Started" button on the homepage and fill in your details. You\'ll receive a confirmation email to verify your account.',
-    },
-    {
-      question: 'Is TriviaVerse free to use?',
-      answer: 'Yes! TriviaVerse offers a free plan with access to thousands of quizzes. We also have premium plans with additional features for power users.',
-    },
-    {
-      question: 'How do I create my own quiz?',
-      answer: 'After logging in, please drop an email to update your role to "Creator" then navigate to the Dashboard and click on "Create Quiz". Follow the step-by-step wizard to add questions, set time limits, and publish your quiz. More details will be available in the Tutorial footer menu!',
-    },
-    {
-      question: 'Can I track my progress?',
-      answer: 'Absolutely! Your Dashboard provides detailed analytics including scores, time spent, improvement trends, and areas for improvement.',
-    },
-    {
-      question: 'How does the leaderboard work?',
-      answer: 'The leaderboard ranks users based on their quiz performance, including accuracy, speed, and consistency. Points are calculated using our proprietary algorithm.',
-    },
-    {
-      question: 'What if I encounter a technical issue?',
-      answer: 'Please contact our support team through the Contact page or email us at triviaverse.contact@gmail.com. We typically respond within 24 hours.',
-    },
-  ];
 
   return (
     <>
@@ -99,10 +45,11 @@ const HelpCenter = () => {
       <Box
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          py: 8,
           color: 'white',
         }}
       >
+        <AppBarNav title={"Help Center"}/>
+
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <HelpIcon sx={{ fontSize: 64, mb: 2, opacity: 0.9 }} />
