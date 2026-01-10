@@ -64,6 +64,7 @@ const LandingPage = () => {
                     bgcolor: alpha('#ffffff', 0.2),
                     color: 'white',
                     mb: 3,
+                    mt: 3,
                     backdropFilter: 'blur(10px)',
                     fontWeight: 500,
                   }}
@@ -100,9 +101,11 @@ const LandingPage = () => {
                     size="large"
                     endIcon={<ArrowIcon />}
                     onClick={() => navigate('/register')}
-                    bgcolor="white"
-                    color="#667eea"
+                    // bgcolor="white"
+                    // color="#667eea"
                     sx={{
+                      borderColor: 'white',
+                      color: 'white',
                       py: 1.5,
                       px: 4,
                       fontSize: '1.1rem',
@@ -111,13 +114,12 @@ const LandingPage = () => {
                   >
                     Get Started Free
                   </GradientButton>
-                 {!isAuthenticated && <Button
-                    variant="outlined"
+                 {!isAuthenticated && <GradientButton
                     size="large"
                     onClick={() => navigate('/login')}
+                     bgcolor="white"
+                    color="#667eea"
                     sx={{
-                      borderColor: 'white',
-                      color: 'white',
                       py: 1.5,
                       px: 4,
                       fontSize: '1.1rem',
@@ -133,7 +135,7 @@ const LandingPage = () => {
                     }}
                   >
                     Sign In
-                  </Button>}
+                  </GradientButton>}
                 </Box>
                 <Box sx={{ display: 'flex', gap: 4, mt: 5, flexWrap: 'wrap' }}>
                   <Box>
