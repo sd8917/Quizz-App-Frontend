@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  Container,
-  Paper,
-  Button,
-  Typography,
-  Link,
   Alert,
+  Box,
+  Button,
   CircularProgress,
+  Container,
   Divider,
   Grid,
+  Link,
+  Paper,
+  Typography,
 } from '@mui/material';
 import {
   Email,
+  Google as GoogleIcon,
   Lock,
   Person,
-  Google as GoogleIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSEO } from '../hooks/useSEO';
-import { registerUser, clearError } from '../store/slices/authSlice';
-import { GradientBackground, GradientButton, FormTextField, LoadingSpinner } from '../components/UI';
+import { clearError, registerUser } from '../store/slices/authSlice';
+import { FormTextField, GradientBackground, GradientButton, LoadingSpinner } from '../components/UI';
 import { isValidEmail, isValidPassword, isValidUsername } from '../utils/helpers';
 
 const Register = () => {

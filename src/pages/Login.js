@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  Container,
-  Paper,
-  Button,
-  Typography,
-  Link,
   Alert,
+  Box,
+  Button,
   CircularProgress,
+  Container,
   Divider,
   Grid,
+  Link,
+  Paper,
+  Typography,
 } from '@mui/material';
 import {
   Email,
-  Lock,
   Google as GoogleIcon,
+  Lock,
 } from '@mui/icons-material';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSEO } from '../hooks/useSEO';
-import { loginUser, clearError, setAuthenticated, updateUser } from '../store/slices/authSlice';
 import { BASE_URL } from '../services/api';
-import { GradientBackground, GradientButton, FormTextField } from '../components/UI';
+import { clearError, loginUser, setAuthenticated, updateUser } from '../store/slices/authSlice';
+import { GradientBackground, FormTextField, GradientButton } from '../components/UI';
 import { isValidEmail, isValidPassword } from '../utils/helpers';
 const Login = () => {
   useSEO('login');

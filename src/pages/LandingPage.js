@@ -1,35 +1,35 @@
 import React, { useState } from 'react';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  alpha,
+  Avatar,
   Box,
-  Container,
-  Typography,
   Button,
-  Grid,
   Card,
   CardContent,
   CardMedia,
-  Paper,
-  Avatar,
   Chip,
+  Container,
+  Grid,
+  Paper,
   Rating,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  Typography,
   useTheme,
-  alpha,
 } from '@mui/material';
 import {
-  CheckCircle as CheckIcon,
   ArrowForward as ArrowIcon,
+  CheckCircle as CheckIcon,
   ExpandMore as ExpandIcon,
   Verified as VerifiedIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
-import { faqs , features, steps ,services, stats, testimonials} from '../utils/constant';
-import {  useSelector } from 'react-redux';
 import { GradientBackground, GradientButton, SectionHeader } from '../components/UI';
+import { faqs, features, services, stats, steps, testimonials } from '../utils/constant';
 
 const LandingPage = () => {
   useSEO('home');
