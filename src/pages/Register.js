@@ -3,11 +3,8 @@ import {
   Box,
   Container,
   Paper,
-  TextField,
   Button,
   Typography,
-  InputAdornment,
-  IconButton,
   Link,
   Alert,
   CircularProgress,
@@ -15,8 +12,6 @@ import {
   Grid,
 } from '@mui/material';
 import {
-  Visibility,
-  VisibilityOff,
   Email,
   Lock,
   Person,
@@ -26,6 +21,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSEO } from '../hooks/useSEO';
 import { registerUser, clearError } from '../store/slices/authSlice';
+import { GradientBackground, GradientButton, FormTextField, LoadingSpinner } from '../components/UI';
+import { isValidEmail, isValidPassword, isValidUsername } from '../utils/helpers';
 
 const Register = () => {
   useSEO('register');
@@ -59,11 +56,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState(null);
 
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -85,19 +77,19 @@ const Register = () => {
     const newErrors = {};
     if (!formData.username) {
       newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
+    } else if (!isValidUsername(formData.username)) {
       newErrors.username = 'Username must be at least 3 characters';
     }
 
     if (!formData.email) {
       newErrors.email = 'Email is required';
-    } else if (!validateEmail(formData.email)) {
+    } else if (!isValidEmail(formData.email)) {
       newErrors.email = 'Invalid email format';
     }
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
+    } else if (!isValidPassword(formData.password)) {
       newErrors.password = 'Password must be at least 6 characters';
     }
 
@@ -144,11 +136,7 @@ const Register = () => {
   };
 
   if (loading || authLoading) {
-      return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-          <CircularProgress />
-        </Box>
-      );
+      return <LoadingSpinner message="Loading..." />;
     }
 
   if(authError){
@@ -160,25 +148,7 @@ const Register = () => {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-        position: 'relative',
-        overflow: 'hidden',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-          opacity: 0.4,
-        },
-      }}
-    >
+    <GradientBackground>
       <Container maxWidth="lg" sx={{ display: 'flex', alignItems: 'center', py: 4, position: 'relative', zIndex: 1 }}>
         <Grid container spacing={0} sx={{ minHeight: '600px' }}>
           {/* Left Side - Registration Form */}
@@ -227,111 +197,59 @@ const Register = () => {
 
               {/* Registration Form */}
               <Box component="form" onSubmit={handleSubmit} noValidate>
-                <TextField
-                  fullWidth
-                  label="Username"
+                <FormTextField
                   name="username"
+                  label="Username"
                   value={formData.username}
                   onChange={handleChange}
-                  error={!!errors.username}
-                  helperText={errors.username}
+                  error={errors.username}
                   disabled={loading}
-                  sx={{ mb: 2.5 }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Person color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
+                  icon={Person}
                 />
 
-                <TextField
-                  fullWidth
-                  label="Email Address"
+                <FormTextField
                   name="email"
+                  label="Email Address"
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  error={!!errors.email}
-                  helperText={errors.email}
+                  error={errors.email}
                   disabled={loading}
-                  sx={{ mb: 2.5 }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Email color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
+                  icon={Email}
                 />
 
-                <TextField
-                  fullWidth
-                  label="Password"
+                <FormTextField
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  label="Password"
+                  type="password"
                   value={formData.password}
                   onChange={handleChange}
-                  error={!!errors.password}
-                  helperText={errors.password}
+                  error={errors.password}
                   disabled={loading}
-                  sx={{ mb: 2.5 }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Lock color="action" />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                          disabled={loading}
-                        >
-                          {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
+                  icon={Lock}
+                  showPasswordToggle
+                  showPassword={showPassword}
+                  onTogglePassword={() => setShowPassword(!showPassword)}
                 />
 
-                <TextField
-                  fullWidth
-                  label="Confirm Password"
+                <FormTextField
                   name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  label="Confirm Password"
+                  type="password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  error={!!errors.confirmPassword}
-                  helperText={errors.confirmPassword}
+                  error={errors.confirmPassword}
                   disabled={loading}
+                  icon={Lock}
+                  showPasswordToggle
+                  showPassword={showConfirmPassword}
+                  onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
                   sx={{ mb: 3 }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Lock color="action" />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          edge="end"
-                          disabled={loading}
-                        >
-                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
                 />
 
-                <Button
+                <GradientButton
                   type="submit"
                   fullWidth
-                  variant="contained"
                   size="large"
                   disabled={loading}
                   sx={{
@@ -339,18 +257,10 @@ const Register = () => {
                     py: 1.5,
                     fontSize: '1rem',
                     fontWeight: 600,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-                    '&:hover': {
-                      background: 'linear-gradient(135deg, #5568d3 0%, #6a3f91 100%)',
-                      boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
-                      transform: 'translateY(-2px)',
-                    },
-                    transition: 'all 0.3s',
                   }}
                 >
                   {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
-                </Button>
+                </GradientButton>
 
                 <Divider sx={{ my: 2.5 }}>
                   <Typography variant="body2" color="text.secondary">
@@ -518,7 +428,7 @@ const Register = () => {
           </Grid>
         </Grid>
       </Container>
-    </Box>
+    </GradientBackground>
   );
 };
 

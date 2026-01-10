@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 
-const ExternalRedirectModal = ({ open, onClose, url, host }) => {
+const ExternalRedirectModal = ({ open, onClose, url = '', host = '' }) => {
   const handleContinue = () => {
     try {
       window.open(url, '_blank', 'noopener,noreferrer');
@@ -50,11 +50,6 @@ ExternalRedirectModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   url: PropTypes.string,
   host: PropTypes.string,
-};
-
-ExternalRedirectModal.defaultProps = {
-  url: '',
-  host: '',
 };
 
 export default ExternalRedirectModal;

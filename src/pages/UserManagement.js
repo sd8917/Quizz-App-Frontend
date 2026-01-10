@@ -53,8 +53,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { userService } from '../services';
-import { getRoleColor, getStatusColor,getActiveColor } from '../utils/helpers';
+import { getRoleColor, getStatusColor, getActiveColor, isValidEmail, isValidPassword } from '../utils/helpers';
 import useFetch from '../hooks/useFetch';
+import { LoadingSpinner } from '../components/UI';
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -225,14 +226,13 @@ const UserManagement = () => {
     }
 
     // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(addUserFormData.email)) {
+    if (!isValidEmail(addUserFormData.email)) {
       setFormError('Please enter a valid email address');
       return;
     }
 
     // Password validation
-    if (addUserFormData.password.length < 6) {
+    if (!isValidPassword(addUserFormData.password)) {
       setFormError('Password must be at least 6 characters long');
       return;
     }
@@ -353,18 +353,7 @@ const UserManagement = () => {
   
   
     if (loading) {
-      return (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '100vh',
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      );
+      return <LoadingSpinner message="Loading users..." />;
     }
 
   if(error) {

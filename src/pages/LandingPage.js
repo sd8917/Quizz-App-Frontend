@@ -29,6 +29,7 @@ import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 import { faqs , features, steps ,services, stats, testimonials} from '../utils/constant';
 import {  useSelector } from 'react-redux';
+import { GradientBackground, GradientButton, SectionHeader } from '../components/UI';
 
 const LandingPage = () => {
   useSEO('home');
@@ -45,26 +46,12 @@ const LandingPage = () => {
   return (
     <>
       {/* Hero Section */}
-      <Box
-        sx={{
-          minHeight: { xs: 'auto', md: '80vh' },
-          display: 'flex',
-          padding: { xs: '20px 16px', sm: '30px 24px', md: '50px' },
+      <GradientBackground
+        minHeight={{ xs: 'auto', md: '80vh' }}
+        padding={{ xs: '20px 16px', sm: '30px 24px', md: '50px' }}
+        sx={{ 
           paddingTop: { xs: '20px', md: '0px' },
-          alignItems: 'center',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-          position: 'relative',
-          overflow: 'hidden',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-            opacity: 0.4,
-          },
+          alignItems: 'center' 
         }}
       >
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, width: '100%' }}>
@@ -109,29 +96,21 @@ const LandingPage = () => {
                   Start your journey to excellence today!
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                  <Button
-                    variant="contained"
+                  <GradientButton
                     size="large"
                     endIcon={<ArrowIcon />}
                     onClick={() => navigate('/register')}
+                    bgcolor="white"
+                    color="#667eea"
                     sx={{
-                      bgcolor: 'white',
-                      color: '#667eea',
                       py: 1.5,
                       px: 4,
                       fontSize: '1.1rem',
                       fontWeight: 700,
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
-                      '&:hover': {
-                        bgcolor: '#f3f4f6',
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 12px 24px rgba(0,0,0,0.3)',
-                      },
-                      transition: 'all 0.3s',
                     }}
                   >
                     Get Started Free
-                  </Button>
+                  </GradientButton>
                  {!isAuthenticated && <Button
                     variant="outlined"
                     size="large"
@@ -203,13 +182,14 @@ const LandingPage = () => {
                 }}
               >
                 <Paper
-                  elevation={50}
+                  elevation={24}
                   sx={{
                     borderRadius: 4,
                     overflow: 'hidden',
                     position: 'relative',
                     transform: 'rotate(2deg)',
                     transition: 'transform 0.3s',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
                     '&:hover': {
                       transform: 'rotate(0deg) scale(1.02)',
                     },
@@ -228,24 +208,17 @@ const LandingPage = () => {
             </Grid>
           </Grid>
         </Container>
-      </Box>
+      </GradientBackground>
 
       {/* Features Section */}
       <Box sx={{ py: 10, bgcolor: '#f9fafb' }}>
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 8 }}>
-            <Chip
-              label="FEATURES"
-              color="primary"
-              sx={{ mb: 2, fontWeight: 600 }}
-            />
-            <Typography variant="h2" sx={{ fontWeight: 700, mb: 2 }}>
-              Why Choose TriviaVerse?
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-              Everything you need to create, take, and master quizzes in one powerful platform
-            </Typography>
-          </Box>
+          <SectionHeader
+            chipLabel="FEATURES"
+            chipColor="primary"
+            title="Why Choose TriviaVerse?"
+            subtitle="Everything you need to create, take, and master quizzes in one powerful platform"
+          />
           <Grid container spacing={4}>
             {features.map((feature, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
@@ -293,19 +266,12 @@ const LandingPage = () => {
       {/* How It Works Section */}
       <Box sx={{ py: 10, bgcolor: 'white' }}>
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 8 }}>
-            <Chip
-              label="HOW IT WORKS"
-              color="secondary"
-              sx={{ mb: 2, fontWeight: 600 }}
-            />
-            <Typography variant="h2" sx={{ fontWeight: 700, mb: 2 }}>
-              Get Started in 5 Simple Steps
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-              Join millions of users and start your learning journey today
-            </Typography>
-          </Box>
+          <SectionHeader
+            chipLabel="HOW IT WORKS"
+            chipColor="secondary"
+            title="Get Started in 5 Simple Steps"
+            subtitle="Join millions of users and start your learning journey today"
+          />
           <Box sx={{ position: 'relative' }}>
             {steps.map((step, index) => (
               <Box key={index} sx={{ mb: 6 }}>
@@ -393,18 +359,13 @@ const LandingPage = () => {
       {/* Services Section */}
       <Box sx={{ py: 10, bgcolor: '#f9fafb' }}>
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 8 }}>
-            <Chip
-              label="OUR SERVICES"
-              sx={{ mb: 2, fontWeight: 600, bgcolor: '#10b981', color: 'white' }}
-            />
-            <Typography variant="h2" sx={{ fontWeight: 700, mb: 2 }}>
-              Perfect for Every Need
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-              Whether you're a student, professional, or just curious, we've got you covered
-            </Typography>
-          </Box>
+          <SectionHeader
+            chipLabel="OUR SERVICES"
+            chipColor="primary"
+            chipSx={{ bgcolor: '#10b981', color: 'white' }}
+            title="Perfect for Every Need"
+            subtitle="Whether you're a student, professional, or just curious, we've got you covered"
+          />
           <Grid container spacing={4}>
             {services.map((service, index) => (
               <Grid item xs={12} md={4} key={index}>
@@ -500,18 +461,13 @@ const LandingPage = () => {
       {/* Testimonials Section */}
       <Box sx={{ py: 10, bgcolor: 'white' }}>
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 8 }}>
-            <Chip
-              label="TESTIMONIALS"
-              sx={{ mb: 2, fontWeight: 600, bgcolor: '#ec4899', color: 'white' }}
-            />
-            <Typography variant="h2" sx={{ fontWeight: 700, mb: 2 }}>
-              What Our Users Say
-            </Typography>
-            <Typography variant="h6" color="text.secondary">
-              Join thousands of satisfied learners
-            </Typography>
-          </Box>
+          <SectionHeader
+            chipLabel="TESTIMONIALS"
+            chipColor="primary"
+            chipSx={{ bgcolor: '#ec4899', color: 'white' }}
+            title="What Our Users Say"
+            subtitle="Join thousands of satisfied learners"
+          />
           <Grid container spacing={4}>
             {testimonials.map((testimonial, index) => (
               <Grid item xs={12} md={4} key={index}>
@@ -560,19 +516,13 @@ const LandingPage = () => {
       {/* FAQ Section */}
       <Box sx={{ py: 10, bgcolor: '#f9fafb' }}>
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Chip
-              label="FAQ"
-              color="primary"
-              sx={{ mb: 2, fontWeight: 600 }}
-            />
-            <Typography variant="h2" sx={{ fontWeight: 700, mb: 2 }}>
-              Frequently Asked Questions
-            </Typography>
-            <Typography variant="h6" color="text.secondary">
-              Got questions? We've got answers!
-            </Typography>
-          </Box>
+          <SectionHeader
+            chipLabel="FAQ"
+            chipColor="primary"
+            title="Frequently Asked Questions"
+            subtitle="Got questions? We've got answers!"
+            sx={{ mb: 6 }}
+          />
           {faqs.map((faq, index) => (
             <Accordion
               key={index}
@@ -607,10 +557,9 @@ const LandingPage = () => {
       </Box>
 
       {/* CTA Section */}
-      <Box
+      <GradientBackground
         sx={{
           py: 10,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
           color: 'white',
           textAlign: 'center',
         }}
@@ -624,29 +573,21 @@ const LandingPage = () => {
             It's free, fun, and takes less than a minute!
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button
-              variant="contained"
+            <GradientButton
               size="large"
               endIcon={<ArrowIcon />}
               onClick={() => navigate('/register')}
+              bgcolor="white"
+              color="#667eea"
               sx={{
-                bgcolor: 'white',
-                color: '#667eea',
                 py: 2,
                 px: 5,
                 fontSize: '1.2rem',
                 fontWeight: 700,
-                boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-                '&:hover': {
-                  bgcolor: '#f3f4f6',
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
-                },
-                transition: 'all 0.3s',
               }}
             >
               Start Free Now
-            </Button>
+            </GradientButton>
             <Button
               variant="outlined"
               size="large"
@@ -684,7 +625,7 @@ const LandingPage = () => {
             </Box>
           </Box>
         </Container>
-      </Box>
+      </GradientBackground>
 
       <Footer />
     </>

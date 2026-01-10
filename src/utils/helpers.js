@@ -92,10 +92,41 @@ export const formatNumber = (num) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
-// Validate email
+// Validate email (used across Login, Register, UserManagement)
 export const isValidEmail = (email) => {
+  if (!email) return false;
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
+};
+
+// Validate password (minimum 6 characters)
+export const isValidPassword = (password) => {
+  return password && password.length >= 6;
+};
+
+// Validate username (minimum 3 characters)
+export const isValidUsername = (username) => {
+  return username && username.length >= 3;
+};
+
+// Form validation helper
+export const validateForm = (formData, rules) => {
+  const errors = {};
+  
+  Object.keys(rules).forEach((field) => {
+    const rule = rules[field];
+    const value = formData[field];
+    
+    if (rule.required && !value) {
+      errors[field] = rule.requiredMessage || `${field} is required`;
+    } else if (value && rule.validator && !rule.validator(value)) {
+      errors[field] = rule.errorMessage || `Invalid ${field}`;
+    } else if (value && rule.match && formData[rule.match] !== value) {
+      errors[field] = rule.matchMessage || `${field} does not match`;
+    }
+  });
+  
+  return errors;
 };
 
 // Generate unique ID
