@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Container,
   Box,
@@ -19,6 +18,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
+import AppBarNav from '../components/UI/AppBarNav';
 
 const OurTeam = () => {
   const navigate = useNavigate();
@@ -41,10 +41,11 @@ const OurTeam = () => {
       <Box
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          py: 8,
           color: 'white',
         }}
       >
+        <AppBarNav title={"Our team"} />
+
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center' }}>
             <PeopleIcon sx={{ fontSize: 64, mb: 2, opacity: 0.9 }} />

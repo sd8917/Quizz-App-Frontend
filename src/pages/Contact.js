@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import {
   Box,
   Container,
@@ -7,19 +7,15 @@ import {
   TextField,
   Button,
   Grid,
-  AppBar,
-  Toolbar,
-  IconButton,
   Alert,
 } from '@mui/material';
-import { ArrowBack, Email, Phone, LocationOn } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { Email, Phone, LocationOn } from '@mui/icons-material';
 import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 import contactService from '../services/contactService';
+import AppBarNav from '../components/UI/AppBarNav';
 const Contact = () => {
   useSEO('contact');
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -55,28 +51,7 @@ const Contact = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
-      <AppBar 
-        position="static" 
-        elevation={0}
-        sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => navigate('/dashboard')}
-          >
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
-            Contact Us
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
+      <AppBarNav navigateTo={'/dashboard'} title={"Contact Us"}/>
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flex: 1 }}>
         <Typography variant="h3" gutterBottom sx={{ fontWeight: 700, mb: 1 }}>
           Get in Touch

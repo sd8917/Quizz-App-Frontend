@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
+import AppBarNav from '../components/UI/AppBarNav';
 
 const Blog = () => {
   useSEO('blog');
@@ -86,10 +87,12 @@ const Blog = () => {
       <Box
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          py: 8,
           color: 'white',
         }}
       >
+
+        <AppBarNav title={"Blog"} />
+
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center' }}>
             <ArticleIcon sx={{ fontSize: 64, mb: 2, opacity: 0.9 }} />

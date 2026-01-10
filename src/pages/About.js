@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Container,
@@ -8,18 +7,14 @@ import {
   Card,
   CardContent,
   Avatar,
-  AppBar,
-  Toolbar,
-  IconButton,
 } from '@mui/material';
-import { ArrowBack, EmojiEvents, People, Psychology } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { EmojiEvents, People, Psychology } from '@mui/icons-material';
 import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
+import AppBarNav from '../components/UI/AppBarNav';
 
 const About = () => {
   useSEO('about');
-  const navigate = useNavigate();
 
   const features = [
     {
@@ -47,27 +42,8 @@ const About = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
-      <AppBar 
-        position="static" 
-        elevation={0}
-        sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => navigate('/dashboard')}
-          >
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
-            About Us
-          </Typography>
-        </Toolbar>
-      </AppBar>
+
+      <AppBarNav navigateTo={'/dashboard'} title={"About Us"}/>
 
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flex: 1 }}>
         {/* Hero Section */}
