@@ -24,6 +24,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import ExternalRedirectModal from '../components/ExternalRedirectModal';
+import AppBarNav from '../components/UI/AppBarNav';
 
 const Careers = () => {
   const navigate = useNavigate();
@@ -56,10 +57,11 @@ const Careers = () => {
       <Box
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          py: 8,
           color: 'white',
         }}
       >
+        <AppBarNav title={"Career page"} />
+
         <Container maxWidth="lg">
           <Box sx={{ textAlign: 'center' }}>
             <WorkIcon sx={{ fontSize: 64, mb: 2, opacity: 0.9 }} />

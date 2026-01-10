@@ -246,8 +246,8 @@ The role-based dashboard system provides tailored experiences for different user
 
 | Feature | User | Creator | Admin |
 |---------|------|---------|-------|
-| Take Quizzes | ✅ | ✅ | ✅ |
-| Create QuizzesChannel | ✅ | ✅ |
+| Take Quizzes | ✅ | ❌ | ✅ |
+| Create QuizzesChannel | ❌ | ✅ | ✅
 | View Analytics | Personal Only | Own Quizzes | All |
 | Manage Users | ❌ | ❌ | ✅ |
 | Platform Stats | ❌ | Limited | ✅ |
