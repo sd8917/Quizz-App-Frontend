@@ -16,7 +16,6 @@ import {
   MenuItem,
   Chip,
   Divider,
-  CircularProgress,
   Alert,
 } from '@mui/material';
 import {
@@ -33,7 +32,6 @@ import {
   PlayArrow,
   EmojiEvents,
   Schedule,
-  Terminal,
   AutoAwesome,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -44,11 +42,8 @@ import Footer from '../components/Footer';
 import useFetch from '../hooks/useFetch';
 import { userService } from '../services';
 import {AdminDashboardRoutes, getWelcomeMessage } from '../utils/helpers';
-import QuickStats from '../components/UI/QuickStats';
-import DashboardTitle from '../components/UI/DashboardTitle';
-import UserRoleDashboard from '../components/UI/UserRoleDashboard';
+import { QuickStats, DashboardTitle, UserRoleDashboard, AdminDashboardCard, LoadingSpinner } from '../components/UI';
 import { channelColors } from '../utils/constant';
-import AdminDashboardCards from '../components/UI/AdminDashboardCard';
 
 const Dashboard = () => {
   useSEO('dashboard');
@@ -174,11 +169,7 @@ const Dashboard = () => {
   }, [userRole]);
 
   if(statsLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingSpinner message="Loading dashboard..." />;
   }
 
   return (
@@ -260,9 +251,7 @@ const Dashboard = () => {
               Available Channels
             </Typography>
             {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-                <CircularProgress />
-              </Box>
+              <LoadingSpinner message="Loading channels..." fullScreen={false} sx={{ py: 8 }} />
             ) : error ? (
               <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
             ) : !channels || channels.length === 0 ? (
@@ -563,7 +552,7 @@ const Dashboard = () => {
             <Grid container spacing={3}>
               {AdminDashboardRoutes.map((card) => (
                 <Grid item xs={12} sm={6} md={4} key={card.title}>
-                  <AdminDashboardCards
+                  <AdminDashboardCard
                     title={card.title}
                     description={card.description}
                     icon={card.icon}
