@@ -41,14 +41,19 @@ const Subscription = React.lazy(() => import('./pages/Subscription'));
 const LoadingFallback = () => (
   <Box
     sx={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      zIndex: 9999,
     }}
   >
-    <CircularProgress size={60} sx={{ color: 'white' }} />
+    <CircularProgress size={40} />
   </Box>
 );
 
