@@ -47,10 +47,10 @@ const LandingPage = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          minHeight: '80vh',
+          minHeight: { xs: 'auto', md: '80vh' },
           display: 'flex',
-          padding: '50px',
-          paddingTop: '0px',
+          padding: { xs: '20px 16px', sm: '30px 24px', md: '50px' },
+          paddingTop: { xs: '20px', md: '0px' },
           alignItems: 'center',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
           position: 'relative',
@@ -67,8 +67,8 @@ const LandingPage = () => {
           },
         }}
       >
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Grid container spacing={6} alignItems="center">
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, width: '100%' }}>
+          <Grid container spacing={{ xs: 3, md: 6 }} alignItems="center">
             <Grid item xs={12} md={6}>
               <Box sx={{ color: 'white' }}>
                 <Chip
