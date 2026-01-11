@@ -1,14 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import {
-  Typography,
-  AppBar,
-  Toolbar,
-  IconButton,
+    Typography,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Chip
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
+import { useSelector } from 'react-redux';
 
 const AppBarNav = ({ navigateTo = "/dashboard", title }) => {
     const navigate = useNavigate();
+    const user = useSelector((state) => state.auth.user);
 
     return (
         <AppBar
@@ -30,6 +33,14 @@ const AppBarNav = ({ navigateTo = "/dashboard", title }) => {
                 <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
                     {title}
                 </Typography>
+                <Chip
+                    label={`Logged in as ${user?.username || 'Creator'}`}
+                    sx={{
+                        bgcolor: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        fontWeight: 600,
+                    }}
+                />
             </Toolbar>
         </AppBar>
     )

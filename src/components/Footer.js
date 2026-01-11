@@ -36,7 +36,7 @@ const Footer = () => {
     support: [
       { label: 'Help Center', href: '/help' },
       { label: 'Contact Us', href: '/contact' },
-      { label: 'FAQs', href: '/faq' },
+      { label: 'Subscription', href: '/subscription' },
       { label: 'Feedback', href: '/feedback' },
     ],
     legal: [
