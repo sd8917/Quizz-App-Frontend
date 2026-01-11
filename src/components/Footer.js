@@ -36,7 +36,7 @@ const Footer = () => {
     support: [
       { label: 'Help Center', href: '/help' },
       { label: 'Contact Us', href: '/contact' },
-      { label: 'FAQs', href: '/faq' },
+      { label: 'Subscription', href: '/subscription' },
       { label: 'Feedback', href: '/feedback' },
     ],
     legal: [
@@ -48,7 +48,7 @@ const Footer = () => {
     resources: [
       { label: 'Documentation', href: 'https://api.triviaverse.site/api-docs/' },
       { label: 'API Reference', href: 'https://api.triviaverse.site/health/' },
-      { label: 'Community', href: '/community' },
+      { label: 'Refund', href: '/refund' },
       { label: 'Tutorials', href: '/tutorial' },
     ],
   };

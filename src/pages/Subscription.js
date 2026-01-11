@@ -53,7 +53,7 @@ const Subscription = () => {
   // Subscription plans
   const plans = [
     {
-      id: 'basic',
+      id: 'Upcoming basic',
       name: 'AI Basic',
       price: '$9.99',
       period: 'month',
@@ -68,7 +68,7 @@ const Subscription = () => {
       color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     },
     {
-      id: 'pro',
+      id: 'Upcoming pro',
       name: 'AI Pro',
       price: '$24.99',
       period: 'month',
@@ -86,7 +86,7 @@ const Subscription = () => {
       color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
     },
     {
-      id: 'enterprise',
+      id: 'Upcoming enterprise',
       name: 'AI Enterprise',
       price: '$99.99',
       period: 'month',

@@ -173,6 +173,11 @@ export const routes = [
         type:    ROUTE_TYPES.PROTECTED,
     },
     {
+        path:    '/refund',
+        element: <Refund />,
+        type:    ROUTE_TYPES.PUBLIC,
+    },
+    {
         path:    '/user-management',
         element:  <UserManagement />,
         type:     ROUTE_TYPES.PROTECTED,
