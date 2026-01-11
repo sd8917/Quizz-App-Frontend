@@ -34,7 +34,7 @@ const AppBarNav = ({ navigateTo = "/dashboard", title }) => {
                     {title}
                 </Typography>
                 <Chip
-                    label={`Logged in as ${user?.username || 'Creator'}`}
+                    label={user ? `Logged in as ${user?.username || 'Anonymous'}`: "Not logged In"}
                     sx={{
                         bgcolor: 'rgba(255,255,255,0.2)',
                         color: 'white',
