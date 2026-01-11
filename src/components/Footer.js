@@ -48,7 +48,7 @@ const Footer = () => {
     resources: [
       { label: 'Documentation', href: 'https://api.triviaverse.site/api-docs/' },
       { label: 'API Reference', href: 'https://api.triviaverse.site/health/' },
-      { label: 'Community', href: '/community' },
+      { label: 'Refund', href: '/refund' },
       { label: 'Tutorials', href: '/tutorial' },
     ],
   };

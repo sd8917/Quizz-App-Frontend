@@ -37,6 +37,7 @@ const Tutorial = React.lazy(() => import('./pages/Tutorial'));
 const Feedback = React.lazy(() => import('./pages/Feedback'));
 const GoogleCallback = React.lazy(() => import('./pages/GoogleCallback'));
 const Subscription = React.lazy(() => import('./pages/Subscription'));
+const Refund = React.lazy(()=> import("./pages/Refund"));
 
 function App() {
   return (
@@ -64,7 +65,8 @@ function App() {
               <Route path="/disclaimer" element={<Suspense fallback={<div>Loading...</div>}><Disclaimer /></Suspense>} />
               <Route path="/tutorial" element={<Suspense fallback={<div>Loading...</div>}><Tutorial /></Suspense>} />
               <Route path="/feedback" element={<Suspense fallback={<div>Loading...</div>}><Feedback /></Suspense>} />
-              
+              <Route path="/refund" element={<Suspense fallback={<div>Loading...</div>}><Refund /></Suspense>} />
+
               {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/quiz-management" element={<ProtectedRoute><QuizManagement /></ProtectedRoute>} />
