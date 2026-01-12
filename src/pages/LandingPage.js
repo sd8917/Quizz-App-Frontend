@@ -625,6 +625,32 @@ const LandingPage = () => {
               <CheckIcon />
               <Typography>Cancel Anytime</Typography>
             </Box>
+            <Box
+              sx={{
+                width: { xs: '100%', sm: '80%', md: '80%', lg: '100%' },
+                position: 'relative',
+                paddingBottom: '56.25%',
+                height: 0,
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: 3,
+              }}
+            >
+              <iframe
+                src="https://www.youtube.com/embed/4BPLeW3ptmE"
+                title="YouTube video"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  border: 0,
+                }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </Box>
           </Box>
         </Container>
       </GradientBackground>
