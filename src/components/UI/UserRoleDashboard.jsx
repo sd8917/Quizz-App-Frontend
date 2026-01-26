@@ -3,7 +3,8 @@ import {
     Quiz as QuizIcon,
     PlayArrow,
     Schedule,
-    Accessibility,
+    Lock,
+    LockOpen,
 } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 import { channelColors } from "../../utils/constant";
@@ -54,7 +55,7 @@ const UserRoleDashboard = ({ quizzes }) => {
                                                 }
                                             />
                                             {channel.duration && <Chip label={channel.duration + " min"} size="small" icon={<Schedule />} />}
-                                            <Chip label={`${channel?.isPublic || "Public"}`} size="small" icon={<Accessibility />} />
+                                            <Chip label={`${channel?.isPublic || "Public"}`} size="small" icon={channel?.isPublic=="public"? <LockOpen />:<Lock />} />
                                             <Chip label={channel.category || 'General'} size="small" variant="outlined" />
                                         </Box>
                                         <Typography variant="body2" color="text.secondary" sx={{
@@ -74,7 +75,7 @@ const UserRoleDashboard = ({ quizzes }) => {
                                             startIcon={<PlayArrow />}
                                             onClick={() => navigate(`/quiz/${channel._id}`)}
                                         >
-                                            Start Quiz
+                                            Go to Quiz
                                         </Button>
                                         <Button size="small" variant="secondary" onClick={() => navigate(`/quiz/${channel._id}`)}>View Details</Button>
                                     </CardActions>
