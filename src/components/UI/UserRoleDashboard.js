@@ -74,7 +74,7 @@ const UserRoleDashboard = ({ quizzes }) => {
                                             startIcon={<PlayArrow />}
                                             onClick={() => navigate(`/quiz/${channel._id}`)}
                                         >
-                                            Start Quiz
+                                            Go to Quiz
                                         </Button>
                                         <Button size="small" variant="secondary" onClick={() => navigate(`/quiz/${channel._id}`)}>View Details</Button>
                                     </CardActions>
