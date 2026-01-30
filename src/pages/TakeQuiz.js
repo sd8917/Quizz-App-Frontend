@@ -22,6 +22,7 @@ import {
   IconButton,
   Tooltip,
   CircularProgress,
+  Snackbar,
 } from '@mui/material';
 import {
   Timer as TimerIcon,
@@ -31,6 +32,8 @@ import {
   Flag as FlagIcon,
   Warning as WarningIcon,
   ExitToApp as ExitIcon,
+  Wifi as WifiIcon,
+  WifiOff as WifiOffIcon,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
@@ -58,6 +61,93 @@ const TakeQuiz = () => {
   const [fetchingQuestions, setFetchingQuestions] = useState(false);
   const [submissionData, setSubmissionData] = useState(null);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+
+  // Offline functionality
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [hasPendingSubmission, setHasPendingSubmission] = useState(false);
+  const [offlineSnackbar, setOfflineSnackbar] = useState({ open: false, message: '', severity: 'info' });
+
+  // Online/offline detection
+  useEffect(() => {
+    const handleOnline = async () => {
+      setIsOnline(true);
+      setOfflineSnackbar({
+        open: true,
+        message: 'You are back online! Processing any pending submissions...',
+        severity: 'success'
+      });
+
+      // Process pending submissions when back online
+      try {
+        const results = await quizService.processPendingSubmissions();
+        if (results.length > 0) {
+          const successCount = results.filter(r => r.success).length;
+          const failCount = results.length - successCount;
+
+          if (successCount > 0) {
+            setOfflineSnackbar({
+              open: true,
+              message: `Successfully submitted ${successCount} quiz(es) that were pending offline.`,
+              severity: 'success'
+            });
+          }
+          if (failCount > 0) {
+            setOfflineSnackbar({
+              open: true,
+              message: `${failCount} submission(s) failed. Please try again.`,
+              severity: 'warning'
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error processing pending submissions:', error);
+        setOfflineSnackbar({
+          open: true,
+          message: 'Failed to process pending submissions. Please try submitting manually.',
+          severity: 'error'
+        });
+      }
+
+      // Check if current quiz has pending submission
+      if (quizId) {
+        const hasPending = await quizService.hasPendingSubmissions(quizId);
+        setHasPendingSubmission(hasPending);
+      }
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      setOfflineSnackbar({
+        open: true,
+        message: 'You are offline. Quiz answers will be stored locally and submitted when you are back online.',
+        severity: 'warning'
+      });
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [quizId]);
+
+  // Check for pending submissions on component mount
+  useEffect(() => {
+    const checkPendingSubmissions = async () => {
+      if (quizId) {
+        try {
+          const hasPending = await quizService.hasPendingSubmissions(quizId);
+          setHasPendingSubmission(hasPending);
+        } catch (error) {
+          console.error('Error checking pending submissions:', error);
+        }
+      }
+    };
+
+    checkPendingSubmissions();
+  }, [quizId]);
 
   // Fullscreen handling
   const enterFullscreen = () => {
@@ -548,7 +638,7 @@ const TakeQuiz = () => {
                       <Chip 
                         label={submissionData.percentage >= 70 ? 'Passed' : 'Failed'} 
                         color={submissionData.percentage >= 70 ? 'success' : 'error'}
-                        sx={{ mt: 1, fontWeight: 600 }}
+                        sx={{ mt: 1, fontWeight: 600, color: "#fff" }}
                       />
                     </Box>
                   </Grid>
@@ -602,7 +692,8 @@ const TakeQuiz = () => {
                         label={answer.isCorrect ? 'Correct' : 'Incorrect'} 
                         color={answer.isCorrect ? 'success' : 'error'}
                         size="small"
-                        sx={{ fontWeight: 600 }}
+                        sx={{ fontWeight: 600 , color: "#fff"}}
+
                       />
                     </Box>
                   ))}
@@ -1194,8 +1285,76 @@ const TakeQuiz = () => {
             </DialogContent>
           </Dialog>
         )}
+
+        {/* Offline status indicator */}
+        {!isOnline && (
+          <Box
+            sx={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bgcolor: 'warning.main',
+              color: 'warning.contrastText',
+              py: 1,
+              px: 2,
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              justifyContent: 'center'
+            }}
+          >
+            <WifiOffIcon fontSize="small" />
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              You are currently offline. Quiz answers will be saved locally.
+            </Typography>
+          </Box>
+        )}
+
+        {/* Pending submission indicator */}
+        {hasPendingSubmission && (
+          <Box
+            sx={{
+              position: 'fixed',
+              top: isOnline ? 0 : 40,
+              left: 0,
+              right: 0,
+              bgcolor: 'info.main',
+              color: 'info.contrastText',
+              py: 1,
+              px: 2,
+              zIndex: 9998,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              justifyContent: 'center'
+            }}
+          >
+            <WifiIcon fontSize="small" />
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              You have pending quiz submissions that will be processed when online.
+            </Typography>
+          </Box>
+        )}
+
+        {/* Offline snackbar */}
+        <Snackbar
+          open={offlineSnackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setOfflineSnackbar({ ...offlineSnackbar, open: false })}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={() => setOfflineSnackbar({ ...offlineSnackbar, open: false })}
+            severity={offlineSnackbar.severity}
+            sx={{ width: '100%' }}
+          >
+            {offlineSnackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
-      
+
     </>
   );
 };

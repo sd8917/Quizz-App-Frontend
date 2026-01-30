@@ -89,6 +89,7 @@ const ChannelDetails = () => {
   const [marks, setMarks] = useState(1);
   const [generatedQuizData, setGeneratedQuizData] = useState(null);
   const [generating, setGenerating] = useState(false);
+  const [uploadloading, setUploadLoading] = useState(false);
 
   // Role-based access control
   useEffect(() => {
@@ -285,14 +286,45 @@ const ChannelDetails = () => {
     }
   };
 
-  const handleAddToChannel = async () => {
-    // This would integrate with your bulk upload functionality
-    setSnackbar({
-      open: true,
-      message: 'Feature coming soon! Use the copy button to paste into bulk upload.',
-      severity: 'info'
-    });
-  };
+ const handleBulkUploadSubmit = async () => {
+
+     setUploadLoading(true);
+     try {
+       // Parse the JSON input
+       const parsedData =generatedQuizData;
+       const questions = parsedData.questions || parsedData;
+ 
+       if (!Array.isArray(questions) || questions.length === 0) {
+         throw new Error('Invalid format: questions array is required');
+       }
+      
+       // Upload to API
+       const response = await channelService.addBulkQuestions(channelId, questions);
+     
+       // Update the local channel state with new question count
+       const addedCount = response?.data.length || questions.length;
+       
+       setSnackbar({ 
+         open: true, 
+         message: `Successfully added ${addedCount} question${addedCount !== 1 ? 's' : ''} to ${channelId}!`, 
+         severity: 'success' 
+       });
+
+     } catch (err) {
+       console.error('Error uploading bulk questions:', err);
+       let errorMessage = 'Failed to upload questions';
+       
+       if (err instanceof SyntaxError) {
+         errorMessage = 'Invalid JSON format. Please check your input.';
+       } else if (err.message) {
+         errorMessage = err.message;
+       }
+       
+       setSnackbar({ open: true, message: errorMessage, severity: 'error' });
+     } finally {
+       setUploadLoading(false);
+     }
+   };
 
   // Access control - redirect if user doesn't have permission
   if (!hasAccess) {
@@ -511,8 +543,9 @@ const ChannelDetails = () => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={handleAddToChannel}
+                  onClick={handleBulkUploadSubmit}
                   sx={{ flex: 1 }}
+                  disabled={uploadloading}
                 >
                   Add This Quiz to App
                 </Button>

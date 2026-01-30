@@ -123,6 +123,7 @@ const QuizManagement = () => {
   };
 
   const handleBulkUploadSubmit = async () => {
+    console.log("bulkQuestionsJson", bulkQuestionsJson)
     if (!bulkQuestionsJson.trim()) {
       setSnackbar({ open: true, message: 'Please paste the questions JSON', severity: 'warning' });
       return;
@@ -603,24 +604,28 @@ const QuizManagement = () => {
               rows={12}
               value={bulkQuestionsJson}
               onChange={(e) => setBulkQuestionsJson(e.target.value)}
-              placeholder={`{
-  "questions": [
-    {
-      "title": "What is the chemical symbol for water?",
-      "questionGroupTitle": "Basic Science",
-      "content": "Select the correct chemical symbol for water.",
-      "type": "multiple_choice",
-      "difficulty": "easy",
-      "points": 5,
-      "options": [
-        { "text": "H2O", "isCorrect": true, "explanation": "H2O is the chemical formula for water." },
-        { "text": "O2", "isCorrect": false },
-        { "text": "CO2", "isCorrect": false },
-        { "text": "NaCl", "isCorrect": false }
-      ]
-    }
-  ]
-}`}
+              placeholder={` {
+    "questionText": "Your questions 1",
+    "marks": 1,
+    "options": [
+      {
+        "text": "Option 1",
+        "isCorrect": false
+      },
+      {
+        "text": "Option 2",
+        "isCorrect": false
+      },
+      {
+        "text": "Option 3",
+        "isCorrect": true
+      },
+      {
+        "text": "Option 4",
+        "isCorrect": false
+      }
+    ]
+  },`}
               sx={{
                 fontFamily: 'monospace',
                 fontSize: '0.85rem',
