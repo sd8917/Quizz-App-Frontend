@@ -55,7 +55,7 @@ const UserRoleDashboard = ({ quizzes }) => {
                                                 }
                                             />
                                             {channel.duration && <Chip label={channel.duration + " min"} size="small" icon={<Schedule />} />}
-                                            <Chip label={`${channel?.isPublic || "Public"}`} size="small" icon={channel?.isPublic=="public"? <LockOpen />:<Lock />} />
+                                            <Chip label={`${channel?.isPublic || "Public"}`} size="small" icon={channel?.isPublic==="public"? <LockOpen />:<Lock />} />
                                             <Chip label={channel.category || 'General'} size="small" variant="outlined" />
                                         </Box>
                                         <Typography variant="body2" color="text.secondary" sx={{

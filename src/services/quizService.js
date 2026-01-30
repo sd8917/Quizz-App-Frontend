@@ -1,4 +1,9 @@
 import apiClient from './api';
+import {
+  getPendingSubmissions,
+  updateSubmissionStatus,
+  deleteSubmission
+} from '../utils/indexedDB';
 
 /**
  * Quiz Service
@@ -144,6 +149,74 @@ const quizService = {
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;
+    }
+  },
+
+  /**
+   * Process pending offline submissions when back online
+   * @returns {Promise} Results of processed submissions
+   */
+  processPendingSubmissions: async () => {
+    try {
+      const pendingSubmissions = await getPendingSubmissions();
+      const results = [];
+
+      for (const submission of pendingSubmissions) {
+        try {
+          // Attempt to submit the stored answers
+          const response = await quizService.submitQuiz(
+            submission.channelId,
+            submission.answers,
+            true // Force online submission
+          );
+
+          if (response.success !== false) {
+            // Successful submission, delete from IndexedDB
+            await deleteSubmission(submission.id);
+            results.push({
+              id: submission.id,
+              success: true,
+              data: response
+            });
+          } else {
+            // Still failed, mark as failed
+            await updateSubmissionStatus(submission.id, 'failed');
+            results.push({
+              id: submission.id,
+              success: false,
+              error: 'Submission still failing'
+            });
+          }
+        } catch (error) {
+          console.error(`Failed to process submission ${submission.id}:`, error);
+          await updateSubmissionStatus(submission.id, 'failed');
+          results.push({
+            id: submission.id,
+            success: false,
+            error: error.message
+          });
+        }
+      }
+
+      return results;
+    } catch (error) {
+      console.error('Error processing pending submissions:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Check if there are pending submissions for a channel
+   * @param {string} channelId - Channel ID
+   * @returns {Promise} Boolean indicating if pending submissions exist
+   */
+  hasPendingSubmissions: async (channelId) => {
+    try {
+      const pendingSubmissions = await getPendingSubmissions();
+      return pendingSubmissions.some(submission => submission.channelId === channelId);
+    } catch (error) {
+      console.error('Error checking pending submissions:', error);
+      return false;
     }
   },
 };
