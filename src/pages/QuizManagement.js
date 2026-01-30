@@ -433,7 +433,7 @@ const QuizManagement = () => {
                       variant="outlined"
                       color="secondary"
                     >
-                      Add in Bulk 222
+                      Add in Bulk
                     </Button>
                     <Button
                       size="small"
@@ -650,7 +650,7 @@ const QuizManagement = () => {
             onClick={handleBulkUploadSubmit}
             disabled={uploadLoading}
           >
-            {uploadLoading ? 'Uploading...' : 'Upload Questions 22'}
+            {uploadLoading ? 'Uploading...' : 'Upload Questions'}
           </Button>
         </DialogActions>
       </Dialog>
