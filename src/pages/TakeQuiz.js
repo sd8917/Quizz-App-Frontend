@@ -638,7 +638,7 @@ const TakeQuiz = () => {
                       <Chip 
                         label={submissionData.percentage >= 70 ? 'Passed' : 'Failed'} 
                         color={submissionData.percentage >= 70 ? 'success' : 'error'}
-                        sx={{ mt: 1, fontWeight: 600 }}
+                        sx={{ mt: 1, fontWeight: 600, color: "#fff" }}
                       />
                     </Box>
                   </Grid>
@@ -692,7 +692,8 @@ const TakeQuiz = () => {
                         label={answer.isCorrect ? 'Correct' : 'Incorrect'} 
                         color={answer.isCorrect ? 'success' : 'error'}
                         size="small"
-                        sx={{ fontWeight: 600 }}
+                        sx={{ fontWeight: 600 , color: "#fff"}}
+
                       />
                     </Box>
                   ))}
