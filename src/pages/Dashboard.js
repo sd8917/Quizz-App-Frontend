@@ -42,6 +42,7 @@ import useFetch from '../hooks/useFetch';
 import { userService } from '../services';
 import {AdminDashboardRoutes, getWelcomeMessage } from '../utils/helpers';
 import { QuickStats, DashboardTitle, UserRoleDashboard, AdminDashboardCard, LoadingSpinner } from '../components/UI';
+import ChatButton from '../components/UI/ChatButton';
 
 const Dashboard = () => {
   useSEO('dashboard');
@@ -187,6 +188,10 @@ const Dashboard = () => {
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700, cursor: 'pointer' }} onClick={()=> navigate("/")}>
             TriviaVerse
+          </Typography>
+          <ChatButton />
+          <Typography variant="body2" color="text.secondary">
+            •
           </Typography>
           <Chip 
             label={userRole.toUpperCase()} 
