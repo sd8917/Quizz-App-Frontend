@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import { AutoAwesome } from '@mui/icons-material';
 import ChatDialog from './ChatDialog';
+import { useSelector } from 'react-redux';
 
 const ChatButton = () => {
     const [chatOpen, setChatOpen] = useState(false);
@@ -9,9 +10,12 @@ const ChatButton = () => {
     const handleChatOpen = () => setChatOpen(true);
     const handleChatClose = () => setChatOpen(false);
 
+    const authState = useSelector((state) => state.auth);
+    const isAdmin = authState.user.role === "admin";
+
     return (
         <>
-            <Button
+           {isAdmin && <Button
                 variant="outlined"
                 size="small"
                 startIcon={<AutoAwesome />}
@@ -30,7 +34,7 @@ const ChatButton = () => {
                 }}
             >
                  AI 
-            </Button>
+            </Button>}
             <ChatDialog open={chatOpen} onClose={handleChatClose} />
         </>
     );
