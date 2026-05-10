@@ -356,18 +356,22 @@ const UserManagement = () => {
       return <LoadingSpinner message="Loading users..." />;
     }
 
-  if(error) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Typography color="error">{error}</Typography>
-      </Box>
-    )
-  }
-
-
+  // if(error) {
+  //   return (
+  //     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+  //       <Typography color="error">{error}</Typography>
+  //     </Box>
+  //   )
+  // }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+
+      {/* */}
+     {error && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Typography color="error">{error}</Typography>
+      </Box>}
+
       {/* Header */}
       <AppBar position="static" elevation={0}>
         <Toolbar>
