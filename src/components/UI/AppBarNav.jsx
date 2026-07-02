@@ -13,6 +13,8 @@ import ChatButton from './ChatButton';
 const AppBarNav = ({ navigateTo = "/dashboard", title }) => {
     const navigate = useNavigate();
     const user = useSelector((state) => state.auth.user);
+    const userRole = user?.data?.roles?.[0] || user?.role || 'user';
+    const isAdmin = userRole === 'admin';
 
     return (
         <AppBar
@@ -34,10 +36,12 @@ const AppBarNav = ({ navigateTo = "/dashboard", title }) => {
                 <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
                     {title}
                 </Typography>
-                 <ChatButton />
+                {isAdmin && <ChatButton />}
+                {isAdmin && (
                     <Typography variant="body2" color="text.secondary">
                         •
                     </Typography>
+                )}
                 <Chip
                     label={user ? `Logged in as ${user?.username || 'Anonymous'}`: "Not logged In"}
                     sx={{

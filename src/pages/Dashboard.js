@@ -189,10 +189,12 @@ const Dashboard = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700, cursor: 'pointer' }} onClick={()=> navigate("/")}>
             TriviaVerse
           </Typography>
-          <ChatButton />
-          <Typography variant="body2" color="text.secondary">
-            •
-          </Typography>
+          {userRole === 'admin' && <ChatButton />}
+          {userRole === 'admin' && (
+            <Typography variant="body2" color="text.secondary">
+              •
+            </Typography>
+          )}
           <Chip 
             label={userRole.toUpperCase()} 
             size="small" 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base API configuration
-const BASE_URL = 'https://api.triviaverse.site/api';
+const BASE_URL = 'http://localhost:8000/api';
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -48,7 +48,7 @@ apiClient.interceptors.response.use(
 
     // If 401 & not already retried
     if (error.response?.status === 401) {
-      
+
       if (isRefreshing) {
         // Queue pending requests
         return new Promise((resolve, reject) => {
