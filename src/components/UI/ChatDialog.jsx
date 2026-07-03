@@ -18,7 +18,6 @@ import {
     CardContent,
     Chip,
     Tooltip,
-    Grid,
     useTheme,
     useMediaQuery,
     Collapse
@@ -30,7 +29,7 @@ import {
     Delete,
     Add,
     Menu,
-    ChevronLeft,
+    ArrowBack,
     MenuBook,
     Psychology,
     AssignmentInd,
@@ -44,7 +43,7 @@ import { ragService } from '../../services';
 const ChatDialog = ({ open, onClose }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    
+
     const [sessions, setSessions] = useState([]);
     const [currentSessionId, setCurrentSessionId] = useState(null);
     const [messages, setMessages] = useState([
@@ -106,7 +105,7 @@ const ChatDialog = ({ open, onClose }) => {
                     timestamp: msg.timestamp,
                     sources: [] // Past messages don't store source citations in DB
                 }));
-                
+
                 if (mappedMessages.length === 0) {
                     setMessages([
                         { id: 'welcome', text: 'This session has no messages yet. Ask a question to get started!', sender: 'bot', sources: [] }
@@ -155,7 +154,7 @@ const ChatDialog = ({ open, onClose }) => {
 
         const userQuery = input;
         setInput('');
-        
+
         // Add user message to state
         const userMessage = {
             id: Date.now(),
@@ -168,10 +167,10 @@ const ChatDialog = ({ open, onClose }) => {
 
         try {
             const response = await ragService.search(userQuery, currentSessionId);
-            
+
             if (response.success && response.data) {
                 const { answer, sources, metadata } = response.data;
-                
+
                 const botResponse = {
                     id: Date.now() + 1,
                     text: answer || 'No response generated.',
@@ -180,7 +179,7 @@ const ChatDialog = ({ open, onClose }) => {
                     timestamp: new Date(),
                     metadata: metadata
                 };
-                
+
                 setMessages(prev => [...prev, botResponse]);
 
                 // Update session details if a new one was initialized
@@ -205,7 +204,7 @@ const ChatDialog = ({ open, onClose }) => {
         } catch (error) {
             console.error('Error fetching RAG response:', error);
             const errorMsg = error?.response?.data?.message || 'Sorry, I encountered an error while processing your request. Please try again.';
-            
+
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
                 text: errorMsg,
@@ -263,10 +262,10 @@ const ChatDialog = ({ open, onClose }) => {
     };
 
     return (
-        <Dialog 
-            open={open} 
-            onClose={onClose} 
-            maxWidth="md" 
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="md"
             fullWidth
             PaperProps={{ sx: glassPaperStyle }}
         >
@@ -280,7 +279,7 @@ const ChatDialog = ({ open, onClose }) => {
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Box display="flex" alignItems="center" gap={1}>
                         {isMobile && (
-                            <IconButton 
+                            <IconButton
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
                                 sx={{ color: '#fff', mr: 0.5 }}
                             >
@@ -289,15 +288,15 @@ const ChatDialog = ({ open, onClose }) => {
                         )}
                         <AutoAwesome />
                         <Typography variant="h6" fontWeight={700}>TriviaVerse RAG Chatbot</Typography>
-                        <Chip 
-                            label="Gemini 2.5 + Re-ranking" 
-                            size="small" 
-                            sx={{ 
-                                bgcolor: 'rgba(255,255,255,0.2)', 
-                                color: '#fff', 
+                        <Chip
+                            label="Gemini 2.5 + Re-ranking"
+                            size="small"
+                            sx={{
+                                bgcolor: 'rgba(255,255,255,0.2)',
+                                color: '#fff',
                                 fontWeight: 600,
-                                fontSize: '0.7rem' 
-                            }} 
+                                fontSize: '0.7rem'
+                            }}
                         />
                     </Box>
                     <IconButton onClick={onClose} sx={{ color: '#fff' }}>
@@ -307,14 +306,14 @@ const ChatDialog = ({ open, onClose }) => {
             </DialogTitle>
 
             <DialogContent dividers sx={{ p: 0, overflow: 'hidden' }}>
-                <Grid container sx={{ height: '65vh' }}>
-                    
+                <Box sx={{ display: 'flex', height: '65vh', width: '100%', position: 'relative', overflow: 'hidden' }}>
+
                     {/* Sidebar: Chat History */}
-                    <Collapse 
-                        in={sidebarOpen} 
-                        orientation="horizontal" 
-                        sx={{ 
-                            height: '100%', 
+                    <Collapse
+                        in={sidebarOpen}
+                        orientation="horizontal"
+                        sx={{
+                            height: '100%',
                             borderRight: '1px solid rgba(0, 0, 0, 0.08)',
                             background: 'rgba(248, 250, 252, 0.6)',
                             width: sidebarOpen ? (isMobile ? '100%' : '280px') : '0px',
@@ -368,7 +367,7 @@ const ChatDialog = ({ open, onClose }) => {
                                     {sessions.map((session) => {
                                         const isActive = session.sessionId === currentSessionId;
                                         const lastMsgText = session.lastMessage?.content || 'Empty Chat';
-                                        
+
                                         return (
                                             <ListItem
                                                 button
@@ -388,10 +387,10 @@ const ChatDialog = ({ open, onClose }) => {
                                             >
                                                 <ListItemText
                                                     primary={
-                                                        <Typography 
-                                                            variant="subtitle2" 
-                                                            noWrap 
-                                                            sx={{ 
+                                                        <Typography
+                                                            variant="subtitle2"
+                                                            noWrap
+                                                            sx={{
                                                                 color: isActive ? 'primary.main' : 'text.primary',
                                                                 fontWeight: isActive ? 700 : 500
                                                             }}
@@ -407,11 +406,11 @@ const ChatDialog = ({ open, onClose }) => {
                                                 />
                                                 <ListItemSecondaryAction sx={{ right: 8 }}>
                                                     <Tooltip title="Delete Session">
-                                                        <IconButton 
-                                                            edge="end" 
+                                                        <IconButton
+                                                            edge="end"
                                                             size="small"
                                                             onClick={(e) => handleDeleteSession(e, session.sessionId)}
-                                                            sx={{ 
+                                                            sx={{
                                                                 color: 'text.secondary',
                                                                 '&:hover': { color: 'error.main' },
                                                                 opacity: 0.7
@@ -430,36 +429,50 @@ const ChatDialog = ({ open, onClose }) => {
                     </Collapse>
 
                     {/* Main Chat Interface */}
-                    <Grid 
-                        item 
-                        xs={12} 
-                        md={sidebarOpen ? 8.5 : 12} 
-                        sx={{ 
-                            height: '100%', 
-                            display: 'flex', 
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            width: 0,
+                            height: '100%',
+                            display: 'flex',
                             flexDirection: 'column',
                             position: 'relative'
                         }}
                     >
-                        {/* Toggle Sidebar Button (Desktop only, when closed) */}
-                        {!sidebarOpen && !isMobile && (
-                            <Box sx={{ position: 'absolute', left: 8, top: 8, zIndex: 5 }}>
-                                <Tooltip title="Show History">
-                                    <IconButton 
-                                        onClick={() => setSidebarOpen(true)}
-                                        sx={{ bgcolor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(0,0,0,0.1)' }}
-                                    >
-                                        <ChevronLeft sx={{ transform: 'rotate(180deg)' }} />
-                                    </IconButton>
-                                </Tooltip>
+                        {!sidebarOpen && (
+                            <Box sx={{
+                                p: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
+                                bgcolor: 'rgba(255, 255, 255, 0.85)',
+                                backdropFilter: 'blur(10px)',
+                                position: 'sticky',
+                                top: 0,
+                                zIndex: 5
+                            }}>
+                                <Button
+                                    startIcon={<ArrowBack />}
+                                    onClick={() => setSidebarOpen(true)}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontWeight: 600,
+                                        color: 'primary.main',
+                                        '&:hover': {
+                                            bgcolor: 'rgba(99, 102, 241, 0.08)'
+                                        }
+                                    }}
+                                >
+                                    Go back
+                                </Button>
                             </Box>
                         )}
 
                         {/* Messages List Area */}
-                        <Box sx={{ 
-                            flexGrow: 1, 
-                            overflowY: 'auto', 
-                            p: 3, 
+                        <Box sx={{
+                            flexGrow: 1,
+                            overflowY: 'auto',
+                            p: 3,
                             bgcolor: 'rgba(255,255,255,0.4)',
                             display: 'flex',
                             flexDirection: 'column',
@@ -468,10 +481,10 @@ const ChatDialog = ({ open, onClose }) => {
                             {messages.map((message) => {
                                 const isUser = message.sender === 'user';
                                 return (
-                                    <Box 
-                                        key={message.id} 
-                                        sx={{ 
-                                            display: 'flex', 
+                                    <Box
+                                        key={message.id}
+                                        sx={{
+                                            display: 'flex',
                                             flexDirection: 'column',
                                             alignItems: isUser ? 'flex-end' : 'flex-start',
                                             width: '100%'
@@ -492,7 +505,7 @@ const ChatDialog = ({ open, onClose }) => {
                                                 {message.text}
                                             </Typography>
                                         </Box>
-                                        
+
                                         {/* Timestamp */}
                                         {message.timestamp && (
                                             <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, mx: 1, fontSize: '0.65rem' }}>
@@ -504,25 +517,25 @@ const ChatDialog = ({ open, onClose }) => {
                                         {!isUser && message.sources && message.sources.length > 0 && (
                                             <Box sx={{ mt: 1.5, width: '100%', maxWidth: '85%' }}>
                                                 <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary', fontWeight: 700, mb: 1, ml: 1 }}>
-                                                    <Star sx={{ fontSize: 14, color: '#f59e0b' }} /> 
+                                                    <Star sx={{ fontSize: 14, color: '#f59e0b' }} />
                                                     Retrieved Sources & Relevance Scores:
                                                 </Typography>
-                                                
+
                                                 <Box display="flex" flexDirection="column" gap={1}>
                                                     {message.sources.map((source, sIdx) => {
                                                         const sType = source.metadata?.type || 'unknown';
                                                         const sColors = getSourceColor(sType);
                                                         const isExpanded = expandedSources[`${message.id}-${sIdx}`];
-                                                        
+
                                                         // Format Scores
                                                         const baseScore = source.score ? `${(source.score * 100).toFixed(0)}%` : null;
                                                         const reRankScore = source.reRankScore ? `${(source.reRankScore * 100).toFixed(0)}%` : null;
-                                                        
+
                                                         return (
-                                                            <Card 
-                                                                key={sIdx} 
-                                                                sx={{ 
-                                                                    borderRadius: '8px', 
+                                                            <Card
+                                                                key={sIdx}
+                                                                sx={{
+                                                                    borderRadius: '8px',
                                                                     border: '1px solid rgba(0, 0, 0, 0.05)',
                                                                     boxShadow: 'none',
                                                                     bgcolor: 'rgba(255, 255, 255, 0.7)'
@@ -555,27 +568,27 @@ const ChatDialog = ({ open, onClose }) => {
                                                                                 </Typography>
                                                                             )}
                                                                         </Box>
-                                                                        
+
                                                                         {/* Relevance Badges */}
                                                                         <Box display="flex" gap={0.5}>
                                                                             {baseScore && (
-                                                                                <Chip 
-                                                                                    label={`Vector: ${baseScore}`} 
-                                                                                    size="small" 
-                                                                                    sx={{ height: 18, fontSize: '0.6rem', bgcolor: '#f1f5f9', color: '#475569' }} 
+                                                                                <Chip
+                                                                                    label={`Vector: ${baseScore}`}
+                                                                                    size="small"
+                                                                                    sx={{ height: 18, fontSize: '0.6rem', bgcolor: '#f1f5f9', color: '#475569' }}
                                                                                 />
                                                                             )}
                                                                             {reRankScore && (
-                                                                                <Chip 
-                                                                                    label={`Re-ranked Match: ${reRankScore}`} 
-                                                                                    size="small" 
+                                                                                <Chip
+                                                                                    label={`Re-ranked Match: ${reRankScore}`}
+                                                                                    size="small"
                                                                                     color="secondary"
-                                                                                    sx={{ height: 18, fontSize: '0.6rem', fontWeight: 700 }} 
+                                                                                    sx={{ height: 18, fontSize: '0.6rem', fontWeight: 700 }}
                                                                                 />
                                                                             )}
                                                                         </Box>
                                                                     </Box>
-                                                                    
+
                                                                     {/* Source Text Content Toggle */}
                                                                     <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                                                         <Typography variant="caption" color="text.secondary" sx={{
@@ -589,8 +602,8 @@ const ChatDialog = ({ open, onClose }) => {
                                                                         }}>
                                                                             "{source.text}"
                                                                         </Typography>
-                                                                        <IconButton 
-                                                                            size="small" 
+                                                                        <IconButton
+                                                                            size="small"
                                                                             onClick={() => toggleSourceExpand(`${message.id}-${sIdx}`)}
                                                                             sx={{ ml: 1, p: 0 }}
                                                                         >
@@ -607,7 +620,7 @@ const ChatDialog = ({ open, onClose }) => {
                                     </Box>
                                 );
                             })}
-                            
+
                             {/* Loading State Bubble */}
                             {isLoading && (
                                 <Box display="flex" justifyContent="flex-start" width="100%">
@@ -632,16 +645,16 @@ const ChatDialog = ({ open, onClose }) => {
                         </Box>
 
                         {/* Input Area */}
-                        <Box sx={{ 
-                            p: 2, 
-                            bgcolor: 'rgba(255,255,255,0.7)', 
+                        <Box sx={{
+                            p: 2,
+                            bgcolor: 'rgba(255,255,255,0.7)',
                             borderTop: '1px solid rgba(0, 0, 0, 0.08)',
                             display: 'flex',
                             alignItems: 'center',
                             gap: 1
                         }}>
-                             <TextField
-                                onClick={() => {}}
+                            <TextField
+                                onClick={() => { }}
                                 fullWidth
                                 multiline
                                 maxRows={3}
@@ -677,8 +690,8 @@ const ChatDialog = ({ open, onClose }) => {
                                 <Send fontSize="small" />
                             </Button>
                         </Box>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </DialogContent>
         </Dialog>
     );
