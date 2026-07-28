@@ -15,6 +15,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 APP_NAME="quizz-app-frontend"
+DOMAIN="triviaverse.site"
 DEPLOY_DIR="/var/www/quizz-app"
 NGINX_CONFIG="/etc/nginx/sites-available/$APP_NAME"
 NGINX_ENABLED="/etc/nginx/sites-enabled/$APP_NAME"
@@ -75,7 +76,7 @@ server {
     listen 80;
     listen [::]:80;
     
-    server_name _;
+    server_name $DOMAIN www.$DOMAIN;
     root /var/www/quizz-app;
     index index.html;
 
@@ -148,6 +149,17 @@ else
   systemctl start nginx
 fi
 
+# Install Certbot if not installed
+if ! command -v certbot &> /dev/null; then
+  echo -e "${YELLOW}Installing Certbot...${NC}"
+  apt-get update
+  apt-get install -y certbot python3-certbot-nginx
+fi
+
+# Obtain SSL certificate
+echo -e "${YELLOW}Obtaining SSL certificate for $DOMAIN...${NC}"
+certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m admin@$DOMAIN --redirect || echo -e "${RED}Certbot failed. You may need to run it manually later.${NC}"
+
 # Cleanup old backups (keep last 5)
 echo -e "${YELLOW}Cleaning up old backups...${NC}"
 cd "$BACKUP_DIR"
@@ -158,10 +170,11 @@ echo -e "${GREEN}Deployment completed successfully!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo -e "App deployed to: ${GREEN}$DEPLOY_DIR${NC}"
 echo -e "Nginx config: ${GREEN}$NGINX_CONFIG${NC}"
-echo -e "Access the app at: ${GREEN}http://$(curl -s ifconfig.me 2>/dev/null || echo 'your-ec2-public-ip')${NC}"
+echo -e "Access the app at: ${GREEN}https://$DOMAIN${NC}"
 echo ""
 echo -e "${YELLOW}Useful commands:${NC}"
 echo -e "  Check Nginx status: ${GREEN}sudo systemctl status nginx${NC}"
 echo -e "  View Nginx logs: ${GREEN}sudo tail -f /var/log/nginx/error.log${NC}"
 echo -e "  Restart Nginx: ${GREEN}sudo systemctl restart nginx${NC}"
+echo -e "  Test SSL certificate renewal: ${GREEN}sudo certbot renew --dry-run${NC}"
 echo -e "  Rollback: ${GREEN}cd $BACKUP_DIR && sudo tar -xzf backup-*.tar.gz -C $DEPLOY_DIR${NC}"
