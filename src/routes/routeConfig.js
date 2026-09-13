@@ -30,6 +30,7 @@ const Tutorial       = React.lazy(() => import('./pages/Tutorial'));
 const Feedback       = React.lazy(() => import('./pages/Feedback'));
 const GoogleCallback = React.lazy(() => import('./pages/GoogleCallback'));
 const Subscription   = React.lazy(() => import('./pages/Subscription'));
+const SubmittedQuizzes = React.lazy(() => import('./pages/SubmittedQuizzes'));
 
 export const ROUTE_TYPES = {
     PUBLIC:     'public',
@@ -159,6 +160,11 @@ export const routes = [
     {
         path:    '/profile',
         element: <Profile />,
+        type:    ROUTE_TYPES.PROTECTED,
+    },
+    {
+        path:    '/submitted-quizzes',
+        element: <SubmittedQuizzes />,
         type:    ROUTE_TYPES.PROTECTED,
     },
     {

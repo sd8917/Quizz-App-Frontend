@@ -38,6 +38,7 @@ const Feedback = React.lazy(() => import('./pages/Feedback'));
 const GoogleCallback = React.lazy(() => import('./pages/GoogleCallback'));
 const Subscription = React.lazy(() => import('./pages/Subscription'));
 const Refund = React.lazy(()=> import("./pages/Refund"));
+const SubmittedQuizzes = React.lazy(() => import('./pages/SubmittedQuizzes'));
 
 function App() {
   return (
@@ -78,6 +79,8 @@ function App() {
               <Route path="/subscription" element={<CreatorRoute><Subscription /></CreatorRoute>} />
               <Route path="/user-management" element={<ProtectedRoute><UserManagement /></ProtectedRoute> } />
               <Route path="/server-logs" element={<ProtectedRoute><ServerLogs /></ProtectedRoute>} />
+              <Route path="/submitted-quizzes" element={<ProtectedRoute><SubmittedQuizzes /></ProtectedRoute>} />
+              <Route path="/submitted-quizzes/:channelId" element={<ProtectedRoute><SubmittedQuizzes /></ProtectedRoute>} />
               
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
