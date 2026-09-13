@@ -96,6 +96,47 @@ const quizService = {
   },
 
   /**
+   * Get user's submitted quizzes
+   * @returns {Promise} List of user's submitted quizzes
+   */
+  getSubmittedQuizzes: async () => {
+    try {
+      const response = await apiClient.get('/attempt/user');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
+   * Get all submissions for a specific channel
+   * @param {string} channelId - Channel ID
+   * @returns {Promise} List of submissions
+   */
+  getChannelSubmissions: async (channelId) => {
+    try {
+      const response = await apiClient.get(`/attempt/channel/${channelId}/submissions`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
+   * Get full details of a specific attempt
+   * @param {string} attemptId - Attempt ID
+   * @returns {Promise} Attempt details
+   */
+  getAttemptById: async (attemptId) => {
+    try {
+      const response = await apiClient.get(`/attempt/${attemptId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  /**
    * Submit quiz answers
    * @param {string} channelId - Channel ID
    * @param {Array} answers - User answers [{questionId, selectedOption}]

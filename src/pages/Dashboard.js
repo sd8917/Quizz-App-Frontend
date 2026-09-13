@@ -23,6 +23,7 @@ import {
   Quiz as QuizIcon,
   Leaderboard as LeaderboardIcon,
   Person as PersonIcon,
+  Assignment as AssignmentIcon,
   Logout,
   Settings,
   TrendingUp,
@@ -218,6 +219,9 @@ const Dashboard = () => {
           >
             <MenuItem onClick={() => { handleMenuClose(); navigate('/profile'); }}>
               <PersonIcon sx={{ mr: 1 }} /> Profile
+            </MenuItem>
+            <MenuItem onClick={() => { handleMenuClose(); navigate('/submitted-quizzes'); }}>
+              <AssignmentIcon sx={{ mr: 1 }} /> Submitted Quizzes
             </MenuItem>
             {(userRole === 'creator' || userRole === 'admin') && (
               <MenuItem onClick={() => { handleMenuClose(); navigate('/quiz-management'); }}>
