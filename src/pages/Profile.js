@@ -28,6 +28,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserProfile, updateUser } from '../store/slices/authSlice';
 import { userService } from '../services';
 import Footer from '../components/Footer';
+import PaymentHistory from '../components/PaymentHistory';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Modal state
   const [openModal, setOpenModal] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -85,7 +86,7 @@ const Profile = () => {
     return () => {
       isMounted = false;
     };
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [dispatch]); // Only run once on mount
 
   const displayUser = profile?.data || authUser;
@@ -142,13 +143,13 @@ const Profile = () => {
 
       // Update Redux store
       dispatch(updateUser(response.data || response));
-      
+
       // Update local state
       setProfile(response);
-      
+
       // Show success message
       setUpdateSuccess(true);
-      
+
       // Close modal
       handleCloseModal();
     } catch (err) {
@@ -158,6 +159,7 @@ const Profile = () => {
       setUpdating(false);
     }
   };
+
 
   if (loading && !displayUser) {
     return (
@@ -169,7 +171,7 @@ const Profile = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-      <AppBar 
+      <AppBar
         position="static"
         sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -196,12 +198,12 @@ const Profile = () => {
             {error}
           </Alert>
         )}
-        
+
         {/* Profile Header Card */}
-        <Paper 
+        <Paper
           elevation={3}
-          sx={{ 
-            p: 4, 
+          sx={{
+            p: 4,
             mb: 3,
             borderRadius: 3,
             background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
@@ -219,11 +221,11 @@ const Profile = () => {
                 boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)',
                 border: '4px solid white',
               }}
-               alt="name icon"
+              alt="name icon"
             >
               {displayUser?.username?.charAt(0)?.toUpperCase() || 'U'}
             </Avatar>
-            
+
             <Box sx={{ flex: 1, textAlign: { xs: 'center', sm: 'left' } }}>
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
                 {displayUser?.username || 'User'}
@@ -234,10 +236,10 @@ const Profile = () => {
                   {displayUser?.email || 'No email'}
                 </Typography>
               </Box>
-              <Chip 
+              <Chip
                 label={displayUser?.roles?.[0]?.toUpperCase() || displayUser?.role?.toUpperCase() || 'USER'}
                 size="small"
-                sx={{ 
+                sx={{
                   fontWeight: 600,
                   bgcolor: 'primary.main',
                   color: 'white',
@@ -245,9 +247,9 @@ const Profile = () => {
                 }}
               />
             </Box>
-            
-            <Button 
-              variant="contained" 
+
+            <Button
+              variant="contained"
               startIcon={<Edit />}
               onClick={handleOpenModal}
               sx={{
@@ -271,12 +273,12 @@ const Profile = () => {
         <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
           Statistics
         </Typography>
-        
+
         <Grid container spacing={3}>
           <Grid item xs={12} sm={4}>
-            <Card 
+            <Card
               elevation={2}
-              sx={{ 
+              sx={{
                 height: '100%',
                 borderRadius: 3,
                 transition: 'all 0.3s',
@@ -312,9 +314,9 @@ const Profile = () => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <Card 
+            <Card
               elevation={2}
-              sx={{ 
+              sx={{
                 height: '100%',
                 borderRadius: 3,
                 transition: 'all 0.3s',
@@ -350,9 +352,9 @@ const Profile = () => {
           </Grid>
 
           <Grid item xs={12} sm={4}>
-            <Card 
+            <Card
               elevation={2}
-              sx={{ 
+              sx={{
                 height: '100%',
                 borderRadius: 3,
                 transition: 'all 0.3s',
@@ -388,11 +390,53 @@ const Profile = () => {
             </Card>
           </Grid>
         </Grid>
+
+        {/* Subscription & Billing Section */}
+        <Typography variant="h5" sx={{ fontWeight: 700, mt: 6, mb: 3 }}>
+          Subscription & Billing
+        </Typography>
+        <Paper
+          elevation={2}
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            bgcolor: displayUser?.isPremium ? 'success.light' : 'grey.100',
+            color: displayUser?.isPremium ? 'white' : 'text.primary',
+            mb: 4
+          }}
+        >
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box>
+              <Typography variant="h6" fontWeight={700}>Subscription Status</Typography>
+              {displayUser?.isPremium ? (
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  Premium Active! Expires on: {new Date(displayUser?.premiumExpiresAt).toLocaleDateString()}
+                </Typography>
+              ) : (
+                <Typography variant="body1" sx={{ mt: 1 }}>Free Tier</Typography>
+              )}
+            </Box>
+
+            {!displayUser?.isPremium && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => navigate('/subscription')}
+                sx={{ mt: { xs: 2, md: 0 } }}
+              >
+                Upgrade to Premium
+              </Button>
+            )}
+          </Box>
+        </Paper>
+
+        {/* Dynamic Payment History Component */}
+        <PaymentHistory />
       </Container>
 
       {/* Edit Profile Modal */}
-      <Dialog 
-        open={openModal} 
+      <Dialog
+        open={openModal}
         onClose={handleCloseModal}
         maxWidth="sm"
         fullWidth
@@ -403,16 +447,16 @@ const Profile = () => {
           }
         }}
       >
-        <DialogTitle sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+        <DialogTitle sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
           fontWeight: 700,
         }}>
           Edit Profile
-          <IconButton 
+          <IconButton
             onClick={handleCloseModal}
             sx={{ color: 'white' }}
             disabled={updating}
@@ -463,17 +507,17 @@ const Profile = () => {
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button 
+          <Button
             onClick={handleCloseModal}
             disabled={updating}
-            sx={{ 
+            sx={{
               borderRadius: 2,
               px: 3,
             }}
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleUpdateProfile}
             variant="contained"
             disabled={updating}
@@ -498,9 +542,9 @@ const Profile = () => {
         onClose={() => setUpdateSuccess(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={() => setUpdateSuccess(false)} 
-          severity="success" 
+        <Alert
+          onClose={() => setUpdateSuccess(false)}
+          severity="success"
           sx={{ width: '100%', borderRadius: 2 }}
         >
           Profile updated successfully!

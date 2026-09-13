@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -15,12 +15,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Alert,
   Paper,
   Divider,
 } from '@mui/material';
@@ -33,78 +27,37 @@ import {
   Lightbulb,
   TrendingUp,
   Support,
-  Close,
-  CreditCard,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Footer from '../components/Footer';
 import { useSEO } from '../hooks/useSEO';
+import CheckoutButton from '../components/CheckoutButton';
+import apiClient from '../services/api';
 
 const Subscription = () => {
   useSEO('subscription');
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
-  const [openPaymentModal, setOpenPaymentModal] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [paymentLoading, setPaymentLoading] = useState(false);
-  const [paymentError, setPaymentError] = useState('');
 
-  // Subscription plans
-  const plans = [
-    {
-      id: 'Upcoming basic',
-      name: 'AI Basic',
-      price: '$9.99',
-      period: 'month',
-      popular: false,
-      features: [
-        'AI-Generated Quiz Questions (50/month)',
-        'Basic Content Suggestions',
-        'Auto-grading with AI insights',
-        'Email Support',
-        'Access to AI Templates',
-      ],
-      color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    },
-    {
-      id: 'Upcoming pro',
-      name: 'AI Pro',
-      price: '$24.99',
-      period: 'month',
-      popular: true,
-      features: [
-        'AI-Generated Quiz Questions (Unlimited)',
-        'Advanced Content Recommendations',
-        'AI-Powered Analytics Dashboard',
-        'Smart Quiz Optimization',
-        'Priority Support',
-        'Custom AI Model Training',
-        'Bulk Quiz Generation',
-        'Multi-language AI Support',
-      ],
-      color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    },
-    {
-      id: 'Upcoming enterprise',
-      name: 'AI Enterprise',
-      price: '$99.99',
-      period: 'month',
-      popular: false,
-      features: [
-        'Everything in Pro',
-        'Dedicated AI Model',
-        'White-label Solutions',
-        'API Access',
-        '24/7 Premium Support',
-        'Custom Integrations',
-        'Advanced Security Features',
-        'Team Collaboration Tools',
-        'On-premise Deployment Option',
-      ],
-      color: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-    },
-  ];
+  const [plans, setPlans] = useState([]);
+  const [plansLoading, setPlansLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const response = await apiClient.get('/pricing');
+        if (response.data?.success || response.data?.data) {
+          setPlans(response.data.data || response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch pricing plans:', error);
+      } finally {
+        setPlansLoading(false);
+      }
+    };
+    fetchPlans();
+  }, []);
 
   // AI Features showcase
   const aiFeatures = [
@@ -140,36 +93,15 @@ const Subscription = () => {
     },
   ];
 
-  const handleSelectPlan = (plan) => {
-    setSelectedPlan(plan);
-    setPaymentError('');
-    setOpenPaymentModal(true);
-  };
-
-  const handleClosePaymentModal = () => {
-    setOpenPaymentModal(false);
-    setPaymentError('');
-    setSelectedPlan(null);
-  };
-
-  const handleSubscribe = async () => {
-    setPaymentLoading(true);
-    setPaymentError('');
-
-    // Simulate payment processing
-    setTimeout(() => {
-      setPaymentLoading(false);
-      setPaymentError('Payment processing is currently in demo mode. Feature coming soon!');
-    }, 2000);
-  };
+  const hasActiveSubscription = user?.isPremium && new Date(user?.premiumExpiresAt) > new Date();
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
       {/* Header */}
-      <AppBar 
-        position="sticky" 
+      <AppBar
+        position="sticky"
         elevation={0}
-        sx={{ 
+        sx={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
         }}
@@ -229,7 +161,7 @@ const Subscription = () => {
             </Typography>
           </Box>
         </Container>
-        
+
         {/* Decorative elements */}
         <Box
           sx={{
@@ -250,7 +182,7 @@ const Subscription = () => {
         <Typography variant="h3" textAlign="center" fontWeight={700} gutterBottom sx={{ mb: 6 }}>
           AI Features at Your Fingertips
         </Typography>
-        
+
         <Grid container spacing={4}>
           {aiFeatures.map((feature, index) => (
             <Grid item xs={12} md={6} lg={4} key={index}>
@@ -310,8 +242,12 @@ const Subscription = () => {
         </Typography>
 
         <Grid container spacing={4} alignItems="stretch">
-          {plans.map((plan) => (
-            <Grid item xs={12} md={4} key={plan.id}>
+          {plansLoading ? (
+            <Grid item xs={12}>
+              <Typography textAlign="center">Loading plans...</Typography>
+            </Grid>
+          ) : plans.map((plan, index) => (
+            <Grid item xs={12} md={4} key={plan._id || index}>
               <Card
                 elevation={plan.popular ? 8 : 0}
                 sx={{
@@ -349,7 +285,7 @@ const Subscription = () => {
                       width: 60,
                       height: 60,
                       borderRadius: 2,
-                      background: plan.color,
+                      background: plan.color || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -365,16 +301,20 @@ const Subscription = () => {
 
                   <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 3 }}>
                     <Typography variant="h3" fontWeight={800}>
-                      {plan.price}
+                      ₹{plan.priceInr}
                     </Typography>
                     <Typography variant="body1" color="text.secondary" sx={{ ml: 1 }}>
-                      /{plan.period}
+                      /{plan.durationDays} days
                     </Typography>
                   </Box>
 
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    {plan.description}
+                  </Typography>
+
                   <List sx={{ mb: 3, flexGrow: 1 }}>
-                    {plan.features.map((feature, index) => (
-                      <ListItem key={index} disableGutters sx={{ py: 0.5 }}>
+                    {plan.features?.map((feature, idx) => (
+                      <ListItem key={idx} disableGutters sx={{ py: 0.5 }}>
                         <ListItemIcon sx={{ minWidth: 36 }}>
                           <CheckCircle sx={{ color: '#10b981', fontSize: 20 }} />
                         </ListItemIcon>
@@ -389,25 +329,35 @@ const Subscription = () => {
                     ))}
                   </List>
 
-                  <Button
-                    variant={plan.popular ? 'contained' : 'outlined'}
-                    fullWidth
-                    size="large"
-                    onClick={() => handleSelectPlan(plan)}
-                    sx={{
-                      borderRadius: 2,
-                      py: 1.5,
-                      fontWeight: 700,
-                      ...(plan.popular && {
-                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        '&:hover': {
-                          background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-                        },
-                      }),
-                    }}
-                  >
-                    Start Free Trial
-                  </Button>
+                  {hasActiveSubscription ? (
+                    <Button disabled fullWidth variant="contained" size="large" sx={{ borderRadius: 2, py: 1.5, fontWeight: 700 }}>
+                      Active Subscription
+                    </Button>
+                  ) : (
+                    <CheckoutButton
+                      amount={plan.priceInr}
+                      planId={plan._id}
+                      buttonText="Start Free Trial"
+                      fullWidth
+                      size="large"
+                      variant={plan.popular ? 'contained' : 'outlined'}
+                      sx={{
+                        borderRadius: 2,
+                        py: 1.5,
+                        fontWeight: 700,
+                        ...(plan.popular && {
+                          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                          color: 'white',
+                          '&:hover': {
+                            background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                          },
+                        }),
+                      }}
+                      onSuccess={() => {
+                        alert('Subscription activated successfully!');
+                      }}
+                    />
+                  )}
                 </CardContent>
               </Card>
             </Grid>
@@ -463,143 +413,6 @@ const Subscription = () => {
         </Paper>
       </Container>
 
-      {/* Payment Modal */}
-      <Dialog
-        open={openPaymentModal}
-        onClose={handleClosePaymentModal}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            fontWeight: 700,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CreditCard />
-            Subscribe to {selectedPlan?.name}
-          </Box>
-          <IconButton onClick={handleClosePaymentModal} sx={{ color: 'white' }} disabled={paymentLoading}>
-            <Close />
-          </IconButton>
-        </DialogTitle>
-
-        <DialogContent sx={{ mt: 3 }}>
-          {paymentError && (
-            <Alert severity="info" sx={{ mb: 3 }}>
-              {paymentError}
-            </Alert>
-          )}
-
-          <Paper
-            elevation={0}
-            sx={{
-              p: 3,
-              mb: 3,
-              bgcolor: '#f8fafc',
-              borderRadius: 2,
-            }}
-          >
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Selected Plan
-            </Typography>
-            <Typography variant="h5" fontWeight={700}>
-              {selectedPlan?.name}
-            </Typography>
-            <Typography variant="h6" color="primary" fontWeight={700}>
-              {selectedPlan?.price}/{selectedPlan?.period}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              First 14 days free, cancel anytime
-            </Typography>
-          </Paper>
-
-          <TextField
-            fullWidth
-            label="Card Number"
-            placeholder="1234 5678 9012 3456"
-            margin="normal"
-            disabled={paymentLoading}
-            sx={{ mb: 2 }}
-            InputProps={{
-              sx: { borderRadius: 2 },
-            }}
-          />
-
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Expiry Date"
-                placeholder="MM/YY"
-                disabled={paymentLoading}
-                InputProps={{
-                  sx: { borderRadius: 2 },
-                }}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="CVV"
-                placeholder="123"
-                disabled={paymentLoading}
-                InputProps={{
-                  sx: { borderRadius: 2 },
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <TextField
-            fullWidth
-            label="Cardholder Name"
-            placeholder="John Doe"
-            margin="normal"
-            disabled={paymentLoading}
-            sx={{ mt: 2 }}
-            InputProps={{
-              sx: { borderRadius: 2 },
-            }}
-          />
-
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
-            🔒 Your payment information is encrypted and secure
-          </Typography>
-        </DialogContent>
-
-        <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button onClick={handleClosePaymentModal} disabled={paymentLoading} sx={{ borderRadius: 2, px: 3 }}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubscribe}
-            variant="contained"
-            disabled={paymentLoading}
-            sx={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-              borderRadius: 2,
-              px: 4,
-              '&:hover': {
-                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-              },
-            }}
-          >
-            {paymentLoading ? 'Processing...' : `Subscribe for ${selectedPlan?.price}`}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       <Footer />
     </Box>

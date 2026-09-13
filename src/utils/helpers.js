@@ -266,6 +266,13 @@ export const AdminDashboardRoutes = [
     iconBg: 'warning.main',
     navigateTo: '/server-logs',
   },
+  {
+    title: 'Pricing Management',
+    description: 'Manage dynamic pricing plans',
+    icon: <PaymentIcon />,
+    iconBg: 'secondary.main',
+    navigateTo: '/admin/pricing',
+  },
 ];
 
 export const categories = [
