@@ -1,4 +1,4 @@
-# Quizz App Frontend
+# TriviaVerse - AI-Powered Quiz App
 <p align="center">
   <img src="public/assets/landing.png" alt="TriviaVerse Hero" width="900" />
 </p>
