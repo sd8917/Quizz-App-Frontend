@@ -71,5 +71,5 @@ jobs:
             echo "Testing local access..."
             curl -f -I http://localhost || echo "Warning: Local access failed"
             echo "Testing domain access..."
-            curl -f -I https://triviaverse.site || echo "Warning: Domain access failed"
+            curl -f -I https://triviaverse.shop || echo "Warning: Domain access failed"
             echo "Deployment verification complete"

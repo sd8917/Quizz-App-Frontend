@@ -8,75 +8,75 @@ export const pageMetas = {
       'TriviaVerse - Master any topic with interactive quizzes. Test your knowledge, track progress, compete on leaderboards, and join millions worldwide.',
     keywords:
       'quiz app, online quiz, trivia, test knowledge, learning platform, interactive quizzes',
-    canonicalUrl: 'https://triviaverse.site/',
+    canonicalUrl: 'https://triviaverse.shop/',
   },
   login: {
     title: 'Login to Your Account',
     description: 'Sign in to TriviaVerse and access your personalized quiz experience.',
     keywords: 'quiz login, account login, TriviaVerse login',
-    canonicalUrl: 'https://triviaverse.site/login',
+    canonicalUrl: 'https://triviaverse.shop/login',
   },
   register: {
     title: 'Create Your Free Account',
     description: 'Join TriviaVerse today and start testing your knowledge with interactive quizzes.',
     keywords: 'quiz registration, create account, free quiz platform',
-    canonicalUrl: 'https://triviaverse.site/register',
+    canonicalUrl: 'https://triviaverse.shop/register',
   },
   about: {
     title: 'About TriviaVerse',
     description:
       'Learn about TriviaVerse - an interactive platform for knowledge testing and competitive learning.',
     keywords: 'about quiz platform, TriviaVerse information, learning platform',
-    canonicalUrl: 'https://triviaverse.site/about',
+    canonicalUrl: 'https://triviaverse.shop/about',
   },
   dashboard: {
     title: 'Your Dashboard',
     description: 'View your quiz results, progress tracking, and personalized learning statistics.',
     keywords: 'quiz dashboard, progress tracking, learning statistics',
-    canonicalUrl: 'https://triviaverse.site/dashboard',
+    canonicalUrl: 'https://triviaverse.shop/dashboard',
   },
   leaderboard: {
     title: 'Global Leaderboard',
     description: 'Compete with users worldwide and see your ranking on our global leaderboard.',
     keywords: 'quiz leaderboard, rankings, global competition',
-    canonicalUrl: 'https://triviaverse.site/leaderboard',
+    canonicalUrl: 'https://triviaverse.shop/leaderboard',
     isProtected: true,
   },
   blog: {
     title: 'Blog & Resources',
     description: 'Read articles, tips, and resources to improve your learning and quiz performance.',
     keywords: 'quiz tips, learning blog, educational resources',
-    canonicalUrl: 'https://triviaverse.site/blog',
+    canonicalUrl: 'https://triviaverse.shop/blog',
   },
   help: {
     title: 'Help & Support Center',
     description: 'Find answers to common questions and get support for TriviaVerse.',
     keywords: 'FAQ, help center, support, quiz help',
-    canonicalUrl: 'https://triviaverse.site/help',
+    canonicalUrl: 'https://triviaverse.shop/help',
   },
   contact: {
     title: 'Contact Us',
     description: 'Get in touch with the TriviaVerse team. We are here to help.',
     keywords: 'contact us, support, feedback',
-    canonicalUrl: 'https://triviaverse.site/contact',
+    canonicalUrl: 'https://triviaverse.shop/contact',
   },
   privacy: {
     title: 'Privacy Policy',
     description: 'Read our privacy policy to understand how we protect your data.',
     keywords: 'privacy policy, data protection',
-    canonicalUrl: 'https://triviaverse.site/privacy-policy',
+    canonicalUrl: 'https://triviaverse.shop/privacy-policy',
   },
   terms: {
     title: 'Terms & Conditions',
     description: 'Read our terms and conditions before using TriviaVerse.',
     keywords: 'terms of service, conditions',
-    canonicalUrl: 'https://triviaverse.site/terms-conditions',
+    canonicalUrl: 'https://triviaverse.shop/terms-conditions',
   },
   subscription: {
     title: 'AI Features Subscription',
     description: 'Unlock powerful AI features for quiz creation. AI-generated questions, smart analytics, and advanced tools for creators.',
     keywords: 'AI quiz generator, AI subscription, quiz creator tools, AI-powered quizzes, premium features',
-    canonicalUrl: 'https://triviaverse.site/subscription',
+    canonicalUrl: 'https://triviaverse.shop/subscription',
     isProtected: true,
   },
 };
@@ -104,7 +104,7 @@ export const updatePageMeta = (config) => {
     description,
     keywords,
     canonicalUrl,
-    ogImage = 'https://triviaverse.site/logo.png',
+    ogImage = 'https://triviaverse.shop/logo.png',
     ogType = 'website',
     isProtected = false,
   } = config;
@@ -148,16 +148,16 @@ const updateMetaTag = (name, content) => {
 
   const isProperty = ['og:', 'twitter:', 'schema:'].some(prefix => name.startsWith(prefix));
   const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
-  
+
   let element = document.querySelector(selector);
-  
+
   if (!element) {
     element = document.createElement('meta');
     const attrName = isProperty ? 'property' : 'name';
     element.setAttribute(attrName, name);
     document.head.appendChild(element);
   }
-  
+
   element.setAttribute('content', content);
 };
 
@@ -167,13 +167,13 @@ const updateMetaTag = (name, content) => {
  */
 const updateCanonicalUrl = (url) => {
   let canonical = document.querySelector('link[rel="canonical"]');
-  
+
   if (!canonical) {
     canonical = document.createElement('link');
     canonical.rel = 'canonical';
     document.head.appendChild(canonical);
   }
-  
+
   canonical.href = url;
 };
 
@@ -248,7 +248,7 @@ export const generateArticleSchema = (config) => {
       name: 'TriviaVerse',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://triviaverse.site/logo.png',
+        url: 'https://triviaverse.shop/logo.png',
       },
     },
     url: url,

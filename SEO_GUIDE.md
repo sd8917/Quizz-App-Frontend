@@ -66,7 +66,7 @@ import { Helmet } from 'react-helmet-async';
 <Helmet>
   <title>Leaderboard - QuizApp</title>
   <meta name="description" content="View top performers and compete on our global leaderboard" />
-  <link rel="canonical" href="https://triviaverse.site/leaderboard" />
+  <link rel="canonical" href="https://triviaverse.shop/leaderboard" />
 </Helmet>
 ```
 
@@ -194,7 +194,7 @@ import { FacebookShareButton, TwitterShareButton } from 'react-share';
 **Update sitemap.xml** when adding blog posts:
 ```xml
 <url>
-  <loc>https://triviaverse.site/blog/quiz-tips</loc>
+  <loc>https://triviaverse.shop/blog/quiz-tips</loc>
   <lastmod>2025-11-27</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.7</priority>
@@ -230,7 +230,7 @@ add_header X-XSS-Protection "1; mode=block" always;
 After deployment:
 
 1. **Google Search Console**
-   - Submit sitemap: https://triviaverse.site/sitemap.xml
+   - Submit sitemap: https://triviaverse.shop/sitemap.xml
    - Request indexing for key pages
    - Monitor search performance
 
@@ -263,7 +263,7 @@ After deployment:
 
 ```bash
 # Run Lighthouse audit
-npx lighthouse https://triviaverse.site --view
+npx lighthouse https://triviaverse.shop --view
 
 # Check mobile-friendliness
 https://search.google.com/test/mobile-friendly

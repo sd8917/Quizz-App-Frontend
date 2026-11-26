@@ -218,7 +218,7 @@ To configure API endpoint or other environment variables:
 
 1. **Create `.env.production` file before building:**
    ```bash
-   REACT_APP_API_URL=https://api.triviaverse.site/api
+   REACT_APP_API_URL=https://api.triviaverse.shop/api
    ```
 
 2. **Or update after deployment:**

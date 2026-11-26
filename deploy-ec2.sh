@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 APP_NAME="quizz-app-frontend"
-DOMAIN="triviaverse.site"
+DOMAIN="triviaverse.shop"
 DEPLOY_DIR="/var/www/quizz-app"
 NGINX_CONFIG="/etc/nginx/sites-available/$APP_NAME"
 NGINX_ENABLED="/etc/nginx/sites-enabled/$APP_NAME"

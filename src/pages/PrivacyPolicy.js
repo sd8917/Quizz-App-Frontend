@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
-      <AppBarNav title={"TriviaVerse Privacy Policy"}/>
+      <AppBarNav title={"TriviaVerse Privacy Policy"} />
 
       <Container maxWidth="lg" sx={{ mt: 4, mb: 8, flex: 1 }}>
         <Paper
@@ -122,8 +122,8 @@ const PrivacyPolicy = () => {
             <li>
               <Typography variant="body1">
                 <strong>Website</strong> refers to Triviaverse, accessible from{' '}
-                <Link href="https://triviaverse.site/" target="_blank" rel="noopener">
-                  https://triviaverse.site/
+                <Link href="https://triviaverse.shop/" target="_blank" rel="noopener">
+                  https://triviaverse.shop/
                 </Link>
               </Typography>
             </li>
@@ -471,8 +471,8 @@ const PrivacyPolicy = () => {
             <li>
               <Typography variant="body1">
                 By visiting this page on our website:{' '}
-                <Link href="https://triviaverse.site/contact" target="_blank" rel="noopener">
-                  https://triviaverse.site/contact
+                <Link href="https://triviaverse.shop/contact" target="_blank" rel="noopener">
+                  https://triviaverse.shop/contact
                 </Link>
               </Typography>
             </li>

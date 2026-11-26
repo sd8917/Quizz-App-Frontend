@@ -20,7 +20,7 @@ const Disclaimer = () => {
       <li><strong>Company</strong> (referred to as either "the Company", "We", "Us" or "Our" in this Disclaimer) refers to triviaverse.</li>
       <li><strong>Service</strong> refers to the Website.</li>
       <li><strong>You</strong> means the individual accessing the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.</li>
-      <li><strong>Website</strong> refers to triviaverse, accessible from <a href="https://triviaverse.site/" rel="external nofollow noopener" target="_blank">https://triviaverse.site/</a></li>
+      <li><strong>Website</strong> refers to triviaverse, accessible from <a href="https://triviaverse.shop/" rel="external nofollow noopener" target="_blank">https://triviaverse.shop/</a></li>
     </ul>
     <h2>Disclaimer</h2>
     <p>The information contained on the Service is for general information purposes only.</p>
@@ -50,7 +50,7 @@ const Disclaimer = () => {
     <p>If you have any questions about this Disclaimer, You can contact Us:</p>
     <ul>
       <li>By email: triviaverse.contact@gmail.com</li>
-      <li>By visiting this page on our website: <a href="https://triviaverse.site/contact" rel="external nofollow noopener" target="_blank">https://triviaverse.site/contact</a></li>
+      <li>By visiting this page on our website: <a href="https://triviaverse.shop/contact" rel="external nofollow noopener" target="_blank">https://triviaverse.shop/contact</a></li>
     </ul>
   `;
 

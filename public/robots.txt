@@ -17,7 +17,7 @@ Disallow: /api/
 Allow: /static/
 
 # Sitemaps
-Sitemap: https://triviaverse.site/sitemap.xml
+Sitemap: https://triviaverse.shop/sitemap.xml
 
 # Crawl optimization
 User-agent: Googlebot
