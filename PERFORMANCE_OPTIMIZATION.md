@@ -82,7 +82,7 @@ const Profile = React.lazy(() => import('./pages/Profile'));
 
 Added preconnect hints for:
 - Google Fonts (`fonts.googleapis.com`, `fonts.gstatic.com`)
-- API endpoint (`api.triviaverse.site`)
+- API endpoint (`api.triviaverse.shop`)
 - Image CDN (`images.unsplash.com`)
 
 ### 6. ✅ Accessibility & SEO
@@ -178,7 +178,7 @@ Consider serving static assets from CDN:
 
 ### Lighthouse Audit
 ```bash
-npx lighthouse https://triviaverse.site --view
+npx lighthouse https://triviaverse.shop --view
 ```
 
 ### Key Metrics to Monitor:

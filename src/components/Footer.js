@@ -46,8 +46,8 @@ const Footer = () => {
       { label: 'Disclaimer', href: '/disclaimer' },
     ],
     resources: [
-      { label: 'Documentation', href: 'https://api.triviaverse.site/api-docs/' },
-      { label: 'API Reference', href: 'https://api.triviaverse.site/health/' },
+      { label: 'Documentation', href: 'https://api.triviaverse.shop/api-docs/' },
+      { label: 'API Reference', href: 'https://api.triviaverse.shop/health/' },
       { label: 'Refund', href: '/refund' },
       { label: 'Tutorials', href: '/tutorial' },
     ],
@@ -80,18 +80,18 @@ const Footer = () => {
           {/* Brand Section */}
           <Grid item xs={12} md={4}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-            <img 
-              src="/logo192.png" 
-              alt="TriviaVerse Logo - Interactive Quiz Platform" 
-              loading="lazy"
-              width="32"
-              height="32"
-              style={{ height: '32px', marginRight: '12px' }}
-            />
-            <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
-              TriviaVerse
-            </Typography>
-          </Box>
+              <img
+                src="/logo192.png"
+                alt="TriviaVerse Logo - Interactive Quiz Platform"
+                loading="lazy"
+                width="32"
+                height="32"
+                style={{ height: '32px', marginRight: '12px' }}
+              />
+              <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
+                TriviaVerse
+              </Typography>
+            </Box>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               Challenge yourself, compete with others, and enhance your knowledge
               with our interactive quiz platform. Join thousands of learners
@@ -204,29 +204,29 @@ const Footer = () => {
             </Typography>
             <Stack spacing={1}>
               {footerLinks.resources.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    underline="none"
-                    sx={{
-                      color: 'text.secondary',
-                      fontSize: '0.875rem',
-                      '&:hover': {
-                        color: 'primary.main',
-                      },
-                    }}
-                    onClick={(e) => {
-                      // Intercept Documentation and API Reference to show external redirect modal
-                      if (link.label === 'Documentation' || link.label === "API Reference") {
-                        e.preventDefault();
-                        setPendingUrl(link.href);
-                        setModalOpen(true);
-                      }
-                    }}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  underline="none"
+                  sx={{
+                    color: 'text.secondary',
+                    fontSize: '0.875rem',
+                    '&:hover': {
+                      color: 'primary.main',
+                    },
+                  }}
+                  onClick={(e) => {
+                    // Intercept Documentation and API Reference to show external redirect modal
+                    if (link.label === 'Documentation' || link.label === "API Reference") {
+                      e.preventDefault();
+                      setPendingUrl(link.href);
+                      setModalOpen(true);
+                    }
+                  }}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </Stack>
           </Grid>
         </Grid>

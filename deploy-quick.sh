@@ -103,7 +103,7 @@ fi
 
 # Test domain accessibility
 echo -e "${YELLOW}Testing domain accessibility...${NC}"
-if curl -f -s -o /dev/null -H "Host: triviaverse.site" http://localhost; then
+if curl -f -s -o /dev/null -H "Host: triviaverse.shop" http://localhost; then
   echo -e "${GREEN}✓ App is accessible via domain${NC}"
 else
   echo -e "${YELLOW}⚠ Domain test failed (may be DNS/SSL issue)${NC}"
@@ -124,7 +124,7 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "Version: ${GREEN}$VERSION${NC}"
 echo -e "Deployed to: ${GREEN}$DEPLOY_DIR${NC}"
 echo -e "Backup: ${GREEN}$BACKUP_FILE${NC}"
-echo -e "Access URL: ${GREEN}https://triviaverse.site${NC}"
+echo -e "Access URL: ${GREEN}https://triviaverse.shop${NC}"
 echo ""
 echo -e "${YELLOW}Useful commands:${NC}"
 echo -e "  View logs: ${GREEN}sudo tail -f /var/log/nginx/error.log${NC}"

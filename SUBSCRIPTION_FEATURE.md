@@ -95,7 +95,7 @@ Six highlighted capabilities:
 3. **`src/utils/seoHelpers.js`**
    - Added subscription page meta configuration
    - SEO optimized title, description, and keywords
-   - Canonical URL: `https://triviaverse.site/subscription`
+   - Canonical URL: `https://triviaverse.shop/subscription`
 
 ## 🎨 Design Highlights
 
@@ -150,7 +150,7 @@ subscription: {
   title: 'AI Features Subscription',
   description: 'Unlock powerful AI features for quiz creation. AI-generated questions, smart analytics, and advanced tools for creators.',
   keywords: 'AI quiz generator, AI subscription, quiz creator tools, AI-powered quizzes, premium features',
-  canonicalUrl: 'https://triviaverse.site/subscription',
+  canonicalUrl: 'https://triviaverse.shop/subscription',
 }
 ```
 
