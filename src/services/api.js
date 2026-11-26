@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base API configuration
-const BASE_URL = 'https://api.triviaverse.site/api';
+const BASE_URL = 'https://api.triviaverse.shop/api';
 
 let isRefreshing = false;
 let failedQueue = [];
