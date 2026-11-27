@@ -2,46 +2,47 @@ import React from 'react';
 import { Button } from '@mui/material';
 
 /**
- * Reusable gradient button component with consistent styling
- * Used across multiple pages for primary actions
+ * Reusable gradient button component with consistent EdTech styling.
  */
 const GradientButton = ({
   children,
   variant = 'contained',
-  gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  hoverGradient = 'linear-gradient(135deg, #5568d3 0%, #6a3f91 100%)',
+  gradient = 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)',
+  hoverGradient = 'linear-gradient(135deg, #4338ca 0%, #3730a3 100%)',
   bgcolor,
-  color = '#667eea',
+  color = '#3730a3',
   sx = {},
   ...props
 }) => {
   const isGradient = variant === 'contained' && !bgcolor;
-  
+
   return (
     <Button
       variant={variant}
       sx={{
+        borderRadius: 2.5,
+        fontWeight: 700,
         ...(isGradient && {
           background: gradient,
           color: 'white',
-          boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+          boxShadow: '0 6px 18px rgba(79, 70, 229, 0.32)',
           '&:hover': {
             background: hoverGradient,
-            boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
+            boxShadow: '0 10px 24px rgba(79, 70, 229, 0.42)',
             transform: 'translateY(-2px)',
           },
-          transition: 'all 0.3s',
+          transition: 'all 0.25s ease',
         }),
         ...(bgcolor && {
           bgcolor,
           color,
-          boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+          boxShadow: '0 8px 20px rgba(15, 23, 42, 0.16)',
           '&:hover': {
-            bgcolor: '#f3f4f6',
+            bgcolor: '#f8fafc',
             transform: 'translateY(-2px)',
-            boxShadow: '0 12px 24px rgba(0,0,0,0.3)',
+            boxShadow: '0 12px 26px rgba(15, 23, 42, 0.24)',
           },
-          transition: 'all 0.3s',
+          transition: 'all 0.25s ease',
         }),
         ...sx,
       }}
