@@ -2,16 +2,16 @@ import React from 'react';
 import { Box } from '@mui/material';
 
 /**
- * Reusable gradient background component with SVG pattern overlay
- * Used across LandingPage, Login, Register, and other pages
+ * Reusable EdTech gradient background component with subtle academic grid and ambient glows.
+ * Used across LandingPage, Login, Register, and auth flows.
  */
-const GradientBackground = ({ 
-  children, 
-  gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+const GradientBackground = ({
+  children,
+  gradient = 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 48%, #312e81 100%)',
   minHeight = '100vh',
   padding,
   sx = {},
-  ...props 
+  ...props
 }) => {
   return (
     <Box
@@ -25,12 +25,19 @@ const GradientBackground = ({
         '&::before': {
           content: '""',
           position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-          opacity: 0.4,
+          inset: 0,
+          backgroundImage:
+            'radial-gradient(circle at 18% 20%, rgba(79, 70, 229, 0.35) 0%, transparent 45%), radial-gradient(circle at 82% 78%, rgba(13, 148, 136, 0.28) 0%, transparent 48%)',
+          pointerEvents: 'none',
+        },
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          inset: 0,
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          pointerEvents: 'none',
         },
         ...sx,
       }}

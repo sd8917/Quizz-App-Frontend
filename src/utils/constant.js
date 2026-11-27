@@ -12,6 +12,11 @@ import {
   Star as StarIcon,
   Timer as TimerIcon,
   TrendingUp as TrendingIcon,
+  Code as CodeIcon,
+  Functions as MathIcon,
+  Science as ScienceIcon,
+  Translate as LanguageIcon,
+  WorkspacePremium as ExamIcon,
 } from '@mui/icons-material';
 
 // FAQ for Landing Page
@@ -172,6 +177,58 @@ export const services = [
 ];
 
   // Palette for channel cards (used when channel.color not provided)
-export const channelColors = ['#6366f1', '#10b981', '#ec4899', '#f59e0b', '#06b6d4', '#8b5cf6'];
+export const channelColors = ['#4f46e5', '#0d9488', '#0284c7', '#f59e0b', '#ec4899', '#7c3aed'];
+
+// Subject Tracks for Landing Page
+export const subjectTracks = [
+  {
+    title: 'Computer Science',
+    quizzes: '12,400+ Quizzes',
+    level: 'Beginner to Pro',
+    color: '#4f46e5',
+    icon: <CodeIcon />,
+    description: 'Data structures, algorithms, React, system design & cloud.',
+  },
+  {
+    title: 'Mathematics & Logic',
+    quizzes: '9,800+ Quizzes',
+    level: 'Adaptive Practice',
+    color: '#0d9488',
+    icon: <MathIcon />,
+    description: 'Calculus, probability, quantitative aptitude & brain teasers.',
+  },
+  {
+    title: 'Science & Tech',
+    quizzes: '8,200+ Quizzes',
+    level: 'Interactive Labs',
+    color: '#0284c7',
+    icon: <ScienceIcon />,
+    description: 'Physics, chemistry, biology, AI fundamentals & space.',
+  },
+  {
+    title: 'Business & Finance',
+    quizzes: '6,500+ Quizzes',
+    level: 'Case Studies',
+    color: '#f59e0b',
+    icon: <BusinessIcon />,
+    description: 'Economics, product strategy, accounting & leadership.',
+  },
+  {
+    title: 'Languages & Verbal',
+    quizzes: '7,100+ Quizzes',
+    level: 'Daily Streaks',
+    color: '#ec4899',
+    icon: <LanguageIcon />,
+    description: 'Grammar mastery, vocabulary building & reading comprehension.',
+  },
+  {
+    title: 'Certification Prep',
+    quizzes: '6,000+ Quizzes',
+    level: 'Timed Mock Tests',
+    color: '#7c3aed',
+    icon: <ExamIcon />,
+    description: 'AWS, university entrance exams & interview readiness.',
+  },
+];
 
 

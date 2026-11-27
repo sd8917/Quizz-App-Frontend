@@ -4,6 +4,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   alpha,
+  AppBar,
   Avatar,
   Box,
   Button,
@@ -12,16 +13,29 @@ import {
   CardMedia,
   Chip,
   Container,
+  Drawer,
   Grid,
+  IconButton,
+  LinearProgress,
+  List,
+  ListItemButton,
+  ListItemText,
   Paper,
   Rating,
+  Stack,
+  Toolbar,
   Typography,
   useTheme,
 } from '@mui/material';
 import {
   ArrowForward as ArrowIcon,
+  AutoAwesome as SparkleIcon,
   CheckCircle as CheckIcon,
   ExpandMore as ExpandIcon,
+  LocalFireDepartment as FireIcon,
+  Menu as MenuIcon,
+  PlayArrow as PlayIcon,
+  School as SchoolIcon,
   Verified as VerifiedIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -29,232 +43,612 @@ import { useSelector } from 'react-redux';
 import { useSEO } from '../hooks/useSEO';
 import Footer from '../components/Footer';
 import { GradientBackground, GradientButton, SectionHeader } from '../components/UI';
-import { faqs, features, services, stats, steps, testimonials } from '../utils/constant';
+import {
+  faqs,
+  features,
+  services,
+  stats,
+  steps,
+  subjectTracks,
+  testimonials,
+} from '../utils/constant';
+
+const SAMPLE_QUIZ = {
+  topic: 'Computer Science • Daily Practice',
+  question: 'Which data structure follows the LIFO (Last In, First Out) principle?',
+  options: ['Queue', 'Stack', 'Linked List', 'Hash Table'],
+  correctIndex: 1,
+  explanation: 'A Stack pushes and pops elements from the top, making the last item added the first one removed.',
+};
+
+const NAV_ITEMS = [
+  { label: 'Subjects', href: '#subjects' },
+  { label: 'Features', href: '#features' },
+  { label: 'How It Works', href: '#how-it-works' },
+  { label: 'FAQ', href: '#faq' },
+];
 
 const LandingPage = () => {
   useSEO('home');
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  
+
   const navigate = useNavigate();
   const theme = useTheme();
-  const [expandedFaq, setExpandedFaq] = useState(false);
+  const [expandedFaq, setExpandedFaq] = useState('panel0');
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const handleFaqChange = (panel) => (event, isExpanded) => {
     setExpandedFaq(isExpanded ? panel : false);
   };
 
+  const handlePrimaryCta = () => {
+    navigate(isAuthenticated ? '/dashboard' : '/register');
+  };
+
+  const scrollToSection = (href) => {
+    setMobileOpen(false);
+    const el = document.querySelector(href);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <>
-      {/* Hero Section */}
-      <GradientBackground
-        minHeight={{ xs: 'auto', md: '80vh' }}
-        padding={{ xs: '20px 16px', sm: '30px 24px', md: '50px' }}
-        sx={{ 
-          paddingTop: { xs: '20px', md: '0px' },
-          alignItems: 'center' 
+      {/* Sticky EdTech Navigation Bar */}
+      <AppBar
+        position="sticky"
+        elevation={0}
+        sx={{
+          bgcolor: alpha('#ffffff', 0.92),
+          backdropFilter: 'blur(14px)',
+          color: 'text.primary',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
         }}
       >
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, width: '100%' }}>
-          <Grid container spacing={{ xs: 3, md: 6 }} alignItems="center">
+        <Container maxWidth="lg">
+          <Toolbar disableGutters sx={{ minHeight: 70, justifyContent: 'space-between' }}>
+            {/* Brand */}
+            <Box
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1.25, cursor: 'pointer' }}
+            >
+              <img
+                src="/logo192.png"
+                alt="TriviaVerse Logo"
+                width="36"
+                height="36"
+                style={{ width: 36, height: 36, borderRadius: 10 }}
+              />
+              <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
+                TriviaVerse
+              </Typography>
+            </Box>
+
+            {/* Desktop Nav Links */}
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}
+            >
+              {NAV_ITEMS.map((item) => (
+                <Button
+                  key={item.href}
+                  onClick={() => scrollToSection(item.href)}
+                  sx={{
+                    color: 'text.secondary',
+                    fontWeight: 600,
+                    px: 2,
+                    '&:hover': {
+                      color: 'primary.main',
+                      bgcolor: alpha(theme.palette.primary.main, 0.06),
+                    },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Stack>
+
+            {/* Desktop CTA */}
+            <Stack direction="row" spacing={1.5} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+              {isAuthenticated ? (
+                <GradientButton
+                  endIcon={<ArrowIcon />}
+                  onClick={() => navigate('/dashboard')}
+                  sx={{ px: 3, py: 1 }}
+                >
+                  Go to Dashboard
+                </GradientButton>
+              ) : (
+                <>
+                  <Button
+                    variant="text"
+                    onClick={() => navigate('/login')}
+                    sx={{ color: 'text.primary', fontWeight: 600 }}
+                  >
+                    Sign In
+                  </Button>
+                  <GradientButton
+                    endIcon={<ArrowIcon />}
+                    onClick={() => navigate('/register')}
+                    sx={{ px: 2.75, py: 1 }}
+                  >
+                    Start Free
+                  </GradientButton>
+                </>
+              )}
+            </Stack>
+
+            {/* Mobile Hamburger */}
+            <IconButton
+              sx={{ display: { xs: 'inline-flex', md: 'none' } }}
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open navigation menu"
+            >
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        PaperProps={{ sx: { width: 270, p: 2 } }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, px: 1 }}>
+          <img src="/logo192.png" alt="TriviaVerse" width="28" height="28" style={{ borderRadius: 8 }} />
+          <Typography variant="h6" sx={{ fontWeight: 800 }}>
+            TriviaVerse
+          </Typography>
+        </Box>
+        <List>
+          {NAV_ITEMS.map((item) => (
+            <ListItemButton key={item.href} onClick={() => scrollToSection(item.href)} sx={{ borderRadius: 2 }}>
+              <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />
+            </ListItemButton>
+          ))}
+        </List>
+        <Stack spacing={1.5} sx={{ mt: 2, px: 1 }}>
+          {!isAuthenticated && (
+            <Button variant="outlined" fullWidth onClick={() => navigate('/login')}>
+              Sign In
+            </Button>
+          )}
+          <GradientButton fullWidth onClick={handlePrimaryCta}>
+            {isAuthenticated ? 'Go to Dashboard' : 'Start Learning Free'}
+          </GradientButton>
+        </Stack>
+      </Drawer>
+
+      {/* Hero Section */}
+      <GradientBackground
+        minHeight={{ xs: 'auto', md: '86vh' }}
+        padding={{ xs: '48px 16px 64px', sm: '60px 24px 72px', md: '72px 24px 88px' }}
+        sx={{ alignItems: 'center' }}
+      >
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+          <Grid container spacing={{ xs: 5, md: 6 }} alignItems="center">
+            {/* Left Content */}
             <Grid item xs={12} md={6}>
               <Box sx={{ color: 'white' }}>
                 <Chip
-                  label="🎉 Join 1M+ Users Worldwide"
+                  icon={<SparkleIcon sx={{ fontSize: 16, color: '#fbbf24 !important' }} />}
+                  label="Interactive Learning & Assessment Platform"
                   sx={{
-                    bgcolor: alpha('#ffffff', 0.2),
-                    color: 'white',
-                    mb: 3,
-                    mt: 3,
+                    bgcolor: alpha('#ffffff', 0.12),
+                    color: '#e2e8f0',
+                    border: '1px solid rgba(255,255,255,0.2)',
                     backdropFilter: 'blur(10px)',
-                    fontWeight: 500,
+                    fontWeight: 600,
+                    mb: 3,
                   }}
                 />
                 <Typography
                   variant="h1"
                   sx={{
                     fontWeight: 800,
-                    fontSize: { xs: '2.5rem', md: '2.5rem', lg: '3.5rem' },
-                    lineHeight: 1.2,
-                    mb: 3,
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
+                    fontSize: { xs: '2.25rem', sm: '2.85rem', lg: '3.45rem' },
+                    lineHeight: 1.12,
+                    mb: 2.5,
                   }}
                 >
-                  Master Any Topic 
-                  <Box component="span" sx={{ display: 'block', color: '#fbbf24' }}>
-                   with  Interactive Quizzes
+                  Master Any Subject with{' '}
+                  <Box
+                    component="span"
+                    sx={{
+                      background: 'linear-gradient(90deg, #fbbf24 0%, #2dd4bf 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
+                    Smart Interactive Quizzes
                   </Box>
                 </Typography>
                 <Typography
-                  variant="h5"
+                  variant="h6"
                   sx={{
                     mb: 4,
                     fontWeight: 400,
-                    opacity: 0.95,
-                    lineHeight: 1.6,
+                    color: '#cbd5e1',
+                    lineHeight: 1.65,
+                    fontSize: { xs: '1.02rem', md: '1.15rem' },
+                    maxWidth: 540,
                   }}
                 >
-                  Test your knowledge, track your progress, and compete with millions of learners worldwide. 
-                  Start your journey to excellence today!
+                  Build lasting mastery through active recall, instant explanations,
+                  adaptive practice tracks, and real-time classroom & global leaderboards.
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+
+                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 5 }}>
                   <GradientButton
                     size="large"
                     endIcon={<ArrowIcon />}
-                    onClick={() => navigate('/register')}
-                    // bgcolor="white"
-                    // color="#667eea"
+                    onClick={handlePrimaryCta}
+                    bgcolor="#ffffff"
+                    color="#1e1b4b"
                     sx={{
-                      borderColor: 'white',
-                      color: 'white',
-                      py: 1.5,
-                      px: 4,
-                      fontSize: '1.1rem',
-                      fontWeight: 700,
+                      py: 1.6,
+                      px: 3.75,
+                      fontSize: '1.05rem',
                     }}
                   >
-                    Get Started Free
+                    {isAuthenticated ? 'Open Dashboard' : 'Start Learning Free'}
                   </GradientButton>
-                 {!isAuthenticated && <GradientButton
+                  <Button
                     size="large"
-                    onClick={() => navigate('/login')}
-                     bgcolor="white"
-                    color="#667eea"
+                    variant="outlined"
+                    startIcon={<PlayIcon />}
+                    onClick={() => scrollToSection('#subjects')}
                     sx={{
-                      py: 1.5,
-                      px: 4,
-                      fontSize: '1.1rem',
-                      fontWeight: 700,
-                      borderWidth: 2,
+                      borderColor: 'rgba(255,255,255,0.35)',
+                      color: 'white',
+                      py: 1.6,
+                      px: 3.25,
+                      fontSize: '1.02rem',
+                      bgcolor: alpha('#ffffff', 0.06),
                       '&:hover': {
-                        borderColor: 'white',
-                        bgcolor: alpha('#ffffff', 0.1),
-                        borderWidth: 2,
-                        transform: 'translateY(-2px)',
+                        borderColor: '#ffffff',
+                        bgcolor: alpha('#ffffff', 0.14),
                       },
-                      transition: 'all 0.3s',
                     }}
                   >
-                    Sign In
-                  </GradientButton>}
+                    Explore Subjects
+                  </Button>
                 </Box>
-                <Box sx={{ display: 'flex', gap: 4, mt: 5, flexWrap: 'wrap' }}>
-                  <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+
+                {/* Trust Metrics */}
+                <Grid container spacing={3} sx={{ pt: 3, borderTop: '1px solid rgba(255,255,255,0.14)' }}>
+                  <Grid item xs={4}>
+                    <Typography variant="h4" sx={{ fontWeight: 800, color: '#ffffff' }}>
                       1M+
                     </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      Active Users
+                    <Typography variant="body2" sx={{ color: '#cbd5e1' }}>
+                      Active Learners
                     </Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography variant="h4" sx={{ fontWeight: 800, color: '#2dd4bf' }}>
                       50K+
                     </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      Quizzes
+                    <Typography variant="body2" sx={{ color: '#cbd5e1' }}>
+                      Curated Quizzes
                     </Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography variant="h4" sx={{ fontWeight: 800, color: '#fbbf24' }}>
                       98%
                     </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      Satisfaction
+                    <Typography variant="body2" sx={{ color: '#cbd5e1' }}>
+                      Pass Confidence
                     </Typography>
-                  </Box>
-                </Box>
+                  </Grid>
+                </Grid>
               </Box>
             </Grid>
+
+            {/* Right Column: Interactive EdTech Quiz Preview Card */}
             <Grid item xs={12} md={6}>
-              <Box
+              <Paper
+                elevation={12}
                 sx={{
-                  position: 'relative',
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: -20,
-                    left: -20,
-                    right: -20,
-                    bottom: -20,
-                    background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-                    borderRadius: 4,
-                    opacity: 0.2,
-                    transform: 'rotate(-3deg)',
-                  },
+                  p: { xs: 2.5, sm: 3.5 },
+                  borderRadius: 4,
+                  bgcolor: '#ffffff',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  boxShadow: '0 28px 65px rgba(2, 6, 23, 0.45)',
+                  animation: 'floatGentle 6s ease-in-out infinite',
                 }}
               >
-                <Paper
-                  elevation={24}
+                {/* Top Gamified EdTech Bar */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                  <Chip
+                    icon={<SchoolIcon sx={{ fontSize: 16 }} />}
+                    label={SAMPLE_QUIZ.topic}
+                    size="small"
+                    sx={{
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      color: 'primary.main',
+                      fontWeight: 700,
+                    }}
+                  />
+                  <Stack direction="row" spacing={1}>
+                    <Chip
+                      icon={<FireIcon sx={{ fontSize: 16, color: '#ea580c !important' }} />}
+                      label="12-Day Streak"
+                      size="small"
+                      sx={{ bgcolor: '#fff7ed', color: '#c2410c', fontWeight: 700 }}
+                    />
+                    <Chip
+                      label="+50 XP"
+                      size="small"
+                      sx={{ bgcolor: '#ecfdf5', color: '#047857', fontWeight: 700 }}
+                    />
+                  </Stack>
+                </Box>
+
+                {/* Mastery Progress */}
+                <Box sx={{ mb: 2.5 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                      Topic Mastery Progress
+                    </Typography>
+                    <Typography variant="caption" color="primary.main" sx={{ fontWeight: 700 }}>
+                      Question 3 of 4 • 75%
+                    </Typography>
+                  </Box>
+                  <LinearProgress
+                    variant="determinate"
+                    value={selectedOption === SAMPLE_QUIZ.correctIndex ? 100 : 75}
+                    sx={{
+                      height: 8,
+                      borderRadius: 99,
+                      bgcolor: '#e2e8f0',
+                      '& .MuiLinearProgress-bar': {
+                        borderRadius: 99,
+                        background: 'linear-gradient(90deg, #4f46e5 0%, #0d9488 100%)',
+                      },
+                    }}
+                  />
+                </Box>
+
+                {/* Interactive Sample Question */}
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: 'text.primary', lineHeight: 1.4 }}>
+                  {SAMPLE_QUIZ.question}
+                </Typography>
+
+                <Stack spacing={1.25}>
+                  {SAMPLE_QUIZ.options.map((option, idx) => {
+                    const isSelected = selectedOption === idx;
+                    const isCorrect = idx === SAMPLE_QUIZ.correctIndex;
+                    const showFeedback = selectedOption !== null;
+
+                    let borderColor = 'rgba(15, 23, 42, 0.12)';
+                    let bgcolor = '#f8fafc';
+                    let textColor = 'text.primary';
+
+                    if (showFeedback && isCorrect) {
+                      borderColor = '#10b981';
+                      bgcolor = '#ecfdf5';
+                      textColor = '#065f46';
+                    } else if (showFeedback && isSelected && !isCorrect) {
+                      borderColor = '#ef4444';
+                      bgcolor = '#fef2f2';
+                      textColor = '#991b1b';
+                    }
+
+                    return (
+                      <Box
+                        key={option}
+                        onClick={() => setSelectedOption(idx)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') setSelectedOption(idx);
+                        }}
+                        sx={{
+                          p: 1.5,
+                          px: 2,
+                          borderRadius: 2.5,
+                          border: '1.5px solid',
+                          borderColor,
+                          bgcolor,
+                          color: textColor,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            borderColor: showFeedback ? borderColor : theme.palette.primary.main,
+                            bgcolor: showFeedback ? bgcolor : alpha(theme.palette.primary.main, 0.05),
+                          },
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                          <Box
+                            sx={{
+                              width: 26,
+                              height: 26,
+                              borderRadius: '50%',
+                              bgcolor: showFeedback && isCorrect ? '#10b981' : '#e2e8f0',
+                              color: showFeedback && isCorrect ? '#ffffff' : '#334155',
+                              fontSize: '0.78rem',
+                              fontWeight: 700,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            {String.fromCharCode(65 + idx)}
+                          </Box>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                            {option}
+                          </Typography>
+                        </Box>
+                        {showFeedback && isCorrect && (
+                          <CheckIcon sx={{ fontSize: 20, color: '#10b981' }} />
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Stack>
+
+                {/* Instant Explanation Bar */}
+                <Box
                   sx={{
-                    borderRadius: 4,
-                    overflow: 'hidden',
-                    position: 'relative',
-                    transform: 'rotate(2deg)',
-                    transition: 'transform 0.3s',
-                    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-                    '&:hover': {
-                      transform: 'rotate(0deg) scale(1.02)',
-                    },
+                    mt: 2.25,
+                    p: 1.5,
+                    borderRadius: 2.5,
+                    bgcolor: selectedOption !== null ? '#eef2ff' : '#f1f5f9',
+                    border: '1px solid',
+                    borderColor: selectedOption !== null ? '#c7d2fe' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 1.5,
                   }}
                 >
-                  <img
-                    src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop"
-                    alt="Students learning with interactive quizzes on TriviaVerse"
-                    fetchpriority="high"
-                    width="400"
-                    height="400"
-                    style={{ width: '100%', display: 'block' }}
-                  />
-                </Paper>
-              </Box>
+                  <Typography variant="caption" sx={{ color: '#334155', lineHeight: 1.5 }}>
+                    {selectedOption !== null
+                      ? SAMPLE_QUIZ.explanation
+                      : 'Try clicking an answer above to preview instant active-recall feedback.'}
+                  </Typography>
+                  {selectedOption !== null && (
+                    <Button
+                      size="small"
+                      onClick={() => setSelectedOption(null)}
+                      sx={{ minWidth: 'auto', px: 1.5, py: 0.5, fontSize: '0.75rem' }}
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </Box>
+              </Paper>
             </Grid>
           </Grid>
         </Container>
       </GradientBackground>
 
-      {/* Features Section */}
-      <Box sx={{ py: 10, bgcolor: '#f9fafb' }}>
+      {/* Popular Subject Tracks Section */}
+      <Box id="subjects" sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.paper' }}>
         <Container maxWidth="lg">
           <SectionHeader
-            chipLabel="FEATURES"
-            chipColor="primary"
-            title="Why Choose TriviaVerse?"
-            subtitle="Everything you need to create, take, and master quizzes in one powerful platform"
+            chipLabel="CURATED TRACKS"
+            chipColor="secondary"
+            title="Explore Popular Learning Tracks"
+            subtitle="Structured topic channels designed for students, educators, and certification prep"
           />
-          <Grid container spacing={4}>
+          <Grid container spacing={3}>
+            {subjectTracks.map((track) => (
+              <Grid item xs={12} sm={6} md={4} key={track.title}>
+                <Card
+                  onClick={handlePrimaryCta}
+                  sx={{
+                    height: '100%',
+                    cursor: 'pointer',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderLeft: `4px solid ${track.color}`,
+                    transition: 'all 0.25s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4,
+                      borderColor: alpha(track.color, 0.5),
+                    },
+                  }}
+                >
+                  <CardContent sx={{ p: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                      <Avatar
+                        sx={{
+                          bgcolor: alpha(track.color, 0.12),
+                          color: track.color,
+                          width: 46,
+                          height: 46,
+                        }}
+                      >
+                        {track.icon}
+                      </Avatar>
+                      <Chip
+                        label={track.level}
+                        size="small"
+                        sx={{
+                          bgcolor: alpha(track.color, 0.1),
+                          color: track.color,
+                          fontSize: '0.72rem',
+                        }}
+                      />
+                    </Box>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.75 }}>
+                      {track.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.6 }}>
+                      {track.description}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <Typography variant="caption" sx={{ fontWeight: 700, color: track.color }}>
+                        {track.quizzes}
+                      </Typography>
+                      <ArrowIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Features Section */}
+      <Box id="features" sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.default' }}>
+        <Container maxWidth="lg">
+          <SectionHeader
+            chipLabel="PLATFORM FEATURES"
+            chipColor="primary"
+            title="Why Learners & Educators Choose TriviaVerse"
+            subtitle="Everything you need to create, take, and master assessments in one focused workspace"
+          />
+          <Grid container spacing={3}>
             {features.map((feature, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card
                   sx={{
                     height: '100%',
-                    transition: 'all 0.3s',
+                    transition: 'all 0.25s ease',
                     '&:hover': {
-                      transform: 'translateY(-8px)',
-                      boxShadow: 8,
+                      transform: 'translateY(-6px)',
+                      boxShadow: 4,
+                      borderColor: alpha(feature.color, 0.4),
                     },
                   }}
                 >
-                  <CardContent sx={{ textAlign: 'center', p: 4 }}>
+                  <CardContent sx={{ p: 3.5 }}>
                     <Box
                       sx={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: '50%',
-                        bgcolor: alpha(feature.color, 0.1),
+                        width: 60,
+                        height: 60,
+                        borderRadius: 3,
+                        bgcolor: alpha(feature.color, 0.12),
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        mx: 'auto',
-                        mb: 3,
+                        mb: 2.5,
                         color: feature.color,
+                        '& svg': { fontSize: 32 },
                       }}
                     >
                       {feature.icon}
                     </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
                       {feature.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
                       {feature.description}
                     </Typography>
                   </CardContent>
@@ -265,157 +659,144 @@ const LandingPage = () => {
         </Container>
       </Box>
 
-      {/* How It Works Section */}
-      <Box sx={{ py: 10, bgcolor: 'white' }}>
+      {/* How It Works Section (Streamlined EdTech Learning Journey) */}
+      <Box id="how-it-works" sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.paper' }}>
         <Container maxWidth="lg">
           <SectionHeader
-            chipLabel="HOW IT WORKS"
+            chipLabel="LEARNING WORKFLOW"
             chipColor="secondary"
-            title="Get Started in 5 Simple Steps"
-            subtitle="Join millions of users and start your learning journey today"
+            title="From Sign-Up to Mastery in 5 Steps"
+            subtitle="A frictionless loop built around active recall, instant feedback, and visible growth"
           />
-          <Box sx={{ position: 'relative' }}>
+          <Grid container spacing={3}>
             {steps.map((step, index) => (
-              <Box key={index} sx={{ mb: 6 }}>
-                <Grid container spacing={4} alignItems="center">
-                  <Grid item xs={12} md={6} order={{ xs: 2, md: index % 2 === 0 ? 1 : 2 }}>
-                    <Paper
-                      elevation={3}
+              <Grid item xs={12} sm={6} md={index < 3 ? 4 : 6} key={step.number}>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 3.25,
+                    height: '100%',
+                    borderRadius: 4,
+                    border: '1px solid',
+                    borderColor: alpha(step.color, 0.22),
+                    background: `linear-gradient(145deg, ${alpha(step.color, 0.08)} 0%, #ffffff 70%)`,
+                    transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 3,
+                    },
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2.25 }}>
+                    <Avatar
                       sx={{
-                        p: 4,
-                        borderRadius: 3,
-                        background: `linear-gradient(135deg, ${alpha(step.color, 0.1)} 0%, ${alpha(step.color, 0.05)} 100%)`,
-                        border: `2px solid ${alpha(step.color, 0.2)}`,
+                        width: 48,
+                        height: 48,
+                        bgcolor: step.color,
+                        color: 'white',
+                        boxShadow: `0 6px 14px ${alpha(step.color, 0.35)}`,
                       }}
                     >
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Typography
-                          variant="h2"
-                          sx={{
-                            fontWeight: 800,
-                            color: step.color,
-                            mr: 2,
-                            fontSize: '3rem',
-                          }}
-                        >
-                          {step.number}
-                        </Typography>
-                        <Box
-                          sx={{
-                            width: 56,
-                            height: 56,
-                            borderRadius: '50%',
-                            bgcolor: step.color,
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {step.icon}
-                        </Box>
-                      </Box>
-                      <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
-                        {step.title}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        {step.description}
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={12} md={6} order={{ xs: 1, md: index % 2 === 0 ? 2 : 1 }}>
-                    <Box
+                      {step.icon}
+                    </Avatar>
+                    <Typography
+                      variant="h4"
                       sx={{
-                        textAlign: index % 2 === 0 ? 'right' : 'left',
-                        px: 2,
+                        fontWeight: 800,
+                        color: alpha(step.color, 0.28),
                       }}
                     >
-                      <img
-                        src={`https://images.unsplash.com/photo-${
-                          index === 0 ? '1488190211105-8b0e65b80b4e' :
-                          index === 1 ? '1516321318423-f06f85e504b3' :
-                          index === 2 ? '1434030216411-0b793f4b4173' :
-                          index === 3 ? '1460925895917-afdab827c52f' :
-                          '1762427354251-f008b64dbc32'
-                        }?w=400&h=200&fit=crop`}
-                        alt={step.title}
-                        loading="lazy"
-                        width="400"
-                        height="220"
-                        style={{
-                          width: '100%',
-                          maxWidth: 400,
-                          borderRadius: 16,
-                          boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                        }}
-                      />
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Box>
+                      {step.number}
+                    </Typography>
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                    {step.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.65 }}>
+                    {step.description}
+                  </Typography>
+                </Paper>
+              </Grid>
             ))}
-          </Box>
+          </Grid>
         </Container>
       </Box>
 
-      {/* Services Section */}
-      <Box sx={{ py: 10, bgcolor: '#f9fafb' }}>
+      {/* Services / Use Cases Section */}
+      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.default' }}>
         <Container maxWidth="lg">
           <SectionHeader
-            chipLabel="OUR SERVICES"
-            chipColor="primary"
-            chipSx={{ bgcolor: '#10b981', color: 'white' }}
-            title="Perfect for Every Need"
-            subtitle="Whether you're a student, professional, or just curious, we've got you covered"
+            chipLabel="WHO IT'S FOR"
+            chipColor="secondary"
+            title="Built for Classrooms, Teams & Self-Learners"
+            subtitle="Whether preparing for finals, upskilling employees, or hosting live trivia"
           />
-          <Grid container spacing={4}>
+          <Grid container spacing={3.5}>
             {services.map((service, index) => (
               <Grid item xs={12} md={4} key={index}>
                 <Card
                   sx={{
                     height: '100%',
-                    transition: 'all 0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                    transition: 'all 0.25s ease',
                     '&:hover': {
-                      transform: 'translateY(-12px)',
-                      boxShadow: 12,
+                      transform: 'translateY(-6px)',
+                      boxShadow: 4,
                     },
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    height="100"
-                    image={service.image}
-                    alt={service.title}
-                  />
-                  <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ position: 'relative' }}>
+                    <CardMedia
+                      component="img"
+                      height="170"
+                      image={service.image}
+                      alt={service.title}
+                      loading="lazy"
+                    />
                     <Box
                       sx={{
-                        width: 64,
-                        height: 64,
-                        borderRadius: '50%',
+                        position: 'absolute',
+                        inset: 0,
+                        background: 'linear-gradient(to top, rgba(15,23,42,0.55) 0%, transparent 60%)',
+                      }}
+                    />
+                  </Box>
+                  <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    <Box
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 3,
                         bgcolor: 'primary.main',
                         color: 'white',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         mb: 2,
-                        mt: -5,
+                        mt: -6,
+                        position: 'relative',
+                        zIndex: 1,
+                        border: '3px solid #ffffff',
                         boxShadow: 3,
+                        '& svg': { fontSize: 28 },
                       }}
                     >
                       {service.icon}
                     </Box>
-                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
                       {service.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" paragraph>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, lineHeight: 1.65, flexGrow: 1 }}>
                       {service.description}
                     </Typography>
                     <Button
                       endIcon={<ArrowIcon />}
-                      sx={{ fontWeight: 600 }}
+                      onClick={handlePrimaryCta}
+                      sx={{ alignSelf: 'flex-start', px: 0, fontWeight: 700 }}
                     >
-                      Learn More
+                      Explore Track
                     </Button>
                   </CardContent>
                 </Card>
@@ -428,32 +809,50 @@ const LandingPage = () => {
       {/* Statistics Section */}
       <Box
         sx={{
-          py: 8,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          py: { xs: 7, md: 9 },
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 55%, #0f766e 100%)',
           color: 'white',
         }}
       >
         <Container maxWidth="lg">
-          <Grid container spacing={4}>
+          <Grid container spacing={3}>
             {stats.map((stat, index) => (
               <Grid item xs={6} md={3} key={index}>
-                <Box sx={{ textAlign: 'center' }}>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 3,
+                    textAlign: 'center',
+                    bgcolor: alpha('#ffffff', 0.08),
+                    border: '1px solid rgba(255,255,255,0.14)',
+                    color: 'white',
+                    borderRadius: 3.5,
+                    backdropFilter: 'blur(8px)',
+                  }}
+                >
                   <Box
                     sx={{
-                      fontSize: 48,
-                      mb: 2,
-                      opacity: 0.9,
+                      width: 48,
+                      height: 48,
+                      borderRadius: 2.5,
+                      bgcolor: alpha('#ffffff', 0.14),
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mx: 'auto',
+                      mb: 1.75,
+                      color: '#2dd4bf',
                     }}
                   >
                     {stat.icon}
                   </Box>
-                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
+                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 0.5 }}>
                     {stat.number}
                   </Typography>
-                  <Typography variant="h6" sx={{ opacity: 0.9 }}>
+                  <Typography variant="body2" sx={{ color: '#cbd5e1', fontWeight: 500 }}>
                     {stat.label}
                   </Typography>
-                </Box>
+                </Paper>
               </Grid>
             ))}
           </Grid>
@@ -461,52 +860,61 @@ const LandingPage = () => {
       </Box>
 
       {/* Testimonials Section */}
-      <Box sx={{ py: 10, bgcolor: 'white' }}>
+      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.paper' }}>
         <Container maxWidth="lg">
           <SectionHeader
-            chipLabel="TESTIMONIALS"
+            chipLabel="LEARNER STORIES"
             chipColor="primary"
-            chipSx={{ bgcolor: '#ec4899', color: 'white' }}
-            title="What Our Users Say"
-            subtitle="Join thousands of satisfied learners"
+            title="Trusted by Students & Trainers"
+            subtitle="See how learners around the world use TriviaVerse to build confidence and mastery"
           />
-          <Grid container spacing={4}>
+          <Grid container spacing={3.5}>
             {testimonials.map((testimonial, index) => (
               <Grid item xs={12} md={4} key={index}>
                 <Card
                   sx={{
                     height: '100%',
-                    p: 3,
-                    transition: 'all 0.3s',
+                    p: 3.25,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    transition: 'all 0.25s ease',
                     '&:hover': {
-                      boxShadow: 8,
+                      boxShadow: 4,
+                      transform: 'translateY(-4px)',
                     },
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Avatar
-                      src={testimonial.avatar}
-                      sx={{ width: 60, height: 60, mr: 2 }}
-                      alt='Profile avatar'
-                    />
-                    <Box>
-                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        {testimonial.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {testimonial.role}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Rating value={testimonial.rating} readOnly sx={{ mb: 2 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    "{testimonial.comment}"
-                  </Typography>
-                  <Box sx={{ mt: 2 }}>
-                    <VerifiedIcon color="primary" fontSize="small" sx={{ mr: 0.5, verticalAlign: 'middle' }} />
-                    <Typography variant="caption" color="primary" sx={{ fontWeight: 600 }}>
-                      Verified User
+                  <Box>
+                    <Rating value={testimonial.rating} readOnly size="small" sx={{ mb: 2 }} />
+                    <Typography variant="body1" color="text.primary" sx={{ mb: 3, lineHeight: 1.7 }}>
+                      "{testimonial.comment}"
                     </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Avatar
+                        src={testimonial.avatar}
+                        sx={{ width: 46, height: 46 }}
+                        alt={testimonial.name}
+                      />
+                      <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                          {testimonial.name}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {testimonial.role}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Chip
+                      icon={<VerifiedIcon sx={{ fontSize: 14 }} />}
+                      label="Verified"
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                    />
                   </Box>
                 </Card>
               </Grid>
@@ -515,41 +923,88 @@ const LandingPage = () => {
         </Container>
       </Box>
 
+      {/* Platform Walkthrough Video Section */}
+      <Box sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.default' }}>
+        <Container maxWidth="md">
+          <SectionHeader
+            chipLabel="PRODUCT TOUR"
+            chipColor="secondary"
+            title="See TriviaVerse in Action"
+            subtitle="Take a quick walkthrough of creating channels, attempting timed quizzes, and reviewing analytics"
+            sx={{ mb: 5 }}
+          />
+          <Paper
+            elevation={6}
+            sx={{
+              position: 'relative',
+              paddingBottom: '56.25%',
+              height: 0,
+              borderRadius: 4,
+              overflow: 'hidden',
+              border: '1px solid',
+              borderColor: 'divider',
+              boxShadow: '0 24px 50px rgba(15, 23, 42, 0.14)',
+            }}
+          >
+            <iframe
+              src="https://www.youtube.com/embed/4BPLeW3ptmE"
+              title="TriviaVerse Platform Walkthrough"
+              loading="lazy"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 0,
+              }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </Paper>
+        </Container>
+      </Box>
+
       {/* FAQ Section */}
-      <Box sx={{ py: 10, bgcolor: '#f9fafb' }}>
-        <Container maxWidth="lg">
+      <Box id="faq" sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.paper' }}>
+        <Container maxWidth="md">
           <SectionHeader
             chipLabel="FAQ"
             chipColor="primary"
             title="Frequently Asked Questions"
-            subtitle="Got questions? We've got answers!"
-            sx={{ mb: 6 }}
+            subtitle="Everything you need to know before starting your first quiz"
+            sx={{ mb: 5 }}
           />
           {faqs.map((faq, index) => (
             <Accordion
               key={index}
               expanded={expandedFaq === `panel${index}`}
               onChange={handleFaqChange(`panel${index}`)}
+              elevation={0}
               sx={{
-                mb: 2,
+                mb: 1.75,
+                border: '1px solid',
+                borderColor: expandedFaq === `panel${index}` ? 'primary.light' : 'divider',
                 '&:before': { display: 'none' },
-                boxShadow: 1,
-                borderRadius: 2,
+                borderRadius: '14px !important',
                 overflow: 'hidden',
+                transition: 'border-color 0.2s ease',
               }}
             >
               <AccordionSummary
                 expandIcon={<ExpandIcon />}
                 sx={{
-                  '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.05) },
+                  px: 3,
+                  py: 0.75,
+                  '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.04) },
                 }}
               >
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
                   {faq.question}
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
-                <Typography color="text.secondary">
+              <AccordionDetails sx={{ px: 3, pb: 2.5 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
                   {faq.answer}
                 </Typography>
               </AccordionDetails>
@@ -558,98 +1013,77 @@ const LandingPage = () => {
         </Container>
       </Box>
 
-      {/* CTA Section */}
+      {/* Final CTA Section */}
       <GradientBackground
+        minHeight="auto"
+        padding={{ xs: '64px 16px', md: '84px 24px' }}
         sx={{
-          py: 10,
           color: 'white',
           textAlign: 'center',
+          alignItems: 'center',
         }}
       >
-        <Container maxWidth="lg">
-          <Typography variant="h2" sx={{ fontWeight: 800, mb: 3 }}>
-            Ready to Get Started?
+        <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 800,
+              mb: 2,
+              fontSize: { xs: '2rem', md: '2.65rem' },
+            }}
+          >
+            Ready to Level Up Your Knowledge?
           </Typography>
-          <Typography variant="h5" sx={{ mb: 5, opacity: 0.95 }}>
-            Join over 1 million users and start your learning journey today. 
-            It's free, fun, and takes less than a minute!
+          <Typography variant="h6" sx={{ mb: 4.5, color: '#cbd5e1', fontWeight: 400, lineHeight: 1.65 }}>
+            Join over 1 million learners and educators building mastery every day.
+            Create your free account in under 60 seconds.
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap', mb: 4 }}>
             <GradientButton
               size="large"
               endIcon={<ArrowIcon />}
-              onClick={() => navigate('/register')}
-              bgcolor="white"
-              color="#667eea"
+              onClick={handlePrimaryCta}
+              bgcolor="#ffffff"
+              color="#1e1b4b"
               sx={{
-                py: 2,
-                px: 5,
-                fontSize: '1.2rem',
-                fontWeight: 700,
+                py: 1.75,
+                px: 4.5,
+                fontSize: '1.08rem',
               }}
             >
-              Start Free Now
+              {isAuthenticated ? 'Go to Dashboard' : 'Start Free Now'}
             </GradientButton>
             <Button
               variant="outlined"
               size="large"
               onClick={() => navigate('/about')}
               sx={{
-                borderColor: 'white',
+                borderColor: 'rgba(255,255,255,0.4)',
                 color: 'white',
-                py: 2,
-                px: 5,
-                fontSize: '1.2rem',
-                fontWeight: 700,
-                borderWidth: 2,
+                py: 1.75,
+                px: 4,
+                fontSize: '1.08rem',
                 '&:hover': {
                   borderColor: 'white',
                   bgcolor: alpha('#ffffff', 0.1),
-                  borderWidth: 2,
                 },
               }}
             >
               Learn More
             </Button>
           </Box>
-          <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 4, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: { xs: 2, sm: 4 }, flexWrap: 'wrap', color: '#e2e8f0' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CheckIcon />
-              <Typography>No Credit Card Required</Typography>
+              <CheckIcon sx={{ fontSize: 18, color: '#2dd4bf' }} />
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>No Credit Card Required</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CheckIcon />
-              <Typography>Free Forever</Typography>
+              <CheckIcon sx={{ fontSize: 18, color: '#2dd4bf' }} />
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>Free Forever Plan</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CheckIcon />
-              <Typography>Cancel Anytime</Typography>
-            </Box>
-            <Box
-              sx={{
-                width: { xs: '100%', sm: '80%', md: '80%', lg: '100%' },
-                position: 'relative',
-                paddingBottom: '56.25%',
-                height: 0,
-                borderRadius: 2,
-                overflow: 'hidden',
-                boxShadow: 3,
-              }}
-            >
-              <iframe
-                src="https://www.youtube.com/embed/4BPLeW3ptmE"
-                title="YouTube video"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  border: 0,
-                }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              <CheckIcon sx={{ fontSize: 18, color: '#2dd4bf' }} />
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>Instant Analytics</Typography>
             </Box>
           </Box>
         </Container>

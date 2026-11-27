@@ -1,40 +1,60 @@
-import { Grid, Card, CardContent, Typography, Box, Avatar } from "@mui/material"
+import { Grid, Card, CardContent, Typography, Box, Avatar, alpha } from '@mui/material';
 
+/**
+ * Dashboard KPI summary cards with clean EdTech framing.
+ */
+const QuickStats = ({ stats }) => {
+  return (
+    <Grid container spacing={2.5}>
+      {stats.map((stat, index) => (
+        <Grid item xs={12} sm={6} md={3} key={index}>
+          <Card
+            sx={{
+              height: '100%',
+              bgcolor: 'background.paper',
+              border: '1px solid',
+              borderColor: alpha(stat.color, 0.2),
+              borderTop: `4px solid ${stat.color}`,
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              '&:hover': {
+                transform: 'translateY(-3px)',
+                boxShadow: 3,
+              },
+            }}
+          >
+            <CardContent sx={{ p: 2.75 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+                  {stat.title}
+                </Typography>
+                <Avatar
+                  sx={{
+                    bgcolor: alpha(stat.color, 0.12),
+                    color: stat.color,
+                    width: 42,
+                    height: 42,
+                  }}
+                  alt="stat icon"
+                >
+                  {stat.icon}
+                </Avatar>
+              </Box>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 800,
+                  color: 'text.primary',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
+                {stat.value}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
 
-// At top of dashboard page - Stats details.
-
-const QuickStats = ({stats}) => {
-    return (
-        <>
-            <Grid container spacing={3}>
-                {stats.map((stat, index) => (
-                    <Grid item xs={12} sm={6} md={3} key={index}>
-                        <Card
-                            sx={{
-                                height: '100%',
-                                background: `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}05 100%)`,
-                                border: `1px solid ${stat.color}30`,
-                            }}
-                        >
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                    <Avatar sx={{ bgcolor: stat.color, mr: 2 }} alt='stat icon'>
-                                        {stat.icon}
-                                    </Avatar>
-                                </Box>
-                                <Typography variant="h4" sx={{ fontWeight: 700, color: stat.color }}>
-                                    {stat.value}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {stat.title}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
-        </>
-    )
-}
-
-export default QuickStats
+export default QuickStats;

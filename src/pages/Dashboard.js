@@ -97,16 +97,16 @@ const Dashboard = () => {
 
   // Stats for different roles
   const userStats = [
-    { title: 'Available Channels', value: (channels?.length || 0).toString(), color: '#6366f1', icon: <QuizIcon /> },
-    { title: 'Quizzes Taken', value: '12', color: '#10b981', icon: <EmojiEvents /> },
-    { title: 'Average Score', value: '1420', color: '#ec4899', icon: <TrendingUp /> },
+    { title: 'Available Channels', value: (channels?.length || 0).toString(), color: '#4f46e5', icon: <QuizIcon /> },
+    { title: 'Quizzes Taken', value: '12', color: '#0d9488', icon: <EmojiEvents /> },
+    { title: 'Average Score', value: '1420', color: '#0284c7', icon: <TrendingUp /> },
     { title: 'Global Rank', value: '#24', color: '#f59e0b', icon: <LeaderboardIcon /> },
   ];
 
   const creatorStats = [
-    { title: 'Quizzes Created', value: '8', color: '#6366f1', icon: <Create /> },
-    { title: 'Total Attempts', value: '342', color: '#10b981', icon: <PlayArrow /> },
-    { title: 'Avg Rating', value: '4.6', color: '#ec4899', icon: <Assessment /> },
+    { title: 'Quizzes Created', value: '8', color: '#4f46e5', icon: <Create /> },
+    { title: 'Total Attempts', value: '342', color: '#0d9488', icon: <PlayArrow /> },
+    { title: 'Avg Rating', value: '4.6', color: '#0284c7', icon: <Assessment /> },
     { title: 'Active Users', value: '156', color: '#f59e0b', icon: <People /> },
   ];
 
@@ -114,16 +114,16 @@ const Dashboard = () => {
   // Compute admin stat cards from fetched adminStats state
   const adminStatsCards = adminStats
     ? [
-        { title: 'Total Users', value: (adminStats.totalUsers ?? 'N/A').toString(), color: '#6366f1', icon: <People /> },
-        { title: 'Total Channels', value: (adminStats.totalChannels  ?? '0').toString(), color: '#10b981', icon: <DashboardIcon /> },
-        { title: 'Total Quizzes', value: (adminStats.totalQuizzes ?? '0').toString(), color: '#10b981', icon: <QuizIcon /> },
+        { title: 'Total Users', value: (adminStats.totalUsers ?? 'N/A').toString(), color: '#4f46e5', icon: <People /> },
+        { title: 'Total Channels', value: (adminStats.totalChannels  ?? '0').toString(), color: '#0d9488', icon: <DashboardIcon /> },
+        { title: 'Total Quizzes', value: (adminStats.totalQuizzes ?? '0').toString(), color: '#0284c7', icon: <QuizIcon /> },
         { title: 'Active Today', value: (adminStats.activeToday ?? 'N/A').toString(), color: '#ec4899', icon: <TrendingUp /> },
         { title: 'Completion Rate', value: typeof adminStats.completionRate === 'number' ? `${adminStats.completionRate}%` : (adminStats.completionRate ?? 'N/A'), color: '#f59e0b', icon: <Assessment /> },
       ]
     : [
-        { title: 'Total Users', value: '-', color: '#6366f1', icon: <People /> },
-        { title: 'Total Quizzes', value: '-', color: '#10b981', icon: <QuizIcon /> },
-        { title: 'Active Today', value: '-', color: '#ec4899', icon: <TrendingUp /> },
+        { title: 'Total Users', value: '-', color: '#4f46e5', icon: <People /> },
+        { title: 'Total Quizzes', value: '-', color: '#0d9488', icon: <QuizIcon /> },
+        { title: 'Active Today', value: '-', color: '#0284c7', icon: <TrendingUp /> },
         { title: 'Completion Rate', value: '-', color: '#f59e0b', icon: <Assessment /> },
       ];
 
@@ -177,22 +177,35 @@ const Dashboard = () => {
      {statsError && <Box sx={{ mt: 1, mx: 2 }}>
        <Alert severity="error">{statsError}</Alert>
      </Box> }
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
       <AppBar 
-        position="static" 
+        position="sticky" 
         elevation={0}
         sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px rgba(102, 126, 234, 0.3)',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 55%, #312e81 100%)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 4px 20px rgba(15, 23, 42, 0.18)',
         }}
       >
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700, cursor: 'pointer' }} onClick={()=> navigate("/")}>
-            TriviaVerse
-          </Typography>
+        <Toolbar sx={{ minHeight: 66 }}>
+          <Box
+            onClick={() => navigate('/')}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexGrow: 1, cursor: 'pointer' }}
+          >
+            <img
+              src="/logo192.png"
+              alt="TriviaVerse"
+              width="32"
+              height="32"
+              style={{ width: 32, height: 32, borderRadius: 8 }}
+            />
+            <Typography variant="h6" component="div" sx={{ fontWeight: 800, letterSpacing: '-0.01em' }}>
+              TriviaVerse
+            </Typography>
+          </Box>
           {userRole === 'admin' && <ChatButton />}
           {userRole === 'admin' && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.45)', mx: 0.75 }}>
               •
             </Typography>
           )}
@@ -200,7 +213,7 @@ const Dashboard = () => {
             label={userRole.toUpperCase()} 
             size="small" 
             color={getRoleColor()}
-            sx={{ mr: 2, fontWeight: 600 }}
+            sx={{ mr: 1.5, fontWeight: 700 }}
           />
           <IconButton
             size="large"
@@ -473,13 +486,13 @@ const Dashboard = () => {
         {/* ADMIN VIEW - Platform Management */}
         {userRole === 'admin' && (
           <>
-            <Typography variant="h5" sx={{ mt: 4, mb: 2, fontWeight: 600 }}>
+            <Typography variant="h5" sx={{ mt: 4, mb: 2, fontWeight: 700 }}>
               Available Quizzes
             </Typography>
 
-                              <Box>
-              Coming soon public quizzes . Check on dashboard
-                          </Box>
+            <Alert severity="info" sx={{ borderRadius: 3 }}>
+              Public quizzes preview is coming soon — check back on your dashboard for curated tracks.
+            </Alert>
 
             <Typography variant="h5" sx={{ mt: 4, mb: 2, fontWeight: 600 }}>
               Quick Actions

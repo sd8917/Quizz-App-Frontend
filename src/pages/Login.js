@@ -503,7 +503,7 @@ const Login = () => {
                 sx={{
                   width: '100%',
                   height: '100%',
-                  background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%)',
+                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(49, 46, 129, 0.9) 100%)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
